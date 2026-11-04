@@ -71,7 +71,7 @@ class AppDemoCard extends ConsumerWidget {
     final isDeveloperMode = ref.watch(developerModeProvider);
 
     return Card(
-      elevation: 4,
+      elevation: 0,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(

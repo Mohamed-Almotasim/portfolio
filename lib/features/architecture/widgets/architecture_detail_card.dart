@@ -32,7 +32,7 @@ class _ArchitectureDetailCardState extends State<ArchitectureDetailCard> {
         duration: const Duration(milliseconds: 180),
         curve: Curves.easeOut,
         child: Card(
-          elevation: _isHovered ? 6 : 1,
+          elevation: _isHovered ? 4 : 0,
           child: Padding(
             padding: const EdgeInsets.all(18),
             child: Column(

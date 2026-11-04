@@ -37,6 +37,7 @@ abstract final class AppTheme {
       splashFactory: InkSparkle.splashFactory,
       cardTheme: CardThemeData(
         elevation: 0,
+        shadowColor: s.shadow.withValues(alpha: 0.4),
         color: s.surface,
         surfaceTintColor: Colors.transparent,
         margin: const EdgeInsets.all(AppSpacing.s8),

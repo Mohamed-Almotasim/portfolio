@@ -14,7 +14,7 @@ class DeveloperInfo extends ConsumerWidget {
     }
 
     return Card(
-      elevation: 4,
+      elevation: 0,
       margin: const EdgeInsets.all(16),
       child: Padding(
         padding: const EdgeInsets.all(16),

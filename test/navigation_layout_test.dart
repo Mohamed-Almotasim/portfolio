@@ -6,6 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:portfolio/app.dart';
 import 'package:portfolio/core/routing/app_router.dart';
+import 'package:portfolio/features/landing/landing_page.dart';
+import 'package:portfolio/shared/widgets/app_navbar.dart';
 
 const routes = [
   '/',
@@ -94,5 +96,21 @@ void main() {
     await tester.tap(find.text('Back home'));
     await tester.pumpAndSettle();
     expect(find.text('404'), findsNothing);
+  });
+
+  testWidgets('nav link navigates and the navbar persists', (tester) async {
+    await pumpAt(tester, 1280, '/');
+    final navbar = tester.element(find.byType(AppNavbar));
+    await tester.tap(
+      find.descendant(
+        of: find.byType(AppNavbar),
+        matching: find.text('Architecture'),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Architecture'), findsWidgets);
+    expect(find.byType(LandingPage), findsNothing);
+    // Same element: the shell was not rebuilt from scratch.
+    expect(tester.element(find.byType(AppNavbar)), same(navbar));
   });
 }

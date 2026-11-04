@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:portfolio/core/theme/app_decorations.dart';
+import 'package:portfolio/core/theme/app_spacing.dart';
 
 class ScrollToTopButton extends StatefulWidget {
   const ScrollToTopButton({super.key, required this.scrollController});
@@ -34,32 +36,54 @@ class _ScrollToTopButtonState extends State<ScrollToTopButton> {
   }
 
   void _scrollListener() {
-    if (widget.scrollController.offset >= 200 && !_isVisible) {
-      setState(() => _isVisible = true);
-    } else if (widget.scrollController.offset < 200 && _isVisible) {
-      setState(() => _isVisible = false);
-    }
+    final visible = widget.scrollController.offset >= 400;
+    if (visible != _isVisible) setState(() => _isVisible = visible);
   }
 
   void _scrollToTop() {
+    if (MediaQuery.disableAnimationsOf(context)) {
+      widget.scrollController.jumpTo(0);
+      return;
+    }
     widget.scrollController.animateTo(
       0,
       duration: const Duration(milliseconds: 500),
-      curve: Curves.easeInOut,
+      curve: Curves.easeInOutCubic,
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Positioned(
-      bottom: 24,
-      right: 24,
-      child: AnimatedOpacity(
-        opacity: _isVisible ? 1.0 : 0.0,
-        duration: const Duration(milliseconds: 200),
-        child: FloatingActionButton(
-          onPressed: _scrollToTop,
-          child: const Icon(Icons.arrow_upward),
+      bottom: AppSpacing.s24,
+      right: AppSpacing.s24,
+      child: IgnorePointer(
+        ignoring: !_isVisible,
+        child: AnimatedSlide(
+          offset: _isVisible ? Offset.zero : const Offset(0, 0.5),
+          duration: const Duration(milliseconds: 200),
+          child: AnimatedOpacity(
+            opacity: _isVisible ? 1.0 : 0.0,
+            duration: const Duration(milliseconds: 200),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                boxShadow: AppDecorations.of(context).shadowSoft,
+              ),
+              child: IconButton.filledTonal(
+                tooltip: 'Back to top',
+                onPressed: _scrollToTop,
+                style: IconButton.styleFrom(
+                  backgroundColor: scheme.surfaceContainerHigh,
+                  foregroundColor: scheme.onSurface,
+                  side: BorderSide(color: scheme.outlineVariant),
+                  minimumSize: const Size(48, 48),
+                ),
+                icon: const Icon(Icons.arrow_upward),
+              ),
+            ),
+          ),
         ),
       ),
     );

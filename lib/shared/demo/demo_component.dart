@@ -74,7 +74,7 @@ class _DemoComponentState extends ConsumerState<DemoComponent>
                 constraints: BoxConstraints(maxWidth: maxCardWidth),
                 child: Card(
                   margin: EdgeInsets.zero,
-                  elevation: 4,
+                  elevation: 0,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
