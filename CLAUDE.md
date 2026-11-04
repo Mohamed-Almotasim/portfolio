@@ -12,7 +12,7 @@ flutter build web              # Production web build
 flutter test test/<file>_test.dart  # Run a single test file (test/ is currently empty)
 ```
 
-Stack: Flutter web, Riverpod 2 (`ProviderScope` in `main.dart`), GoRouter, `url_launcher`, `equatable`. Design intent and spec live in `docs/architecture.md` and `docs/portfolio_spec.md`.
+Stack: Flutter web, Riverpod 2 (`ProviderScope` in `main.dart`), GoRouter, `url_launcher`, `equatable`. Design intent lives in `docs/architecture.md`.
 
 ## Architecture
 
@@ -43,13 +43,15 @@ Three top-level layers under `lib/`:
 
 ## AI Guardrails (from `AI_RULES.md`)
 
-1. Never invent new folders.
-2. Ask before creating any new file.
-3. Only modify files explicitly listed in the prompt.
-4. Do not introduce new packages.
+Refactor phase rules:
+
+1. You may create, move, rename and delete files inside `lib/`, `test/`, `web/` and `docs/` when the task requires it. List every created/deleted file in your summary.
+2. Only these packages are pre-approved: `google_fonts`, `flutter_web_plugins` (SDK). Ask before adding anything else.
+3. After every task run `dart format .`, `flutter analyze` (must be zero issues) and `flutter test`.
+4. Never use `withOpacity` (use `withValues(alpha:)`). Never hard-code `Colors.*` in UI; use `Theme.of(context).colorScheme` or theme extensions.
 5. Use Flutter built-in widgets and animations (`AnimatedContainer`, `AnimatedOpacity`, `AnimatedSwitcher`, `TweenAnimationBuilder`, `Hero`) — no animation packages.
-6. Keep the codebase intentionally small and focused; prefer simple solutions.
-7. Respect the `core/` / `shared/` / `features/` boundaries; Firebase is allowed only for an optional contact form.
+6. Keep the codebase intentionally small and focused; prefer simple solutions, no over-engineering.
+7. Respect the `core/` / `shared/` / `features/` boundaries.
 
 ## Theme
 

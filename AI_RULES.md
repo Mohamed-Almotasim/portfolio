@@ -31,18 +31,16 @@ Do not increase complexity without a clear reason.
 
 AI assistants must follow these rules:
 
-1. Never invent new folders.
-2. Never create files unless explicitly requested.
-3. Only modify files listed in the prompt.
-4. Follow the defined project architecture.
-5. Do not introduce additional packages unless requested.
+1. You may create, move, rename and delete files inside `lib/`, `test/`, `web/` and `docs/` when the task requires it. List every created/deleted file in your summary.
+2. Only these packages are pre-approved: `google_fonts`, `flutter_web_plugins` (SDK). Ask before adding anything else.
+3. After every task run `dart format .`, `flutter analyze` (must be zero issues) and `flutter test`.
+4. Never use `withOpacity` (use `withValues(alpha:)`). Never hard-code `Colors.*` in UI; use `Theme.of(context).colorScheme` or theme extensions.
+5. Follow the defined project architecture.
 6. Prefer simple solutions over complex ones.
 7. Avoid over-engineering.
 8. Use Flutter built-in widgets whenever possible.
 9. Keep the code readable and well structured.
 10. Avoid deeply nested widgets when unnecessary.
-
-If a task requires a new file, the AI must ask before creating it.
 
 ---
 
@@ -54,7 +52,6 @@ Flutter (Web target)
 Dart
 Riverpod (state management)
 GoRouter (navigation)
-Firebase (optional contact form only)
 
 Do not introduce additional frameworks.
 
@@ -134,4 +131,13 @@ core/
 Contains global systems used by the entire app:
 
 * theme
-* routin
+* routing
+* global state (Riverpod providers)
+
+shared/
+
+Reusable, feature-agnostic widgets and layout. Must not import from `features/`.
+
+features/
+
+One folder per page/section, each self-contained with its own widgets.
