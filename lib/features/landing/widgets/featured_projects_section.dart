@@ -9,7 +9,7 @@ class FeaturedProjectsSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final projects = ref.watch(projectsProvider);
+    final projects = ref.watch(featuredCaseStudiesProvider);
 
     return ResponsiveGrid(
       spacing: 22,

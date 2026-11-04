@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:portfolio/core/state/profile_provider.dart';
 import 'package:portfolio/shared/layout/app_page.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class ContactPage extends StatefulWidget {
+class ContactPage extends ConsumerStatefulWidget {
   const ContactPage({super.key});
 
   @override
-  State<ContactPage> createState() => _ContactPageState();
+  ConsumerState<ContactPage> createState() => _ContactPageState();
 }
 
-class _ContactPageState extends State<ContactPage> {
+class _ContactPageState extends ConsumerState<ContactPage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
@@ -102,9 +105,11 @@ class _ContactPageState extends State<ContactPage> {
           const SizedBox(height: 16),
           Row(
             children: [
-              IconButton(onPressed: () {}, icon: const Icon(Icons.link)),
-              IconButton(onPressed: () {}, icon: const Icon(Icons.link)),
-              IconButton(onPressed: () {}, icon: const Icon(Icons.link)),
+              for (final link in ref.watch(profileProvider).contactLinks)
+                IconButton(
+                  onPressed: () => launchUrl(Uri.parse(link.url)),
+                  icon: const Icon(Icons.link),
+                ),
             ],
           ),
         ],

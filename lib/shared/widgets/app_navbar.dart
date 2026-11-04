@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:portfolio/core/routing/app_routes.dart';
 
 class AppNavbar extends StatefulWidget {
   const AppNavbar({super.key, this.onMenuPressed});
@@ -55,54 +56,14 @@ class _AppNavbarState extends State<AppNavbar> {
                 if (isDesktop) ...[
                   Row(
                     children: [
-                      _NavLink(
-                        label: 'Home',
-                        route: '/',
-                        isActive: currentLocation == '/',
-                        onPressed: () => context.go('/'),
-                      ),
-                      const SizedBox(width: 24),
-                      _NavLink(
-                        label: 'UI Showcase',
-                        route: '/ui-showcase',
-                        isActive: currentLocation == '/ui-showcase',
-                        onPressed: () => context.go('/ui-showcase'),
-                      ),
-                      const SizedBox(width: 24),
-                      _NavLink(
-                        label: 'UI Patterns',
-                        route: '/widget-gallery',
-                        isActive: currentLocation == '/widget-gallery',
-                        onPressed: () => context.go('/widget-gallery'),
-                      ),
-                      const SizedBox(width: 24),
-                      _NavLink(
-                        label: 'App Demos',
-                        route: '/app-demos',
-                        isActive: currentLocation == '/app-demos',
-                        onPressed: () => context.go('/app-demos'),
-                      ),
-                      const SizedBox(width: 24),
-                      _NavLink(
-                        label: 'Architecture',
-                        route: '/architecture',
-                        isActive: currentLocation == '/architecture',
-                        onPressed: () => context.go('/architecture'),
-                      ),
-                      const SizedBox(width: 24),
-                      _NavLink(
-                        label: 'Services',
-                        route: '/services',
-                        isActive: currentLocation == '/services',
-                        onPressed: () => context.go('/services'),
-                      ),
-                      const SizedBox(width: 24),
-                      _NavLink(
-                        label: 'Contact',
-                        route: '/contact',
-                        isActive: currentLocation == '/contact',
-                        onPressed: () => context.go('/contact'),
-                      ),
+                      for (final (i, d) in navDestinations.indexed) ...[
+                        if (i > 0) const SizedBox(width: 24),
+                        _NavLink(
+                          label: d.label,
+                          isActive: currentLocation == d.path,
+                          onPressed: () => context.go(d.path),
+                        ),
+                      ],
                     ],
                   ),
                 ] else ...[
@@ -124,13 +85,11 @@ class _AppNavbarState extends State<AppNavbar> {
 class _NavLink extends StatefulWidget {
   const _NavLink({
     required this.label,
-    required this.route,
     required this.isActive,
     required this.onPressed,
   });
 
   final String label;
-  final String route;
   final bool isActive;
   final VoidCallback onPressed;
 

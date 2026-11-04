@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:portfolio/core/content/profile.dart';
+import 'package:portfolio/core/routing/app_routes.dart';
+import 'package:portfolio/core/state/profile_provider.dart';
 
-class HeroSection extends StatelessWidget {
+class HeroSection extends ConsumerWidget {
   const HeroSection({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final profile = ref.watch(profileProvider);
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 64),
       constraints: const BoxConstraints(minHeight: 400),
@@ -40,14 +45,14 @@ class HeroSection extends StatelessWidget {
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Expanded(flex: 2, child: _buildContent(context)),
+                    Expanded(flex: 2, child: _buildContent(context, profile)),
                     Expanded(child: _buildAvatar(context)),
                   ],
                 );
               } else {
                 return Column(
                   children: [
-                    _buildContent(context),
+                    _buildContent(context, profile),
                     const SizedBox(height: 32),
                     _buildAvatar(context),
                   ],
@@ -60,32 +65,29 @@ class HeroSection extends StatelessWidget {
     );
   }
 
-  Widget _buildContent(BuildContext context) {
+  Widget _buildContent(BuildContext context, Profile profile) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          'Your Name', // Replace with actual developer name
+          profile.name,
           style: Theme.of(
             context,
           ).textTheme.displayLarge?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
-        Text(
-          'Flutter Developer',
-          style: Theme.of(context).textTheme.headlineMedium,
-        ),
+        Text(profile.title, style: Theme.of(context).textTheme.headlineMedium),
         const SizedBox(height: 24),
         ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 500),
-          child: _buildDescription(context),
+          child: _buildDescription(context, profile.shortBio),
         ),
         const SizedBox(height: 48),
         Row(
           children: [
             ElevatedButton(
-              onPressed: () => context.go('/app-demos'),
+              onPressed: () => context.go(AppRoutes.appDemos),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 32,
@@ -96,7 +98,7 @@ class HeroSection extends StatelessWidget {
             ),
             const SizedBox(width: 16),
             OutlinedButton(
-              onPressed: () => context.go('/contact'),
+              onPressed: () => context.go(AppRoutes.contact),
               style: OutlinedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 32,
@@ -111,34 +113,16 @@ class HeroSection extends StatelessWidget {
     );
   }
 
-  Widget _buildDescription(BuildContext context) {
+  Widget _buildDescription(BuildContext context, String bio) {
+    final highlight = TextStyle(color: Theme.of(context).colorScheme.primary);
     return RichText(
       textAlign: TextAlign.left,
       text: TextSpan(
         style: Theme.of(context).textTheme.bodyLarge,
+        // Odd segments sat between *asterisks* and get highlighted.
         children: [
-          const TextSpan(text: 'Passionate '),
-          TextSpan(
-            text: 'Flutter',
-            style: TextStyle(color: Theme.of(context).colorScheme.primary),
-          ),
-          const TextSpan(
-            text:
-                ' developer specializing in creating beautiful, performant, and user-friendly ',
-          ),
-          TextSpan(
-            text: 'Mobile Apps',
-            style: TextStyle(color: Theme.of(context).colorScheme.primary),
-          ),
-          const TextSpan(
-            text:
-                '. With expertise in modern Flutter development practices and a keen eye for ',
-          ),
-          TextSpan(
-            text: 'UI Development',
-            style: TextStyle(color: Theme.of(context).colorScheme.primary),
-          ),
-          const TextSpan(text: '.'),
+          for (final (i, part) in bio.split('*').indexed)
+            TextSpan(text: part, style: i.isOdd ? highlight : null),
         ],
       ),
     );

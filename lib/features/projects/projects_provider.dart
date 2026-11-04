@@ -1,31 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:portfolio/features/projects/project_model.dart';
+import 'package:portfolio/core/content/case_study.dart';
+import 'package:portfolio/core/content/portfolio_content.dart' as content;
 
-final projectsProvider = Provider<List<Project>>((ref) {
-  return const [
-    Project(
-      title: 'E-Commerce App',
-      description:
-          'A full-featured e-commerce application with user authentication, product catalog, shopping cart, and payment integration.',
-      techStack: ['Flutter', 'Firebase', 'Stripe', 'Riverpod'],
-      demoUrl: 'https://demo.example.com',
-      githubUrl: 'https://github.com/example/ecommerce',
-    ),
-    Project(
-      title: 'Task Management Tool',
-      description:
-          'A collaborative task management application with real-time updates, team collaboration, and project tracking.',
-      techStack: ['Flutter', 'Dart', 'SQLite', 'WebSocket'],
-      demoUrl: 'https://demo.example.com/taskmanager',
-      githubUrl: 'https://github.com/example/taskmanager',
-    ),
-    Project(
-      title: 'Weather Dashboard',
-      description:
-          'A beautiful weather dashboard with location-based forecasts, interactive maps, and weather alerts.',
-      techStack: ['Flutter', 'REST API', 'Geolocation', 'Charts'],
-      demoUrl: 'https://demo.example.com/weather',
-      githubUrl: 'https://github.com/example/weather',
-    ),
-  ];
-});
+final caseStudiesProvider = Provider<List<CaseStudy>>(
+  (ref) => content.caseStudies,
+);
+
+final featuredCaseStudiesProvider = Provider<List<CaseStudy>>(
+  (ref) => ref.watch(caseStudiesProvider).where((c) => c.featured).toList(),
+);

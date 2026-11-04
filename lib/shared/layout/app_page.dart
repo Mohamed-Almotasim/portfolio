@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:portfolio/core/routing/app_routes.dart';
 import 'package:portfolio/core/state/developer_mode_provider.dart';
 import 'package:portfolio/shared/widgets/app_footer.dart';
 import 'package:portfolio/shared/widgets/app_navbar.dart';
@@ -48,62 +49,15 @@ class _AppPageState extends ConsumerState<AppPage> {
                       style: TextStyle(color: Colors.white, fontSize: 24),
                     ),
                   ),
-                  ListTile(
-                    title: const Text('Home'),
-                    selected: currentLocation == '/',
-                    onTap: () {
-                      Navigator.pop(context);
-                      context.go('/');
-                    },
-                  ),
-                  ListTile(
-                    title: const Text('UI Showcase'),
-                    selected: currentLocation == '/ui-showcase',
-                    onTap: () {
-                      Navigator.pop(context);
-                      context.go('/ui-showcase');
-                    },
-                  ),
-                  ListTile(
-                    title: const Text('UI Patterns'),
-                    selected: currentLocation == '/widget-gallery',
-                    onTap: () {
-                      Navigator.pop(context);
-                      context.go('/widget-gallery');
-                    },
-                  ),
-                  ListTile(
-                    title: const Text('Architecture'),
-                    selected: currentLocation == '/architecture',
-                    onTap: () {
-                      Navigator.pop(context);
-                      context.go('/architecture');
-                    },
-                  ),
-                  ListTile(
-                    title: const Text('Services'),
-                    selected: currentLocation == '/services',
-                    onTap: () {
-                      Navigator.pop(context);
-                      context.go('/services');
-                    },
-                  ),
-                  ListTile(
-                    title: const Text('App Demos'),
-                    selected: currentLocation == '/app-demos',
-                    onTap: () {
-                      Navigator.pop(context);
-                      context.go('/app-demos');
-                    },
-                  ),
-                  ListTile(
-                    title: const Text('Contact'),
-                    selected: currentLocation == '/contact',
-                    onTap: () {
-                      Navigator.pop(context);
-                      context.go('/contact');
-                    },
-                  ),
+                  for (final d in navDestinations)
+                    ListTile(
+                      title: Text(d.label),
+                      selected: currentLocation == d.path,
+                      onTap: () {
+                        Navigator.pop(context);
+                        context.go(d.path);
+                      },
+                    ),
                   const Divider(),
                   ListTile(
                     title: const Text('Developer Mode'),

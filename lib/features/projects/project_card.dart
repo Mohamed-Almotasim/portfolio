@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:portfolio/features/projects/project_model.dart';
+import 'package:portfolio/core/content/case_study.dart';
 import 'package:portfolio/shared/widgets/hover_card.dart';
 import 'package:portfolio/shared/widgets/tech_badge.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -7,7 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 class ProjectCard extends StatelessWidget {
   const ProjectCard({super.key, required this.project});
 
-  final Project project;
+  final CaseStudy project;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,7 @@ class ProjectCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  project.description,
+                  project.tagline,
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 const SizedBox(height: 12),
@@ -43,32 +43,45 @@ class ProjectCard extends StatelessWidget {
             const SizedBox(height: 16),
             Row(
               children: [
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () => launchUrl(Uri.parse(project.demoUrl)),
-                    icon: const Icon(Icons.launch, size: 18),
-                    label: const Text('Live Demo'),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                    ),
+                for (final (i, link) in project.links.indexed) ...[
+                  if (i > 0) const SizedBox(width: 8),
+                  Expanded(
+                    child: _LinkButton(link: link, primary: i == 0),
                   ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () => launchUrl(Uri.parse(project.githubUrl)),
-                    icon: const Icon(Icons.code, size: 18),
-                    label: const Text('GitHub'),
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                    ),
-                  ),
-                ),
+                ],
               ],
             ),
           ],
         ),
       ),
     );
+  }
+}
+
+class _LinkButton extends StatelessWidget {
+  const _LinkButton({required this.link, required this.primary});
+
+  final CaseStudyLink link;
+  final bool primary;
+
+  @override
+  Widget build(BuildContext context) {
+    void open() => launchUrl(Uri.parse(link.url));
+    final icon = Icon(link.icon, size: 18);
+    final label = Text(link.label);
+    const padding = EdgeInsets.symmetric(vertical: 12);
+    return primary
+        ? ElevatedButton.icon(
+            onPressed: open,
+            icon: icon,
+            label: label,
+            style: ElevatedButton.styleFrom(padding: padding),
+          )
+        : OutlinedButton.icon(
+            onPressed: open,
+            icon: icon,
+            label: label,
+            style: OutlinedButton.styleFrom(padding: padding),
+          );
   }
 }

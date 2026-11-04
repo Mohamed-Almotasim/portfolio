@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:portfolio/core/content/profile.dart';
+import 'package:portfolio/core/routing/app_routes.dart';
+import 'package:portfolio/core/state/profile_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class AppFooter extends StatelessWidget {
+class AppFooter extends ConsumerWidget {
   const AppFooter({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final links = ref.watch(profileProvider).contactLinks;
     final isDesktop = MediaQuery.of(context).size.width > 600;
 
     return Container(
@@ -60,41 +65,11 @@ class AppFooter extends StatelessWidget {
                                 ?.copyWith(fontWeight: FontWeight.w600),
                           ),
                           const SizedBox(height: 16),
-                          _FooterNavLink(
-                            label: 'Home',
-                            route: '/',
-                            onPressed: () => context.go('/'),
-                          ),
-                          _FooterNavLink(
-                            label: 'UI Showcase',
-                            route: '/ui-showcase',
-                            onPressed: () => context.go('/ui-showcase'),
-                          ),
-                          _FooterNavLink(
-                            label: 'UI Patterns',
-                            route: '/widget-gallery',
-                            onPressed: () => context.go('/widget-gallery'),
-                          ),
-                          _FooterNavLink(
-                            label: 'App Demos',
-                            route: '/app-demos',
-                            onPressed: () => context.go('/app-demos'),
-                          ),
-                          _FooterNavLink(
-                            label: 'Architecture',
-                            route: '/architecture',
-                            onPressed: () => context.go('/architecture'),
-                          ),
-                          _FooterNavLink(
-                            label: 'Services',
-                            route: '/services',
-                            onPressed: () => context.go('/services'),
-                          ),
-                          _FooterNavLink(
-                            label: 'Contact',
-                            route: '/contact',
-                            onPressed: () => context.go('/contact'),
-                          ),
+                          for (final d in navDestinations)
+                            _FooterNavLink(
+                              label: d.label,
+                              onPressed: () => context.go(d.path),
+                            ),
                         ],
                       ),
                     ),
@@ -110,23 +85,10 @@ class AppFooter extends StatelessWidget {
                                 ?.copyWith(fontWeight: FontWeight.w600),
                           ),
                           const SizedBox(height: 16),
-                          const _SocialLink(
-                            icon: Icons.code,
-                            label: 'GitHub',
-                            url: 'https://github.com',
-                          ),
-                          const SizedBox(height: 12),
-                          const _SocialLink(
-                            icon: Icons.business_center,
-                            label: 'LinkedIn',
-                            url: 'https://linkedin.com',
-                          ),
-                          const SizedBox(height: 12),
-                          const _SocialLink(
-                            icon: Icons.email,
-                            label: 'Email',
-                            url: 'mailto:example@email.com',
-                          ),
+                          for (final (i, link) in links.indexed) ...[
+                            if (i > 0) const SizedBox(height: 12),
+                            _SocialLink(link: link),
+                          ],
                         ],
                       ),
                     ),
@@ -165,41 +127,11 @@ class AppFooter extends StatelessWidget {
                       spacing: 24,
                       runSpacing: 8,
                       children: [
-                        _FooterNavLink(
-                          label: 'Home',
-                          route: '/',
-                          onPressed: () => context.go('/'),
-                        ),
-                        _FooterNavLink(
-                          label: 'UI Showcase',
-                          route: '/ui-showcase',
-                          onPressed: () => context.go('/ui-showcase'),
-                        ),
-                        _FooterNavLink(
-                          label: 'UI Patterns',
-                          route: '/widget-gallery',
-                          onPressed: () => context.go('/widget-gallery'),
-                        ),
-                        _FooterNavLink(
-                          label: 'App Demos',
-                          route: '/app-demos',
-                          onPressed: () => context.go('/app-demos'),
-                        ),
-                        _FooterNavLink(
-                          label: 'Architecture',
-                          route: '/architecture',
-                          onPressed: () => context.go('/architecture'),
-                        ),
-                        _FooterNavLink(
-                          label: 'Services',
-                          route: '/services',
-                          onPressed: () => context.go('/services'),
-                        ),
-                        _FooterNavLink(
-                          label: 'Contact',
-                          route: '/contact',
-                          onPressed: () => context.go('/contact'),
-                        ),
+                        for (final d in navDestinations)
+                          _FooterNavLink(
+                            label: d.label,
+                            onPressed: () => context.go(d.path),
+                          ),
                       ],
                     ),
                     const SizedBox(height: 32),
@@ -211,25 +143,11 @@ class AppFooter extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    const Wrap(
+                    Wrap(
                       spacing: 24,
                       runSpacing: 8,
                       children: [
-                        _SocialLink(
-                          icon: Icons.code,
-                          label: 'GitHub',
-                          url: 'https://github.com',
-                        ),
-                        _SocialLink(
-                          icon: Icons.business_center,
-                          label: 'LinkedIn',
-                          url: 'https://linkedin.com',
-                        ),
-                        _SocialLink(
-                          icon: Icons.email,
-                          label: 'Email',
-                          url: 'mailto:example@email.com',
-                        ),
+                        for (final link in links) _SocialLink(link: link),
                       ],
                     ),
                   ],
@@ -243,7 +161,7 @@ class AppFooter extends StatelessWidget {
 
               // Bottom section - Copyright
               Text(
-                '© 2024 Portfolio. All rights reserved.',
+                '© ${DateTime.now().year} Portfolio. All rights reserved.',
                 style: Theme.of(context).textTheme.bodyMedium,
                 textAlign: TextAlign.center,
               ),
@@ -256,14 +174,9 @@ class AppFooter extends StatelessWidget {
 }
 
 class _FooterNavLink extends StatelessWidget {
-  const _FooterNavLink({
-    required this.label,
-    required this.route,
-    required this.onPressed,
-  });
+  const _FooterNavLink({required this.label, required this.onPressed});
 
   final String label;
-  final String route;
   final VoidCallback onPressed;
 
   @override
@@ -282,15 +195,9 @@ class _FooterNavLink extends StatelessWidget {
 }
 
 class _SocialLink extends StatefulWidget {
-  const _SocialLink({
-    required this.icon,
-    required this.label,
-    required this.url,
-  });
+  const _SocialLink({required this.link});
 
-  final IconData icon;
-  final String label;
-  final String url;
+  final SocialLink link;
 
   @override
   State<_SocialLink> createState() => _SocialLinkState();
@@ -305,7 +212,7 @@ class _SocialLinkState extends State<_SocialLink> {
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       child: InkWell(
-        onTap: () => launchUrl(Uri.parse(widget.url)),
+        onTap: () => launchUrl(Uri.parse(widget.link.url)),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
@@ -319,7 +226,7 @@ class _SocialLinkState extends State<_SocialLink> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(
-                widget.icon,
+                widget.link.icon,
                 size: 20,
                 color: _isHovered
                     ? Theme.of(context).colorScheme.primary
@@ -327,7 +234,7 @@ class _SocialLinkState extends State<_SocialLink> {
               ),
               const SizedBox(width: 8),
               Text(
-                widget.label,
+                widget.link.label,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: _isHovered
                       ? Theme.of(context).colorScheme.primary

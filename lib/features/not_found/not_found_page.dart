@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:portfolio/core/routing/app_routes.dart';
 import 'package:portfolio/shared/layout/app_page.dart';
 import 'package:portfolio/shared/theme/app_spacing.dart';
 
@@ -34,7 +35,7 @@ class NotFoundPage extends StatelessWidget {
               ),
               const SizedBox(height: AppSpacing.componentSpacing),
               ElevatedButton.icon(
-                onPressed: () => context.go('/'),
+                onPressed: () => context.go(AppRoutes.home),
                 icon: const Icon(Icons.home_outlined),
                 label: const Text('Back home'),
               ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:portfolio/core/routing/app_routes.dart';
 
 class CallToActionSection extends StatelessWidget {
   const CallToActionSection({super.key});
@@ -34,7 +35,7 @@ class CallToActionSection extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ElevatedButton(
-                    onPressed: () => context.go('/contact'),
+                    onPressed: () => context.go(AppRoutes.contact),
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 32,
@@ -45,7 +46,7 @@ class CallToActionSection extends StatelessWidget {
                   ),
                   const SizedBox(width: 16),
                   OutlinedButton(
-                    onPressed: () => context.go('/app-demos'),
+                    onPressed: () => context.go(AppRoutes.appDemos),
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 32,

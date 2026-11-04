@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'package:portfolio/core/routing/app_routes.dart';
 import 'package:portfolio/features/app_simulator/app_simulator_page.dart';
 import 'package:portfolio/features/architecture/architecture_page.dart';
 import 'package:portfolio/features/contact/contact_page.dart';
@@ -12,29 +13,32 @@ class AppRouter {
   static final GoRouter router = GoRouter(
     errorBuilder: (context, state) => NotFoundPage(path: state.uri.path),
     routes: [
-      GoRoute(path: '/', builder: (context, state) => const LandingPage()),
       GoRoute(
-        path: '/ui-showcase',
+        path: AppRoutes.home,
+        builder: (context, state) => const LandingPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.uiShowcase,
         builder: (context, state) => const UIShowcasePage(),
       ),
       GoRoute(
-        path: '/widget-gallery',
+        path: AppRoutes.widgetGallery,
         builder: (context, state) => const UIPatternsPage(),
       ),
       GoRoute(
-        path: '/architecture',
+        path: AppRoutes.architecture,
         builder: (context, state) => const ArchitecturePage(),
       ),
       GoRoute(
-        path: '/services',
+        path: AppRoutes.services,
         builder: (context, state) => const ServicesPage(),
       ),
       GoRoute(
-        path: '/contact',
+        path: AppRoutes.contact,
         builder: (context, state) => const ContactPage(),
       ),
       GoRoute(
-        path: '/app-demos',
+        path: AppRoutes.appDemos,
         builder: (context, state) => const AppSimulatorPage(),
       ),
     ],

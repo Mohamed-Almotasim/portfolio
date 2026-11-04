@@ -1,5 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:portfolio/features/widget_gallery/ui_pattern.dart';
 
 final uiPatternsSearchProvider = StateProvider<String>((ref) => '');
 
-final uiPatternsCategoryProvider = StateProvider<String>((ref) => 'All');
+/// `null` means "All".
+final uiPatternsCategoryProvider = StateProvider<UiPatternCategory?>(
+  (ref) => null,
+);

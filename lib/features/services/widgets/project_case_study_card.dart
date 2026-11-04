@@ -1,29 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:portfolio/core/content/case_study.dart';
 import 'package:portfolio/shared/widgets/hover_card.dart';
 import 'package:portfolio/shared/widgets/tech_badge.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ProjectCaseStudyCard extends StatelessWidget {
-  const ProjectCaseStudyCard({
-    super.key,
-    required this.title,
-    required this.tagline,
-    required this.problem,
-    required this.solution,
-    required this.techStack,
-    required this.result,
-    required this.liveDemoUrl,
-    required this.githubUrl,
-  });
+  const ProjectCaseStudyCard({super.key, required this.caseStudy});
 
-  final String title;
-  final String tagline;
-  final String problem;
-  final String solution;
-  final List<String> techStack;
-  final String result;
-  final String liveDemoUrl;
-  final String githubUrl;
+  final CaseStudy caseStudy;
 
   @override
   Widget build(BuildContext context) {
@@ -53,19 +37,22 @@ class ProjectCaseStudyCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              Text(title, style: Theme.of(context).textTheme.titleLarge),
+              Text(
+                caseStudy.title,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
               const SizedBox(height: 12),
               Text(
-                tagline,
+                caseStudy.tagline,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: colorScheme.onSurfaceVariant,
                   height: 1.45,
                 ),
               ),
               const SizedBox(height: 16),
-              _CaseStudySection(label: 'Problem', content: problem),
+              _CaseStudySection(label: 'Problem', content: caseStudy.problem),
               const SizedBox(height: 12),
-              _CaseStudySection(label: 'Solution', content: solution),
+              _CaseStudySection(label: 'Solution', content: caseStudy.solution),
               const SizedBox(height: 16),
               Text(
                 'Tech Stack',
@@ -78,27 +65,29 @@ class ProjectCaseStudyCard extends StatelessWidget {
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
-                children: techStack
+                children: caseStudy.techStack
                     .map((tech) => TechBadge(label: tech))
                     .toList(),
               ),
               const SizedBox(height: 16),
-              _CaseStudySection(label: 'Result', content: result),
+              _CaseStudySection(label: 'Result', content: caseStudy.result),
               const SizedBox(height: 16),
               Wrap(
                 spacing: 12,
                 runSpacing: 12,
                 children: [
-                  ElevatedButton.icon(
-                    onPressed: () => _openUrl(liveDemoUrl),
-                    icon: const Icon(Icons.launch, size: 18),
-                    label: const Text('Live Demo'),
-                  ),
-                  OutlinedButton.icon(
-                    onPressed: () => _openUrl(githubUrl),
-                    icon: const Icon(Icons.code, size: 18),
-                    label: const Text('GitHub'),
-                  ),
+                  for (final (i, link) in caseStudy.links.indexed)
+                    i == 0
+                        ? ElevatedButton.icon(
+                            onPressed: () => _openUrl(link.url),
+                            icon: Icon(link.icon, size: 18),
+                            label: Text(link.label),
+                          )
+                        : OutlinedButton.icon(
+                            onPressed: () => _openUrl(link.url),
+                            icon: Icon(link.icon, size: 18),
+                            label: Text(link.label),
+                          ),
                 ],
               ),
             ],
