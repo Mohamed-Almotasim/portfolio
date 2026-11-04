@@ -1,0 +1,7 @@
+{
+  "github.copilot.chat.codeGeneration.instructions": [
+    {
+      "text": "Follow the architecture defined in AI_RULES.md. Do not create new folders or packages unless explicitly requested."
+    }
+  ]
+}

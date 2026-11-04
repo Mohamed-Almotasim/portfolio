@@ -1,0 +1,404 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../shared/demo/demo_component.dart';
+
+class ThemeSwitcherDemo extends ConsumerStatefulWidget {
+  const ThemeSwitcherDemo({super.key});
+
+  @override
+  ConsumerState<ThemeSwitcherDemo> createState() => _ThemeSwitcherDemoState();
+}
+
+class _ThemeSwitcherDemoState extends ConsumerState<ThemeSwitcherDemo>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<Color?> _backgroundAnimation;
+  ThemeMode _currentTheme = ThemeMode.light;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
+
+    _backgroundAnimation = ColorTween(
+      begin: Colors.white,
+      end: const Color(0xFF1a1a1a),
+    ).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  void _switchTheme(ThemeMode theme) {
+    setState(() {
+      _currentTheme = theme;
+      Color endColor;
+      switch (theme) {
+        case ThemeMode.light:
+          endColor = Colors.white;
+          break;
+        case ThemeMode.dark:
+          endColor = const Color(0xFF1a1a1a);
+          break;
+        case ThemeMode.system:
+          endColor = const Color(0xFF6366f1); // your gradient proxy
+          break;
+      }
+      _backgroundAnimation = ColorTween(
+        begin: _backgroundAnimation.value,
+        end: endColor,
+      ).animate(_animationController);
+    });
+    _animationController.forward(from: 0.0);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DemoComponent(
+      title: "Theme Switcher Demo",
+      description:
+          "A theme switcher panel that demonstrates smooth UI transitions and state management. Toggle between light, dark, and gradient modes with animated background changes.",
+      label: "UI Pattern",
+      demoWidget: AnimatedBuilder(
+        animation: _backgroundAnimation,
+        builder: (context, child) {
+          return Container(
+            constraints: const BoxConstraints(maxWidth: 360, minHeight: 220),
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: _backgroundAnimation.value,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.12),
+                  blurRadius: 16,
+                  offset: const Offset(0, 6),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  _getThemeIcon(),
+                  size: 56,
+                  color: _getThemeIconColor(),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  _getThemeName(),
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    color: _getThemeTextColor(),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  alignment: WrapAlignment.center,
+                  children: [
+                    _ThemeButton(
+                      icon: Icons.wb_sunny,
+                      label: 'Light',
+                      isSelected: _currentTheme == ThemeMode.light,
+                      onPressed: () => _switchTheme(ThemeMode.light),
+                    ),
+                    _ThemeButton(
+                      icon: Icons.nightlight_round,
+                      label: 'Dark',
+                      isSelected: _currentTheme == ThemeMode.dark,
+                      onPressed: () => _switchTheme(ThemeMode.dark),
+                    ),
+                    _ThemeButton(
+                      icon: Icons.palette,
+                      label: 'Gradient',
+                      isSelected: _currentTheme == ThemeMode.system,
+                      onPressed: () => _switchTheme(ThemeMode.system),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+      codeSnippet: '''
+// ... your code snippet ...
+''',
+    );
+  }
+
+  // Keep your _getThemeIcon(), _getThemeIconColor(), _getThemeName(), _getThemeTextColor() methods
+  // (omitted here for brevity – copy them over)
+
+}
+
+class _ThemeButton extends StatelessWidget {
+  const _ThemeButton({
+    required this.icon,
+    required this.label,
+    required this.isSelected,
+    required this.onPressed,
+  });
+
+  final IconData icon;
+  final String label;
+  final bool isSelected;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        color: isSelected
+            ? theme.colorScheme.primary.withOpacity(0.15)
+            : Colors.transparent,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: isSelected
+              ? theme.colorScheme.primary
+              : theme.colorScheme.outline.withOpacity(0.5),
+          width: isSelected ? 1.5 : 1,
+        ),
+      ),
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: BorderRadius.circular(24),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              size: 18,
+              color: isSelected
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.onSurfaceVariant,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                color: isSelected
+                    ? theme.colorScheme.primary
+                    : theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+//
+
+
+import 'package:equatable/equatable.dart';
+// ... other imports ...
+
+class KanbanTask extends Equatable {
+  final String id;
+  final String title;
+  final String columnTitle;
+
+  const KanbanTask({
+    required this.id,
+    required this.title,
+    required this.columnTitle,
+  });
+
+  @override
+  List<Object> get props => [id, title, columnTitle];
+}
+
+class KanbanColumn {
+  final String title;
+  final Color color;
+  List<KanbanTask> tasks;
+
+  KanbanColumn({
+    required this.title,
+    required this.color,
+    required this.tasks,
+  });
+}
+
+// In _KanbanBoardDemoState
+// ... keep your _columns and _moveTask ...
+
+@override
+Widget build(BuildContext context) {
+  return DemoComponent(
+    title: "Drag & Drop Kanban Board",
+    description: "...",
+    label: "Interaction Demo",
+    demoWidget: SizedBox(
+      height: 340, // give a bit more breathing room
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: _columns.length,
+        itemBuilder: (context, index) {
+          final column = _columns[index];
+          return SizedBox(
+            width: 280, // wider → better readability, no overflow on text
+            child: _KanbanColumnWidget(
+              column: column,
+              onTaskMoved: _moveTask,
+            ),
+          );
+        },
+      ),
+    ),
+    codeSnippet: '''...''',
+  );
+}
+
+// In _KanbanColumnWidgetState
+
+@override
+Widget build(BuildContext context) {
+  return Container(
+    margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+    padding: const EdgeInsets.all(12),
+    decoration: BoxDecoration(
+      color: Theme.of(context).colorScheme.surface,
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(color: Colors.grey.shade300),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Container(
+              width: 14,
+              height: 14,
+              decoration: BoxDecoration(
+                color: widget.column.color,
+                shape: BoxShape.circle,
+              ),
+            ),
+            const SizedBox(width: 10),
+            Text(
+              widget.column.title,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            const Spacer(),
+            Text(
+              '${widget.column.tasks.length}',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Expanded(
+          child: DragTarget<KanbanTask>(
+            onAcceptWithDetails: (details) {
+              final task = details.data;
+              widget.onTaskMoved(task.id, task.columnTitle, widget.column.title);
+            },
+            builder: (context, candidateData, rejectedData) {
+              final isHover = candidateData.isNotEmpty;
+              return AnimatedContainer(
+                duration: const Duration(milliseconds: 180),
+                decoration: BoxDecoration(
+                  color: isHover ? widget.column.color.withOpacity(0.08) : null,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: ListView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: widget.column.tasks.length,
+                  itemBuilder: (context, index) {
+                    final task = widget.column.tasks[index];
+                    return _KanbanTaskWidget(
+                      task: task,
+                      columnTitle: widget.column.title,
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+// In _KanbanTaskWidget
+
+@override
+Widget build(BuildContext context) {
+  return LongPressDraggable<KanbanTask>(
+    data: task, // ← use the original object!
+    axis: null, // allow both directions
+    feedback: Material(
+      elevation: 6,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        width: 260,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Theme.of(context).colorScheme.primary, width: 1.5),
+        ),
+        child: Text(
+          task.title,
+          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                fontWeight: FontWeight.w500,
+              ),
+        ),
+      ),
+    ),
+    childWhenDragging: Opacity(
+      opacity: 0.4,
+      child: _buildTaskCard(context, dimmed: true),
+    ),
+    child: _buildTaskCard(context, dimmed: false),
+  );
+}
+
+Widget _buildTaskCard(BuildContext context, {required bool dimmed}) {
+  return Container(
+    margin: const EdgeInsets.only(bottom: 12),
+    padding: const EdgeInsets.all(14),
+    decoration: BoxDecoration(
+      color: Theme.of(context).colorScheme.surface,
+      borderRadius: BorderRadius.circular(10),
+      border: Border.all(color: Colors.grey.shade300),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.06),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
+    child: Text(
+      task.title,
+      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: dimmed ? Colors.grey : null,
+          ),
+    ),
+  );
+}
