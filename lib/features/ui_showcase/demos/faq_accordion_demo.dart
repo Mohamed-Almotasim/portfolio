@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../shared/demo/demo_component.dart';
+import 'package:portfolio/shared/demo/demo_component.dart';
 
 class FaqAccordionDemo extends ConsumerStatefulWidget {
   const FaqAccordionDemo({super.key});
@@ -40,10 +40,10 @@ class _FaqAccordionDemoState extends ConsumerState<FaqAccordionDemo>
   @override
   Widget build(BuildContext context) {
     return DemoComponent(
-      title: "Expandable FAQ Component",
+      title: 'Expandable FAQ Component',
       description:
-          "An accordion-style FAQ component with smooth expand/collapse animations. Features staggered animations and clean typography for an elegant user experience.",
-      label: "UI Pattern",
+          'An accordion-style FAQ component with smooth expand/collapse animations. Features staggered animations and clean typography for an elegant user experience.',
+      label: 'UI Pattern',
       demoWidget: Column(
         children: List.generate(_faqs.length, (index) {
           return _FaqItemWidget(

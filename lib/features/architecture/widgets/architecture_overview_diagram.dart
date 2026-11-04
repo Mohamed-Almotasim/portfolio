@@ -70,7 +70,6 @@ class ArchitectureOverviewDiagram extends StatelessWidget {
                 }
 
                 return Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     for (var index = 0; index < _layers.length; index++) ...[
                       Expanded(

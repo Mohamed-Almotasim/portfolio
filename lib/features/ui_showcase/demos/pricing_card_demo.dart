@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../shared/demo/demo_component.dart';
+import 'package:portfolio/shared/demo/demo_component.dart';
 
 class PricingCardDemo extends ConsumerStatefulWidget {
   const PricingCardDemo({super.key});
@@ -53,10 +53,10 @@ class _PricingCardDemoState extends ConsumerState<PricingCardDemo>
   @override
   Widget build(BuildContext context) {
     return DemoComponent(
-      title: "Animated Pricing Card",
+      title: 'Animated Pricing Card',
       description:
-          "An interactive pricing card featuring hover expansion effects, smooth animations, and an animated CTA button. Perfect for showcasing pricing tiers with engaging micro-interactions.",
-      label: "Component",
+          'An interactive pricing card featuring hover expansion effects, smooth animations, and an animated CTA button. Perfect for showcasing pricing tiers with engaging micro-interactions.',
+      label: 'Component',
       demoWidget: MouseRegion(
         onEnter: (_) => _onHover(true),
         onExit: (_) => _onHover(false),
@@ -95,7 +95,6 @@ class _PricingCardDemoState extends ConsumerState<PricingCardDemo>
                         ],
                       ),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Container(
                             padding: const EdgeInsets.symmetric(
@@ -154,7 +153,7 @@ class _PricingCardDemoState extends ConsumerState<PricingCardDemo>
                             ],
                           ),
                           const SizedBox(height: 20),
-                          Column(
+                          const Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               _FeatureItem(text: 'Unlimited Projects'),

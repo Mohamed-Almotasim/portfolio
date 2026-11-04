@@ -19,8 +19,12 @@ class HeroSection extends StatelessWidget {
                   center: Alignment.centerLeft,
                   radius: 0.8,
                   colors: [
-                    Theme.of(context).colorScheme.primary.withOpacity(0.05),
-                    Theme.of(context).colorScheme.secondary.withOpacity(0.03),
+                    Theme.of(
+                      context,
+                    ).colorScheme.primary.withValues(alpha: 0.05),
+                    Theme.of(
+                      context,
+                    ).colorScheme.secondary.withValues(alpha: 0.03),
                     Colors.transparent,
                   ],
                   stops: const [0.0, 0.5, 1.0],
@@ -37,7 +41,7 @@ class HeroSection extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Expanded(flex: 2, child: _buildContent(context)),
-                    Expanded(flex: 1, child: _buildAvatar(context)),
+                    Expanded(child: _buildAvatar(context)),
                   ],
                 );
               } else {
@@ -79,10 +83,9 @@ class HeroSection extends StatelessWidget {
         ),
         const SizedBox(height: 48),
         Row(
-          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             ElevatedButton(
-              onPressed: () => context.go('/projects'),
+              onPressed: () => context.go('/app-demos'),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 32,
@@ -161,7 +164,7 @@ class HeroSection extends StatelessWidget {
                     BoxShadow(
                       color: Theme.of(
                         context,
-                      ).colorScheme.shadow.withOpacity(0.2),
+                      ).colorScheme.shadow.withValues(alpha: 0.2),
                       blurRadius: 20,
                       offset: const Offset(0, 10),
                     ),

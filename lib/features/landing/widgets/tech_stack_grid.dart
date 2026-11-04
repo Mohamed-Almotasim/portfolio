@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../shared/layout/responsive_grid.dart';
-import 'skill_card.dart';
+import 'package:portfolio/features/landing/widgets/skill_card.dart';
+import 'package:portfolio/shared/layout/responsive_grid.dart';
 
 class TechStackGrid extends StatelessWidget {
   const TechStackGrid({super.key});

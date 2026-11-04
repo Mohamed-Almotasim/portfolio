@@ -3,8 +3,8 @@ import 'dart:math' as math;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-import 'origami_controller.dart';
-import 'origami_model.dart';
+import 'package:portfolio/features/app_simulator/widgets/origami_animation/origami_controller.dart';
+import 'package:portfolio/features/app_simulator/widgets/origami_animation/origami_model.dart';
 
 class OrigamiGridAnimation extends StatefulWidget {
   const OrigamiGridAnimation({
@@ -294,7 +294,7 @@ class OrigamiGridAnimationView extends StatelessWidget {
       child: Transform(
         alignment: _pivotFor(quadrant),
         transform: Matrix4.identity()
-          ..scale(scale.scaleX, scale.scaleY)
+          ..scaleByDouble(scale.scaleX, scale.scaleY, scale.scaleX, 1)
           ..rotateZ(_rotationFor(quadrant) * foldIntensity),
         child: DecoratedBox(
           decoration: BoxDecoration(

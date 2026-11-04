@@ -2,8 +2,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-import 'glass_tilt_controller.dart';
-import 'glass_tilt_model.dart';
+import 'package:portfolio/features/app_simulator/widgets/glass_tilt_card/glass_tilt_controller.dart';
+import 'package:portfolio/features/app_simulator/widgets/glass_tilt_card/glass_tilt_model.dart';
 
 class GlassTiltCard extends StatefulWidget {
   const GlassTiltCard({
@@ -75,7 +75,12 @@ class _GlassTiltCardState extends State<GlassTiltCard> {
                           alignment: Alignment.center,
                           transform: Matrix4.identity()
                             ..setEntry(3, 2, 0.0011)
-                            ..scale(animatedState.scale)
+                            ..scaleByDouble(
+                              animatedState.scale,
+                              animatedState.scale,
+                              animatedState.scale,
+                              1,
+                            )
                             ..rotateX(animatedState.rotationX)
                             ..rotateY(animatedState.rotationY),
                           child: Stack(

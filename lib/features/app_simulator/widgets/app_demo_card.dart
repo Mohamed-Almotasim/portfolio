@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/state/developer_mode_provider.dart';
-import '../../../shared/widgets/device_frame.dart';
+import 'package:portfolio/core/state/developer_mode_provider.dart';
+import 'package:portfolio/shared/widgets/device_frame.dart';
 
 class AppDemoCard extends ConsumerWidget {
   const AppDemoCard({

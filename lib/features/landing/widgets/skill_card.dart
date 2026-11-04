@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../shared/widgets/hover_card.dart';
+import 'package:portfolio/shared/widgets/hover_card.dart';
 
 class SkillCard extends StatelessWidget {
   const SkillCard({super.key, required this.name});
@@ -15,9 +15,9 @@ class SkillCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withOpacity(0.2), width: 1),
+          border: Border.all(color: color.withValues(alpha: 0.2)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,

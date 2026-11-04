@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../shared/demo/demo_component.dart';
+import 'package:portfolio/shared/demo/demo_component.dart';
 
 class ThemeSwitcherDemo extends ConsumerStatefulWidget {
   const ThemeSwitcherDemo({super.key});
@@ -68,10 +68,10 @@ class _ThemeSwitcherDemoState extends ConsumerState<ThemeSwitcherDemo>
   @override
   Widget build(BuildContext context) {
     return DemoComponent(
-      title: "Theme Switcher Demo",
+      title: 'Theme Switcher Demo',
       description:
-          "A theme switcher panel that demonstrates smooth UI transitions and state management. Toggle between light, dark, and gradient modes with animated background changes.",
-      label: "UI Pattern",
+          'A theme switcher panel that demonstrates smooth UI transitions and state management. Toggle between light, dark, and gradient modes with animated background changes.',
+      label: 'UI Pattern',
       demoWidget: AnimatedBuilder(
         animation: _backgroundAnimation,
         builder: (context, child) {

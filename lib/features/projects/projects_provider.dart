@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'project_model.dart';
+import 'package:portfolio/features/projects/project_model.dart';
 
 final projectsProvider = Provider<List<Project>>((ref) {
   return const [

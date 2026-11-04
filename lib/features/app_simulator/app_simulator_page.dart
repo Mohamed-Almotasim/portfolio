@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import '../../shared/layout/app_page.dart';
-import '../../shared/layout/responsive_grid.dart';
-import 'demos/glass_tilt_card_demo.dart';
-import 'demos/magnetic_card_grid_demo.dart';
-import 'demos/origami_grid_animation_demo.dart';
-import 'demo_app_registry.dart';
-import 'widgets/app_demo_card.dart';
+import 'package:portfolio/features/app_simulator/demo_app_registry.dart';
+import 'package:portfolio/features/app_simulator/demos/glass_tilt_card_demo.dart';
+import 'package:portfolio/features/app_simulator/demos/magnetic_card_grid_demo.dart';
+import 'package:portfolio/features/app_simulator/demos/origami_grid_animation_demo.dart';
+import 'package:portfolio/features/app_simulator/widgets/app_demo_card.dart';
+import 'package:portfolio/shared/layout/app_page.dart';
+import 'package:portfolio/shared/layout/responsive_grid.dart';
 
 class AppSimulatorPage extends StatelessWidget {
   const AppSimulatorPage({super.key});
@@ -46,9 +46,9 @@ class AppSimulatorPage extends StatelessWidget {
             style: Theme.of(context).textTheme.bodyLarge,
           ),
           const SizedBox(height: 24),
-          ResponsiveGrid(
+          const ResponsiveGrid(
             childAspectRatio: 1.7,
-            children: const [
+            children: [
               AppDemoCard(
                 title: 'Magnetic Card Grid',
                 description:

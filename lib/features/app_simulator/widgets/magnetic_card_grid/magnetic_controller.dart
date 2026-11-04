@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'magnetic_model.dart';
+import 'package:portfolio/features/app_simulator/widgets/magnetic_card_grid/magnetic_model.dart';
 
 const double _magneticRadius = 150;
 const double _maxMagneticOffset = 14;

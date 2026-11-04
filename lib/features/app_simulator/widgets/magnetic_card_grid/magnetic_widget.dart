@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'magnetic_controller.dart';
-import 'magnetic_model.dart';
+import 'package:portfolio/features/app_simulator/widgets/magnetic_card_grid/magnetic_controller.dart';
+import 'package:portfolio/features/app_simulator/widgets/magnetic_card_grid/magnetic_model.dart';
 
 class MagneticCardGrid extends StatefulWidget {
   const MagneticCardGrid({
@@ -187,7 +187,12 @@ class _MagneticCardTileState extends State<_MagneticCardTile> {
                         alignment: Alignment.center,
                         transform: Matrix4.identity()
                           ..setEntry(3, 2, 0.001)
-                          ..scale(animatedState.scale)
+                          ..scaleByDouble(
+                            animatedState.scale,
+                            animatedState.scale,
+                            animatedState.scale,
+                            1,
+                          )
                           ..rotateX(animatedState.rotationX)
                           ..rotateY(animatedState.rotationY),
                         child: DecoratedBox(
@@ -217,7 +222,6 @@ class _MagneticCardTileState extends State<_MagneticCardTile> {
                                   alpha: animatedState.glowOpacity,
                                 ),
                                 blurRadius: 26,
-                                offset: const Offset(0, 0),
                                 spreadRadius: 1,
                               ),
                             ],

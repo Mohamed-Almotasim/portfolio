@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'origami_model.dart';
+import 'package:portfolio/features/app_simulator/widgets/origami_animation/origami_model.dart';
 
 class OrigamiAnimationController extends ChangeNotifier {
   OrigamiAnimationController({

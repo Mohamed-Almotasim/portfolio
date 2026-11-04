@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../shared/demo/demo_component.dart';
+import 'package:portfolio/shared/demo/demo_component.dart';
 
 class SmartSearchDemo extends ConsumerStatefulWidget {
   const SmartSearchDemo({super.key});
@@ -85,10 +85,10 @@ class _SmartSearchDemoState extends ConsumerState<SmartSearchDemo>
   @override
   Widget build(BuildContext context) {
     return DemoComponent(
-      title: "Smart Search UI",
+      title: 'Smart Search UI',
       description:
-          "An intelligent search interface with animated dropdown suggestions. Features smooth transitions, filtering, and selection animations for a modern search experience.",
-      label: "Interaction Demo",
+          'An intelligent search interface with animated dropdown suggestions. Features smooth transitions, filtering, and selection animations for a modern search experience.',
+      label: 'Interaction Demo',
       demoWidget: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -98,16 +98,16 @@ class _SmartSearchDemoState extends ConsumerState<SmartSearchDemo>
             runSpacing: 8,
             children: [
               ActionChip(
-                label: const Text("UI Components"),
-                onPressed: () => _controller.text = "UI Components",
+                label: const Text('UI Components'),
+                onPressed: () => _controller.text = 'UI Components',
               ),
               ActionChip(
-                label: const Text("Dashboard Layout"),
-                onPressed: () => _controller.text = "Dashboard Layout",
+                label: const Text('Dashboard Layout'),
+                onPressed: () => _controller.text = 'Dashboard Layout',
               ),
               ActionChip(
-                label: const Text("Authentication"),
-                onPressed: () => _controller.text = "Authentication",
+                label: const Text('Authentication'),
+                onPressed: () => _controller.text = 'Authentication',
               ),
             ],
           ),
@@ -129,11 +129,11 @@ class _SmartSearchDemoState extends ConsumerState<SmartSearchDemo>
             child: TextField(
               controller: _controller,
               focusNode: _focusNode,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: 'Search components (UI, dashboard, auth...)',
-                prefixIcon: const Icon(Icons.search),
+                prefixIcon: Icon(Icons.search),
                 border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(
+                contentPadding: EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 16,
                 ),

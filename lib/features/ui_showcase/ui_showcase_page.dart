@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../shared/layout/app_page.dart';
-import 'demo_registry.dart';
-import 'demos/kanban_board_demo.dart';
+import 'package:portfolio/features/ui_showcase/demo_registry.dart';
+import 'package:portfolio/features/ui_showcase/demos/analytics_dashboard_demo_card.dart';
+import 'package:portfolio/shared/layout/app_page.dart';
 
 class UIShowcasePage extends StatelessWidget {
   const UIShowcasePage({super.key});
@@ -77,7 +77,7 @@ class UIShowcasePage extends StatelessWidget {
 
     final twoUpWidth = (availableWidth - spacing) / 2;
     final minimumComfortableWidth = switch (demo) {
-      KanbanBoardDemo() => 500.0,
+      AnalyticsDashboardDemoCard() => 500.0,
       _ => 320.0,
     };
 

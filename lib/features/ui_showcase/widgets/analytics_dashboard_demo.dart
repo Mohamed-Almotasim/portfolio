@@ -41,7 +41,6 @@ class AnalyticsDashboardDemo extends StatelessWidget {
                 const _StatCard(
                   label: 'Users',
                   targetValue: 12840,
-                  valuePrefix: '',
                   changeText: '+12%',
                   accentColor: Color(0xFF2563EB),
                 ),
@@ -321,6 +320,9 @@ class _ChartPanel extends StatelessWidget {
                         const SizedBox(height: 8),
                         Text(
                           labels[index],
+                          maxLines: 1,
+                          softWrap: false,
+                          overflow: TextOverflow.clip,
                           style: theme.textTheme.labelSmall?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
                           ),

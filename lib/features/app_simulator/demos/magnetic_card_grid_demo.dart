@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../widgets/magnetic_card_grid/magnetic_model.dart';
-import '../widgets/magnetic_card_grid/magnetic_widget.dart';
+import 'package:portfolio/features/app_simulator/widgets/magnetic_card_grid/magnetic_model.dart';
+import 'package:portfolio/features/app_simulator/widgets/magnetic_card_grid/magnetic_widget.dart';
 
 class MagneticCardGridDemo extends StatelessWidget {
   const MagneticCardGridDemo({super.key});

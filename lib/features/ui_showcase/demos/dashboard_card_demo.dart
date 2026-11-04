@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../shared/demo/demo_component.dart';
+import 'package:portfolio/shared/demo/demo_component.dart';
 
 class DashboardCardDemo extends ConsumerStatefulWidget {
   const DashboardCardDemo({super.key});
@@ -43,10 +43,10 @@ class _DashboardCardDemoState extends ConsumerState<DashboardCardDemo>
   @override
   Widget build(BuildContext context) {
     return DemoComponent(
-      title: "Interactive Dashboard Card",
+      title: 'Interactive Dashboard Card',
       description:
-          "A dynamic dashboard widget featuring animated statistics, mini charts, and hover effects. Perfect for displaying key metrics with smooth number animations.",
-      label: "Component",
+          'A dynamic dashboard widget featuring animated statistics, mini charts, and hover effects. Perfect for displaying key metrics with smooth number animations.',
+      label: 'Component',
       demoWidget: LayoutBuilder(
         builder: (context, constraints) {
           final isCompact = constraints.maxWidth < 360;
@@ -55,19 +55,19 @@ class _DashboardCardDemoState extends ConsumerState<DashboardCardDemo>
             return Column(
               children: [
                 _MetricCard(
-                  title: "Users Online",
+                  title: 'Users Online',
                   value: _usersAnimation.value.toInt(),
-                  change: "+12%",
+                  change: '+12%',
                   changeColor: Colors.green,
                   icon: Icons.people,
                   animation: _usersAnimation,
                 ),
                 const SizedBox(height: 16),
                 _MetricCard(
-                  title: "Revenue",
+                  title: 'Revenue',
                   value: _revenueAnimation.value.toInt(),
-                  prefix: "\$",
-                  change: "+8%",
+                  prefix: '\$',
+                  change: '+8%',
                   changeColor: Colors.green,
                   icon: Icons.attach_money,
                   animation: _revenueAnimation,
@@ -80,9 +80,9 @@ class _DashboardCardDemoState extends ConsumerState<DashboardCardDemo>
             children: [
               Expanded(
                 child: _MetricCard(
-                  title: "Users Online",
+                  title: 'Users Online',
                   value: _usersAnimation.value.toInt(),
-                  change: "+12%",
+                  change: '+12%',
                   changeColor: Colors.green,
                   icon: Icons.people,
                   animation: _usersAnimation,
@@ -91,10 +91,10 @@ class _DashboardCardDemoState extends ConsumerState<DashboardCardDemo>
               const SizedBox(width: 16),
               Expanded(
                 child: _MetricCard(
-                  title: "Revenue",
+                  title: 'Revenue',
                   value: _revenueAnimation.value.toInt(),
-                  prefix: "\$",
-                  change: "+8%",
+                  prefix: '\$',
+                  change: '+8%',
                   changeColor: Colors.green,
                   icon: Icons.attach_money,
                   animation: _revenueAnimation,
@@ -121,7 +121,7 @@ class _MetricCard extends StatefulWidget {
     required this.changeColor,
     required this.icon,
     required this.animation,
-    this.prefix = "",
+    this.prefix = '',
   });
 
   final String title;

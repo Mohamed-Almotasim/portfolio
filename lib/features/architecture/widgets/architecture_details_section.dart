@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'architecture_detail_card.dart';
+import 'package:portfolio/features/architecture/widgets/architecture_detail_card.dart';
 
 class ArchitectureDetailsSection extends StatelessWidget {
   const ArchitectureDetailsSection({super.key});

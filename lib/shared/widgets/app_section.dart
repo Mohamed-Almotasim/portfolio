@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../theme/app_spacing.dart';
+import 'package:portfolio/shared/theme/app_spacing.dart';
 
 class AppSection extends StatelessWidget {
   const AppSection({
@@ -36,7 +36,7 @@ class AppSection extends StatelessWidget {
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       color: Theme.of(
                         context,
-                      ).colorScheme.onSurface.withOpacity(0.7),
+                      ).colorScheme.onSurface.withValues(alpha: 0.7),
                     ),
                   ),
                 ],
@@ -48,7 +48,7 @@ class AppSection extends StatelessWidget {
         ),
         if (showDivider)
           Divider(
-            color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+            color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
             thickness: 1,
             height: 1,
           ),

@@ -6,6 +6,9 @@ class AppNavbar extends StatefulWidget {
 
   final VoidCallback? onMenuPressed;
 
+  /// Below this width the 7 inline links don't fit; AppPage shows a drawer.
+  static const double collapseBelow = 1024;
+
   @override
   State<AppNavbar> createState() => _AppNavbarState();
 }
@@ -16,7 +19,8 @@ class _AppNavbarState extends State<AppNavbar> {
     final currentLocation = GoRouter.of(
       context,
     ).routerDelegate.currentConfiguration.uri.toString();
-    final isDesktop = MediaQuery.of(context).size.width > 600;
+    final isDesktop =
+        MediaQuery.sizeOf(context).width >= AppNavbar.collapseBelow;
 
     return Container(
       height: 60,
@@ -24,7 +28,7 @@ class _AppNavbarState extends State<AppNavbar> {
         color: Theme.of(context).colorScheme.surface,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -148,7 +152,7 @@ class _NavLinkState extends State<_NavLink> {
           color: widget.isActive
               ? Theme.of(context).colorScheme.primary
               : _isHovered
-              ? Theme.of(context).colorScheme.primary.withOpacity(0.8)
+              ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.8)
               : Theme.of(context).colorScheme.onSurface,
           decoration: widget.isActive || _isHovered
               ? TextDecoration.underline

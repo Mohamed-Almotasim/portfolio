@@ -10,7 +10,9 @@ class AppFooter extends StatelessWidget {
     final isDesktop = MediaQuery.of(context).size.width > 600;
 
     return Container(
-      color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
+      color: Theme.of(
+        context,
+      ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
       padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 24),
       child: Center(
         child: ConstrainedBox(
@@ -108,19 +110,19 @@ class AppFooter extends StatelessWidget {
                                 ?.copyWith(fontWeight: FontWeight.w600),
                           ),
                           const SizedBox(height: 16),
-                          _SocialLink(
+                          const _SocialLink(
                             icon: Icons.code,
                             label: 'GitHub',
                             url: 'https://github.com',
                           ),
                           const SizedBox(height: 12),
-                          _SocialLink(
+                          const _SocialLink(
                             icon: Icons.business_center,
                             label: 'LinkedIn',
                             url: 'https://linkedin.com',
                           ),
                           const SizedBox(height: 12),
-                          _SocialLink(
+                          const _SocialLink(
                             icon: Icons.email,
                             label: 'Email',
                             url: 'mailto:example@email.com',
@@ -209,20 +211,20 @@ class AppFooter extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    Row(
+                    const Wrap(
+                      spacing: 24,
+                      runSpacing: 8,
                       children: [
                         _SocialLink(
                           icon: Icons.code,
                           label: 'GitHub',
                           url: 'https://github.com',
                         ),
-                        const SizedBox(width: 24),
                         _SocialLink(
                           icon: Icons.business_center,
                           label: 'LinkedIn',
                           url: 'https://linkedin.com',
                         ),
-                        const SizedBox(width: 24),
                         _SocialLink(
                           icon: Icons.email,
                           label: 'Email',
@@ -309,7 +311,7 @@ class _SocialLinkState extends State<_SocialLink> {
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
           decoration: BoxDecoration(
             color: _isHovered
-                ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
+                ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)
                 : Colors.transparent,
             borderRadius: BorderRadius.circular(8),
           ),

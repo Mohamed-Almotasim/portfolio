@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../../shared/layout/app_page.dart';
-import 'pattern_card.dart';
-import 'widget_gallery_search_provider.dart';
+import 'package:portfolio/features/widget_gallery/pattern_card.dart';
+import 'package:portfolio/features/widget_gallery/widget_gallery_search_provider.dart';
+import 'package:portfolio/shared/layout/app_page.dart';
 
 class UIPatternsPage extends ConsumerWidget {
   const UIPatternsPage({super.key});
@@ -183,17 +182,17 @@ class _AuthenticationPreview extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                "Welcome Back",
+                'Welcome Back',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: isCompact ? 16 : 18,
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               TextField(
                 decoration: InputDecoration(
                   prefixIcon: const Icon(Icons.email_outlined),
-                  hintText: "Email",
+                  hintText: 'Email',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -201,11 +200,11 @@ class _AuthenticationPreview extends StatelessWidget {
                 ),
                 style: TextStyle(fontSize: isCompact ? 12 : 14),
               ),
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
               TextField(
                 decoration: InputDecoration(
                   prefixIcon: const Icon(Icons.lock_outline),
-                  hintText: "Password",
+                  hintText: 'Password',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -214,12 +213,15 @@ class _AuthenticationPreview extends StatelessWidget {
                 obscureText: true,
                 style: TextStyle(fontSize: isCompact ? 12 : 14),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {},
-                  child: Text("Login", style: TextStyle(fontSize: isCompact ? 12 : 14)),
+                  child: Text(
+                    'Login',
+                    style: TextStyle(fontSize: isCompact ? 12 : 14),
+                  ),
                 ),
               ),
             ],
@@ -238,11 +240,7 @@ class _DashboardPreview extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final compact = constraints.maxWidth < 300;
-        final stats = [
-          Flexible(child: _StatBox(compact: compact)),
-          SizedBox(width: compact ? 0 : 8, height: compact ? 8 : 0),
-          Flexible(child: _StatBox(compact: compact)),
-        ];
+        final box = _StatBox(compact: compact);
         final chart = Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: List.generate(5, (index) {
@@ -263,14 +261,18 @@ class _DashboardPreview extends StatelessWidget {
 
         return Column(
           children: [
+            // Flexible only works in the Row; the Column has unbounded height.
             compact
-                ? Column(children: stats)
-                : Row(children: stats),
-            SizedBox(height: 12),
-            SizedBox(
-              height: compact ? 60 : 90,
-              child: chart,
-            ),
+                ? Column(children: [box, const SizedBox(height: 8), box])
+                : Row(
+                    children: [
+                      Flexible(child: box),
+                      const SizedBox(width: 8),
+                      Flexible(child: box),
+                    ],
+                  ),
+            const SizedBox(height: 12),
+            SizedBox(height: compact ? 60 : 90, child: chart),
           ],
         );
       },
@@ -292,7 +294,8 @@ class _StatBox extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Colors.grey.shade300),
       ),
-      padding: const EdgeInsets.all(8),
+      // Horizontal-only: vertical padding left too little room for two lines.
+      padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -305,10 +308,7 @@ class _StatBox extends StatelessWidget {
           ),
           Text(
             'Stats',
-            style: TextStyle(
-              fontSize: compact ? 10 : 12,
-              color: Colors.grey,
-            ),
+            style: TextStyle(fontSize: compact ? 10 : 12, color: Colors.grey),
           ),
         ],
       ),
@@ -337,19 +337,28 @@ class _SettingsPreviewState extends State<_SettingsPreview> {
           mainAxisSize: MainAxisSize.min,
           children: [
             SwitchListTile(
-              title: Text('Dark Mode', style: TextStyle(fontSize: isCompact ? 12 : 14)),
+              title: Text(
+                'Dark Mode',
+                style: TextStyle(fontSize: isCompact ? 12 : 14),
+              ),
               value: _darkMode,
               onChanged: (value) => setState(() => _darkMode = value),
               dense: true,
             ),
             SwitchListTile(
-              title: Text('Push Notifications', style: TextStyle(fontSize: isCompact ? 12 : 14)),
+              title: Text(
+                'Push Notifications',
+                style: TextStyle(fontSize: isCompact ? 12 : 14),
+              ),
               value: _pushNotifications,
               onChanged: (value) => setState(() => _pushNotifications = value),
               dense: true,
             ),
             SwitchListTile(
-              title: Text('Auto Sync', style: TextStyle(fontSize: isCompact ? 12 : 14)),
+              title: Text(
+                'Auto Sync',
+                style: TextStyle(fontSize: isCompact ? 12 : 14),
+              ),
               value: _autoSync,
               onChanged: (value) => setState(() => _autoSync = value),
               dense: true,
@@ -360,7 +369,6 @@ class _SettingsPreviewState extends State<_SettingsPreview> {
     );
   }
 }
-
 
 class _EmptyStatePreview extends StatelessWidget {
   const _EmptyStatePreview();
@@ -375,16 +383,16 @@ class _EmptyStatePreview extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(Icons.inbox_outlined, size: isCompact ? 32 : 40),
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
               Text(
-                "No Data Available",
+                'No Data Available',
                 style: TextStyle(fontSize: isCompact ? 12 : 14),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               TextButton(
                 onPressed: () {},
                 child: Text(
-                  "Refresh",
+                  'Refresh',
                   style: TextStyle(fontSize: isCompact ? 12 : 14),
                 ),
               ),
@@ -400,7 +408,8 @@ class _LoadingSkeletonPreview extends StatefulWidget {
   const _LoadingSkeletonPreview();
 
   @override
-  State<_LoadingSkeletonPreview> createState() => _LoadingSkeletonPreviewState();
+  State<_LoadingSkeletonPreview> createState() =>
+      _LoadingSkeletonPreviewState();
 }
 
 class _LoadingSkeletonPreviewState extends State<_LoadingSkeletonPreview>
@@ -415,9 +424,10 @@ class _LoadingSkeletonPreviewState extends State<_LoadingSkeletonPreview>
       duration: const Duration(milliseconds: 1200),
       vsync: this,
     )..repeat(reverse: true);
-    _animation = Tween<double>(begin: 0.3, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _animation = Tween<double>(
+      begin: 0.3,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -440,10 +450,12 @@ class _LoadingSkeletonPreviewState extends State<_LoadingSkeletonPreview>
                   opacity: _animation.value,
                   child: CircleAvatar(
                     radius: isCompact ? 16 : 20,
-                    backgroundColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
+                    backgroundColor: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.2),
                   ),
                 ),
-                SizedBox(width: 12),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -455,19 +467,23 @@ class _LoadingSkeletonPreviewState extends State<_LoadingSkeletonPreview>
                           width: isCompact ? 100 : 120,
                           height: isCompact ? 12 : 16,
                           decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
                       ),
-                      SizedBox(height: 6),
+                      const SizedBox(height: 6),
                       Opacity(
                         opacity: _animation.value,
                         child: Container(
                           width: isCompact ? 80 : 100,
                           height: isCompact ? 10 : 12,
                           decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
@@ -490,7 +506,7 @@ class _ProfileCardPreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      physics: NeverScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       child: LayoutBuilder(
         builder: (context, constraints) {
           final isCompact = constraints.maxWidth < 250;
@@ -498,10 +514,15 @@ class _ProfileCardPreview extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: isCompact ? 18 : 22,
-                backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.18),
-                child: Icon(Icons.person_rounded, color: Theme.of(context).colorScheme.primary),
+                backgroundColor: Theme.of(
+                  context,
+                ).colorScheme.primary.withValues(alpha: 0.18),
+                child: Icon(
+                  Icons.person_rounded,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
               ),
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -514,7 +535,7 @@ class _ProfileCardPreview extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
                       'Flutter Developer',
                       style: TextStyle(
@@ -522,7 +543,7 @@ class _ProfileCardPreview extends StatelessWidget {
                         color: Colors.grey,
                       ),
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Row(
                       children: [
                         Chip(
@@ -530,16 +551,18 @@ class _ProfileCardPreview extends StatelessWidget {
                             'Flutter',
                             style: TextStyle(fontSize: isCompact ? 10 : 12),
                           ),
-                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
                           padding: EdgeInsets.zero,
                         ),
-                        SizedBox(width: 4),
+                        const SizedBox(width: 4),
                         Chip(
                           label: Text(
                             'Dart',
                             style: TextStyle(fontSize: isCompact ? 10 : 12),
                           ),
-                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
                           padding: EdgeInsets.zero,
                         ),
                       ],
@@ -554,5 +577,3 @@ class _ProfileCardPreview extends StatelessWidget {
     );
   }
 }
-
-

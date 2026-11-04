@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../../shared/demo/demo_component.dart';
-import '../widgets/analytics_dashboard_demo.dart';
+import 'package:portfolio/features/ui_showcase/widgets/analytics_dashboard_demo.dart';
+import 'package:portfolio/shared/demo/demo_component.dart';
 
-class KanbanBoardDemo extends StatelessWidget {
-  const KanbanBoardDemo({super.key});
+class AnalyticsDashboardDemoCard extends StatelessWidget {
+  const AnalyticsDashboardDemoCard({super.key});
 
   @override
   Widget build(BuildContext context) {

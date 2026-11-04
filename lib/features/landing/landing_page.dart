@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
-import '../../shared/layout/app_page.dart';
-import '../../core/dev_mode/developer_info.dart';
-import '../../shared/widgets/app_section.dart';
-import '../../shared/widgets/animated_section.dart';
-import 'widgets/hero_section.dart';
-import 'widgets/tech_stack_grid.dart';
-import 'widgets/featured_projects_section.dart';
-import 'widgets/call_to_action_section.dart';
+import 'package:portfolio/core/dev_mode/developer_info.dart';
+import 'package:portfolio/features/landing/widgets/call_to_action_section.dart';
+import 'package:portfolio/features/landing/widgets/featured_projects_section.dart';
+import 'package:portfolio/features/landing/widgets/hero_section.dart';
+import 'package:portfolio/features/landing/widgets/tech_stack_grid.dart';
+import 'package:portfolio/shared/layout/app_page.dart';
+import 'package:portfolio/shared/widgets/animated_section.dart';
+import 'package:portfolio/shared/widgets/app_section.dart';
 
 class LandingPage extends StatelessWidget {
   const LandingPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return AppPage(
-      child: const Column(
+    return const AppPage(
+      child: Column(
         children: [
           AppSection(child: AnimatedSection(child: HeroSection())),
           AppSection(

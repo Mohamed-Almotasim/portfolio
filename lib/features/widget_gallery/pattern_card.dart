@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../shared/widgets/hover_card.dart';
+import 'package:portfolio/shared/widgets/hover_card.dart';
 
 class PatternCard extends StatelessWidget {
   const PatternCard({
@@ -61,11 +61,8 @@ class PatternCard extends StatelessWidget {
             Text(description, style: theme.textTheme.bodySmall),
             const SizedBox(height: 16),
             Container(
-              constraints: BoxConstraints(
-                minHeight: 140,
-                maxHeight: 220,
-              ),
-              padding: EdgeInsets.all(12),
+              constraints: const BoxConstraints(minHeight: 140, maxHeight: 220),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: Colors.grey.shade300),
@@ -74,7 +71,15 @@ class PatternCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
                 child: Material(
                   color: Colors.transparent,
-                  child: preview,
+                  // Previews taller than the 220px cap scroll instead of overflowing.
+                  child: LayoutBuilder(
+                    builder: (context, c) => SingleChildScrollView(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(minHeight: c.minHeight),
+                        child: preview,
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),

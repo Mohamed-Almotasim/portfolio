@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../shared/layout/responsive_grid.dart';
-import '../../projects/projects_provider.dart';
-import '../../projects/project_card.dart';
+import 'package:portfolio/features/projects/project_card.dart';
+import 'package:portfolio/features/projects/projects_provider.dart';
+import 'package:portfolio/shared/layout/responsive_grid.dart';
 
 class FeaturedProjectsSection extends ConsumerWidget {
   const FeaturedProjectsSection({super.key});

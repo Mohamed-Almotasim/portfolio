@@ -18,7 +18,9 @@ class TechBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final bgColor =
         backgroundColor ??
-        Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5);
+        Theme.of(
+          context,
+        ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5);
     final fgColor = textColor ?? Theme.of(context).colorScheme.onSurfaceVariant;
 
     return Container(
@@ -27,12 +29,11 @@ class TechBadge extends StatelessWidget {
         color: bgColor,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
-          width: 1,
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
         ),
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).colorScheme.shadow.withOpacity(0.1),
+            color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.1),
             blurRadius: 2,
             offset: const Offset(0, 1),
           ),

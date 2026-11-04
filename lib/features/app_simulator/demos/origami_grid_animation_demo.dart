@@ -1,9 +1,9 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import '../widgets/origami_animation/origami_controller.dart';
-import '../widgets/origami_animation/origami_model.dart';
-import '../widgets/origami_animation/origami_widget.dart';
+import 'package:portfolio/features/app_simulator/widgets/origami_animation/origami_controller.dart';
+import 'package:portfolio/features/app_simulator/widgets/origami_animation/origami_model.dart';
+import 'package:portfolio/features/app_simulator/widgets/origami_animation/origami_widget.dart';
 
 class OrigamiGridAnimationDemo extends StatefulWidget {
   const OrigamiGridAnimationDemo({super.key});
@@ -80,7 +80,9 @@ class _OrigamiGridAnimationDemoState extends State<OrigamiGridAnimationDemo> {
       body: LayoutBuilder(
         builder: (context, constraints) {
           final isWide = constraints.maxWidth >= 760;
-          final controlsWidth = isWide ? 180.0 : math.min(220.0, constraints.maxWidth);
+          final controlsWidth = isWide
+              ? 180.0
+              : math.min(220.0, constraints.maxWidth);
 
           return Padding(
             padding: const EdgeInsets.all(8),
@@ -244,5 +246,7 @@ class _ControlsColumn extends StatelessWidget {
             onChangeEnd: (_) => onScrubEnd(),
           ),
         ),
-    ]);  }
+      ],
+    );
+  }
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+/// Grid whose cells are at least `width / childAspectRatio` tall but grow to
+/// fit their content, so cards never overflow at in-between widths.
 class ResponsiveGrid extends StatelessWidget {
   const ResponsiveGrid({
     super.key,
@@ -27,18 +29,38 @@ class ResponsiveGrid extends StatelessWidget {
         } else {
           crossAxisCount = 1;
         }
-        //gridDelegate
-        return GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: crossAxisCount,
-            crossAxisSpacing: spacing,
-            mainAxisSpacing: spacing,
-            childAspectRatio: childAspectRatio,
-          ),
-          itemCount: children.length,
-          itemBuilder: (context, index) => children[index],
+        final cellWidth =
+            (constraints.maxWidth - spacing * (crossAxisCount - 1)) /
+            crossAxisCount;
+        final minCellHeight = cellWidth / childAspectRatio;
+
+        return Column(
+          children: [
+            for (var row = 0; row < children.length; row += crossAxisCount) ...[
+              if (row > 0) SizedBox(height: spacing),
+              // Equal heights per row, sized to the tallest card.
+              IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    for (var i = row; i < row + crossAxisCount; i++) ...[
+                      if (i > row) SizedBox(width: spacing),
+                      Expanded(
+                        child: i < children.length
+                            ? ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  minHeight: minCellHeight,
+                                ),
+                                child: children[i],
+                              )
+                            : const SizedBox.shrink(),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ],
         );
       },
     );

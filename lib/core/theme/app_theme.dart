@@ -7,10 +7,7 @@ class AppTheme {
   static ThemeData lightTheme = ThemeData(
     useMaterial3: true,
     brightness: Brightness.light,
-    colorScheme: ColorScheme.fromSeed(
-      seedColor: primaryColor,
-      brightness: Brightness.light,
-    ),
+    colorScheme: ColorScheme.fromSeed(seedColor: primaryColor),
     scaffoldBackgroundColor: backgroundColor,
     textTheme: const TextTheme(
       headlineLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),

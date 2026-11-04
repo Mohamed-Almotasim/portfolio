@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
-
-import '../../shared/layout/app_page.dart';
-import 'widgets/architecture_details_section.dart';
-import 'widgets/architecture_flow_section.dart';
-import 'widgets/architecture_overview_diagram.dart';
+import 'package:portfolio/features/architecture/widgets/architecture_details_section.dart';
+import 'package:portfolio/features/architecture/widgets/architecture_flow_section.dart';
+import 'package:portfolio/features/architecture/widgets/architecture_overview_diagram.dart';
+import 'package:portfolio/shared/layout/app_page.dart';
 
 class ArchitecturePage extends StatelessWidget {
   const ArchitecturePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return AppPage(
+    return const AppPage(
       title: 'Architecture',
-      child: const Column(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ArchitectureOverviewDiagram(),

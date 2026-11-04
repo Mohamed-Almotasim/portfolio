@@ -9,11 +9,12 @@ class CallToActionSection extends StatelessWidget {
     return Center(
       child: Card(
         elevation: 2,
-        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
+        color: Theme.of(
+          context,
+        ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 32),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
                 'Let\'s build something great together',
@@ -44,7 +45,7 @@ class CallToActionSection extends StatelessWidget {
                   ),
                   const SizedBox(width: 16),
                   OutlinedButton(
-                    onPressed: () => context.go('/app-simulator'),
+                    onPressed: () => context.go('/app-demos'),
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 32,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../core/state/developer_mode_provider.dart';
-import '../widgets/code_viewer.dart';
+import 'package:portfolio/core/state/developer_mode_provider.dart';
+import 'package:portfolio/shared/widgets/code_viewer.dart';
 
 class DemoComponent extends ConsumerStatefulWidget {
   final String title;
@@ -169,7 +169,7 @@ class _DemoComponentState extends ConsumerState<DemoComponent>
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  "Code",
+                                  'Code',
                                   style: Theme.of(
                                     context,
                                   ).textTheme.titleMedium,

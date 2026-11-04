@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:portfolio/shared/widgets/hover_card.dart';
+import 'package:portfolio/shared/widgets/tech_badge.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import '../../../shared/widgets/hover_card.dart';
-import '../../../shared/widgets/tech_badge.dart';
 
 class ProjectCaseStudyCard extends StatelessWidget {
   const ProjectCaseStudyCard({
@@ -31,12 +30,13 @@ class ProjectCaseStudyCard extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return HoverCard(
-      elevation: 1,
       hoverElevation: 5,
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: colorScheme.outline.withOpacity(0.25)),
+          border: Border.all(
+            color: colorScheme.outline.withValues(alpha: 0.25),
+          ),
         ),
         child: Padding(
           padding: const EdgeInsets.all(20),
@@ -138,7 +138,7 @@ class _CaseStudySection extends StatelessWidget {
         Text(
           content,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: colorScheme.onSurface.withOpacity(0.82),
+            color: colorScheme.onSurface.withValues(alpha: 0.82),
             height: 1.45,
           ),
         ),

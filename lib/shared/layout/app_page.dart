@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../widgets/app_navbar.dart';
-import '../widgets/app_footer.dart';
-import '../widgets/scroll_to_top_button.dart';
-import '../../core/state/developer_mode_provider.dart';
+import 'package:portfolio/core/state/developer_mode_provider.dart';
+import 'package:portfolio/shared/widgets/app_footer.dart';
+import 'package:portfolio/shared/widgets/app_navbar.dart';
+import 'package:portfolio/shared/widgets/scroll_to_top_button.dart';
 
 class AppPage extends ConsumerStatefulWidget {
   const AppPage({super.key, required this.child, this.title});
@@ -18,6 +18,8 @@ class AppPage extends ConsumerStatefulWidget {
 
 class _AppPageState extends ConsumerState<AppPage> {
   final ScrollController _scrollController = ScrollController();
+  // build()'s context is above the Scaffold, so Scaffold.of(context) can't find it.
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void dispose() {
@@ -33,7 +35,8 @@ class _AppPageState extends ConsumerState<AppPage> {
     ).routerDelegate.currentConfiguration.uri.toString();
 
     return Scaffold(
-      drawer: MediaQuery.of(context).size.width <= 600
+      key: _scaffoldKey,
+      drawer: MediaQuery.sizeOf(context).width < AppNavbar.collapseBelow
           ? Drawer(
               child: ListView(
                 padding: EdgeInsets.zero,
@@ -123,7 +126,7 @@ class _AppPageState extends ConsumerState<AppPage> {
             left: 0,
             right: 0,
             child: AppNavbar(
-              onMenuPressed: () => Scaffold.of(context).openDrawer(),
+              onMenuPressed: () => _scaffoldKey.currentState?.openDrawer(),
             ),
           ),
 

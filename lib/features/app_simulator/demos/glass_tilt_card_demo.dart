@@ -2,16 +2,15 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-import '../widgets/glass_tilt_card/glass_tilt_model.dart';
-import '../widgets/glass_tilt_card/glass_tilt_widget.dart';
+import 'package:portfolio/features/app_simulator/widgets/glass_tilt_card/glass_tilt_model.dart';
+import 'package:portfolio/features/app_simulator/widgets/glass_tilt_card/glass_tilt_widget.dart';
 
 class GlassTiltCardDemo extends StatelessWidget {
   const GlassTiltCardDemo({super.key});
 
   static const GlassCardData _cardData = GlassCardData(
     title: 'Glass Tilt Card',
-    description:
-        'Move across the surface to tilt the card,',
+    description: 'Move across the surface to tilt the card,',
     icon: Icons.flare_rounded,
   );
 

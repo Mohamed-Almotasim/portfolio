@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-
-import '../../shared/layout/app_page.dart';
-import '../../shared/layout/responsive_grid.dart';
-import '../../shared/widgets/app_section.dart';
-import 'widgets/project_case_study_card.dart';
+import 'package:portfolio/features/services/widgets/project_case_study_card.dart';
+import 'package:portfolio/shared/layout/app_page.dart';
+import 'package:portfolio/shared/layout/responsive_grid.dart';
+import 'package:portfolio/shared/widgets/app_section.dart';
 
 class ServicesPage extends StatelessWidget {
   const ServicesPage({super.key});
@@ -76,7 +75,6 @@ class ServicesPage extends StatelessWidget {
         subtitle:
             'Selected product case studies focused on the problem solved, the implementation approach, and the outcome delivered.',
         child: ResponsiveGrid(
-          spacing: 16,
           childAspectRatio: 0.78,
           children: caseStudies
               .map(
