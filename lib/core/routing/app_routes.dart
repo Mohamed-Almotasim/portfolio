@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 abstract final class AppRoutes {
   static const home = '/';
+  static const work = '/work';
+  static String caseStudy(String slug) => '/work/$slug';
   static const uiShowcase = '/ui-showcase';
   static const widgetGallery = '/widget-gallery';
   static const appDemos = '/app-demos';
@@ -25,6 +27,7 @@ class NavDestination {
 /// Single source for the navbar, drawer and footer links, in display order.
 const navDestinations = [
   NavDestination(label: 'Home', path: AppRoutes.home, icon: Icons.home),
+  NavDestination(label: 'Work', path: AppRoutes.work, icon: Icons.work_outline),
   NavDestination(
     label: 'UI Showcase',
     path: AppRoutes.uiShowcase,

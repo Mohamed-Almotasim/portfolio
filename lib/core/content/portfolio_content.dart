@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:portfolio/core/content/case_study.dart';
+import 'package:portfolio/core/content/engagement_model.dart';
+import 'package:portfolio/core/content/faq_item.dart';
 import 'package:portfolio/core/content/process_step.dart';
 import 'package:portfolio/core/content/profile.dart';
 import 'package:portfolio/core/content/proof_stat.dart';
@@ -244,5 +246,55 @@ const processSteps = [
     description:
         'Store release or web deploy, monitoring, and a clean handover of the codebase.',
     icon: Icons.rocket_launch_outlined,
+  ),
+];
+
+// TODO(me): adjust to how you actually like to work. Prices stay hidden
+// unless you add `price:`.
+const engagementModels = [
+  EngagementModel(
+    title: 'Fixed scope',
+    description:
+        'An agreed set of screens and features, delivered for a fixed quote.',
+    bestFor: 'MVPs and well-defined features',
+    icon: Icons.inventory_2_outlined,
+  ),
+  EngagementModel(
+    title: 'Hourly',
+    description:
+        'Flexible time for fixes, reviews or work whose shape is still moving.',
+    bestFor: 'Audits, bug fixing, short spikes',
+    icon: Icons.schedule,
+  ),
+  EngagementModel(
+    title: 'Retainer',
+    description:
+        'A reserved block of time each month for ongoing product development.',
+    bestFor: 'Teams that ship continuously',
+    icon: Icons.autorenew,
+  ),
+];
+
+// TODO(me): rewrite in your own words; keep only what is true for you.
+const faqs = [
+  FaqItem(
+    question: 'Which platforms can you deliver?',
+    answer:
+        'One Flutter codebase for iOS, Android and the web. Desktop is possible when a project needs it.',
+  ),
+  FaqItem(
+    question: 'Can you work with my existing app?',
+    answer:
+        'Yes. I start with a short architecture review, then fix or extend the codebase without a rewrite unless one is clearly cheaper.',
+  ),
+  FaqItem(
+    question: 'Who owns the code?',
+    answer:
+        'You do. The repository, assets and accounts are yours from day one.',
+  ),
+  FaqItem(
+    question: 'How do we stay in touch during a project?',
+    answer:
+        'A weekly demo of a working build, plus a shared channel for questions in between.',
   ),
 ];

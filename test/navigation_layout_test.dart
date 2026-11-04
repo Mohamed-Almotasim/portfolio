@@ -7,10 +7,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:portfolio/app.dart';
 import 'package:portfolio/core/routing/app_router.dart';
 import 'package:portfolio/features/landing/landing_page.dart';
-import 'package:portfolio/features/landing/widgets/landing_sections.dart';
 import 'package:portfolio/shared/widgets/app_navbar.dart';
+import 'package:portfolio/shared/widgets/cta_band.dart';
 
 const routes = [
+  '/work',
+  '/work/student-management-system',
   '/',
   '/ui-showcase',
   '/widget-gallery',
@@ -137,9 +139,9 @@ void main() {
         )
         .opacity
         .value;
-    expect(opacityOf(FinalCtaBand), 0);
-    await tester.scrollUntilVisible(find.byType(FinalCtaBand), 300);
+    expect(opacityOf(CtaBand), 0);
+    await tester.scrollUntilVisible(find.byType(CtaBand), 300);
     await settle(tester);
-    expect(opacityOf(FinalCtaBand), 1);
+    expect(opacityOf(CtaBand), 1);
   });
 }

@@ -5,9 +5,11 @@ import 'package:portfolio/core/theme/app_spacing.dart';
 import 'package:portfolio/features/landing/widgets/featured_projects_section.dart';
 import 'package:portfolio/features/landing/widgets/hero_section.dart';
 import 'package:portfolio/features/landing/widgets/landing_sections.dart';
+import 'package:portfolio/features/services/widgets/service_sections.dart';
 import 'package:portfolio/shared/layout/app_page.dart';
 import 'package:portfolio/shared/widgets/animated_section.dart';
 import 'package:portfolio/shared/widgets/app_section.dart';
+import 'package:portfolio/shared/widgets/cta_band.dart';
 
 class LandingPage extends StatelessWidget {
   const LandingPage({super.key});
@@ -35,12 +37,12 @@ class LandingPage extends StatelessWidget {
             title: 'What I do',
             subtitle: 'From first prototype to store release.',
             action: link('All services', AppRoutes.services),
-            child: const AnimatedSection(child: ServicesTeaser()),
+            child: const AnimatedSection(child: ServiceOfferingsList(limit: 3)),
           ),
           AppSection(
             title: 'Selected work',
             subtitle: 'The problem, the approach and what changed.',
-            action: link('All work', AppRoutes.services),
+            action: link('All work', AppRoutes.work),
             child: const AnimatedSection(child: FeaturedProjectsSection()),
           ),
           const AppSection(
@@ -54,7 +56,7 @@ class LandingPage extends StatelessWidget {
             child: AnimatedSection(child: ProcessSection()),
           ),
           const SizedBox(height: AppSpacing.s32),
-          const AnimatedSection(child: FinalCtaBand()),
+          const AnimatedSection(child: CtaBand()),
         ],
       ),
     );

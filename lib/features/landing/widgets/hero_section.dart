@@ -101,7 +101,7 @@ class HeroSection extends ConsumerWidget {
               label: const Text('Start a project'),
             ),
             OutlinedButton(
-              onPressed: () => context.go(AppRoutes.services),
+              onPressed: () => context.go(AppRoutes.work),
               child: const Text('See my work'),
             ),
           ],

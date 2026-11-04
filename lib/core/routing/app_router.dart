@@ -13,11 +13,18 @@ import 'package:portfolio/features/not_found/not_found_page.dart';
 import 'package:portfolio/features/services/services_page.dart';
 import 'package:portfolio/features/ui_showcase/ui_showcase_page.dart';
 import 'package:portfolio/features/widget_gallery/ui_patterns_page.dart';
+import 'package:portfolio/features/work/case_study_page.dart';
+import 'package:portfolio/features/work/work_page.dart';
 import 'package:portfolio/shared/layout/app_shell.dart';
 
 /// Browser tab title: `Page — Name`, or `Name — Title` on the home page.
 String pageTitle(String path, Profile profile) {
   if (path == AppRoutes.home) return '${profile.name} — ${profile.title}';
+  if (path.startsWith('${AppRoutes.work}/')) {
+    final slug = path.substring(AppRoutes.work.length + 1);
+    final study = content.caseStudies.where((c) => c.slug == slug).firstOrNull;
+    return '${study?.title ?? 'Not found'} — ${profile.name}';
+  }
   final label = navDestinations
       .where((d) => d.path == path)
       .map((d) => d.label)
@@ -35,32 +42,33 @@ GoRouter createRouter({
     child: child,
   );
 
-  GoRoute route(String path, Widget page) => GoRoute(
-    path: path,
-    pageBuilder: (context, state) => CustomTransitionPage(
-      key: state.pageKey,
-      child: titled(context, path, page),
-      transitionDuration: const Duration(milliseconds: 280),
-      reverseTransitionDuration: const Duration(milliseconds: 200),
-      transitionsBuilder: (context, animation, _, child) {
-        if (MediaQuery.disableAnimationsOf(context)) return child;
-        final curved = CurvedAnimation(
-          parent: animation,
-          curve: Curves.easeOutCubic,
-        );
-        return FadeTransition(
-          opacity: curved,
-          child: SlideTransition(
-            position: Tween(
-              begin: const Offset(0, 0.015),
-              end: Offset.zero,
-            ).animate(curved),
-            child: child,
-          ),
-        );
-      },
-    ),
-  );
+  GoRoute route(String path, Widget Function(GoRouterState state) page) =>
+      GoRoute(
+        path: path,
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: titled(context, state.uri.path, page(state)),
+          transitionDuration: const Duration(milliseconds: 280),
+          reverseTransitionDuration: const Duration(milliseconds: 200),
+          transitionsBuilder: (context, animation, _, child) {
+            if (MediaQuery.disableAnimationsOf(context)) return child;
+            final curved = CurvedAnimation(
+              parent: animation,
+              curve: Curves.easeOutCubic,
+            );
+            return FadeTransition(
+              opacity: curved,
+              child: SlideTransition(
+                position: Tween(
+                  begin: const Offset(0, 0.015),
+                  end: Offset.zero,
+                ).animate(curved),
+                child: child,
+              ),
+            );
+          },
+        ),
+      );
 
   return GoRouter(
     initialLocation: initialLocation,
@@ -78,13 +86,20 @@ GoRouter createRouter({
         builder: (context, state, child) =>
             AppShell(location: state.uri.path, child: child),
         routes: [
-          route(AppRoutes.home, const LandingPage()),
-          route(AppRoutes.uiShowcase, const UIShowcasePage()),
-          route(AppRoutes.widgetGallery, const UIPatternsPage()),
-          route(AppRoutes.appDemos, const AppSimulatorPage()),
-          route(AppRoutes.architecture, const ArchitecturePage()),
-          route(AppRoutes.services, const ServicesPage()),
-          route(AppRoutes.contact, const ContactPage()),
+          route(AppRoutes.home, (_) => const LandingPage()),
+          route(AppRoutes.work, (_) => const WorkPage()),
+          // A sibling, not a child of /work: a child route would keep the work
+          // page laid out offstage underneath, which breaks its SelectionArea.
+          route(
+            AppRoutes.caseStudy(':slug'),
+            (s) => CaseStudyPage(slug: s.pathParameters['slug']!),
+          ),
+          route(AppRoutes.uiShowcase, (_) => const UIShowcasePage()),
+          route(AppRoutes.widgetGallery, (_) => const UIPatternsPage()),
+          route(AppRoutes.appDemos, (_) => const AppSimulatorPage()),
+          route(AppRoutes.architecture, (_) => const ArchitecturePage()),
+          route(AppRoutes.services, (_) => const ServicesPage()),
+          route(AppRoutes.contact, (_) => const ContactPage()),
         ],
       ),
     ],

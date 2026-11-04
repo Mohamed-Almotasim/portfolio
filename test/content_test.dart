@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:portfolio/core/content/portfolio_content.dart';
 import 'package:portfolio/core/routing/app_router.dart';
 import 'package:portfolio/core/routing/app_routes.dart';
-import 'package:portfolio/features/projects/projects_provider.dart';
+import 'package:portfolio/features/work/case_studies_provider.dart';
 
 void main() {
   test('every nav destination is a registered route', () {
@@ -42,5 +42,13 @@ void main() {
     );
     expect(pageTitle(AppRoutes.contact, profile), 'Contact — ${profile.name}');
     expect(pageTitle('/nope', profile), 'Not found — ${profile.name}');
+    expect(
+      pageTitle(AppRoutes.caseStudy(caseStudies.first.slug), profile),
+      '${caseStudies.first.title} — ${profile.name}',
+    );
+    expect(
+      pageTitle(AppRoutes.caseStudy('nope'), profile),
+      'Not found — ${profile.name}',
+    );
   });
 }

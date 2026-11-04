@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:portfolio/features/projects/project_card.dart';
-import 'package:portfolio/features/projects/projects_provider.dart';
+import 'package:portfolio/features/work/case_studies_provider.dart';
+import 'package:portfolio/features/work/widgets/case_study_card.dart';
 import 'package:portfolio/shared/layout/responsive_grid.dart';
 
 class FeaturedProjectsSection extends ConsumerWidget {
@@ -14,7 +14,7 @@ class FeaturedProjectsSection extends ConsumerWidget {
     return ResponsiveGrid(
       spacing: 22,
       children: projects
-          .map((project) => ProjectCard(project: project))
+          .map((project) => CaseStudyCard(project: project))
           .toList(),
     );
   }
