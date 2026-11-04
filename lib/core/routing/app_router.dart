@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:portfolio/core/routing/app_routes.dart';
 import 'package:portfolio/features/app_simulator/app_simulator_page.dart';
@@ -9,38 +10,44 @@ import 'package:portfolio/features/services/services_page.dart';
 import 'package:portfolio/features/ui_showcase/ui_showcase_page.dart';
 import 'package:portfolio/features/widget_gallery/ui_patterns_page.dart';
 
-class AppRouter {
-  static final GoRouter router = GoRouter(
-    errorBuilder: (context, state) => NotFoundPage(path: state.uri.path),
-    routes: [
-      GoRoute(
-        path: AppRoutes.home,
-        builder: (context, state) => const LandingPage(),
-      ),
-      GoRoute(
-        path: AppRoutes.uiShowcase,
-        builder: (context, state) => const UIShowcasePage(),
-      ),
-      GoRoute(
-        path: AppRoutes.widgetGallery,
-        builder: (context, state) => const UIPatternsPage(),
-      ),
-      GoRoute(
-        path: AppRoutes.architecture,
-        builder: (context, state) => const ArchitecturePage(),
-      ),
-      GoRoute(
-        path: AppRoutes.services,
-        builder: (context, state) => const ServicesPage(),
-      ),
-      GoRoute(
-        path: AppRoutes.contact,
-        builder: (context, state) => const ContactPage(),
-      ),
-      GoRoute(
-        path: AppRoutes.appDemos,
-        builder: (context, state) => const AppSimulatorPage(),
-      ),
-    ],
-  );
-}
+GoRouter createRouter({String initialLocation = AppRoutes.home}) => GoRouter(
+  initialLocation: initialLocation,
+  errorBuilder: (context, state) => NotFoundPage(path: state.uri.path),
+  routes: [
+    GoRoute(
+      path: AppRoutes.home,
+      builder: (context, state) => const LandingPage(),
+    ),
+    GoRoute(
+      path: AppRoutes.uiShowcase,
+      builder: (context, state) => const UIShowcasePage(),
+    ),
+    GoRoute(
+      path: AppRoutes.widgetGallery,
+      builder: (context, state) => const UIPatternsPage(),
+    ),
+    GoRoute(
+      path: AppRoutes.architecture,
+      builder: (context, state) => const ArchitecturePage(),
+    ),
+    GoRoute(
+      path: AppRoutes.services,
+      builder: (context, state) => const ServicesPage(),
+    ),
+    GoRoute(
+      path: AppRoutes.contact,
+      builder: (context, state) => const ContactPage(),
+    ),
+    GoRoute(
+      path: AppRoutes.appDemos,
+      builder: (context, state) => const AppSimulatorPage(),
+    ),
+  ],
+);
+
+/// Override in tests with `routerProvider.overrideWithValue(createRouter(...))`.
+final routerProvider = Provider<GoRouter>((ref) {
+  final router = createRouter();
+  ref.onDispose(router.dispose);
+  return router;
+});

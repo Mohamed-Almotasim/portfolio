@@ -21,8 +21,14 @@ Future<void> pumpAt(WidgetTester tester, double width, String path) async {
   tester.view.physicalSize = Size(width, 900);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
-  AppRouter.router.go(path);
-  await tester.pumpWidget(const ProviderScope(child: PortfolioApp()));
+  await tester.pumpWidget(
+    ProviderScope(
+      overrides: [
+        routerProvider.overrideWithValue(createRouter(initialLocation: path)),
+      ],
+      child: const PortfolioApp(),
+    ),
+  );
   await tester.pump(const Duration(seconds: 1));
 }
 

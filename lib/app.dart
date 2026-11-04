@@ -13,7 +13,7 @@ class PortfolioApp extends ConsumerWidget {
       title: 'Portfolio',
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      routerConfig: AppRouter.router,
+      routerConfig: ref.watch(routerProvider),
     );
   }
 }

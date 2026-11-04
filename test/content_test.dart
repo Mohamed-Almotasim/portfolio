@@ -8,7 +8,7 @@ import 'package:portfolio/features/projects/projects_provider.dart';
 
 void main() {
   test('every nav destination is a registered route', () {
-    final paths = AppRouter.router.configuration.routes
+    final paths = createRouter().configuration.routes
         .whereType<GoRoute>()
         .map((r) => r.path)
         .toSet();

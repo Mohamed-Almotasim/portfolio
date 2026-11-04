@@ -64,7 +64,7 @@ class _AppPageState extends ConsumerState<AppPage> {
                     trailing: Switch(
                       value: isDeveloperMode,
                       onChanged: (value) {
-                        ref.read(developerModeProvider.notifier).state = value;
+                        ref.read(developerModeProvider.notifier).set(value);
                       },
                     ),
                   ),

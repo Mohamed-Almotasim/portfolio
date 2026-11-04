@@ -39,8 +39,9 @@ class UIPatternsPage extends ConsumerWidget {
                 label: Text(category?.label ?? 'All'),
                 selected: selectedCategory == category,
                 onSelected: (_) {
-                  ref.read(uiPatternsCategoryProvider.notifier).state =
-                      category;
+                  ref
+                      .read(uiPatternsCategoryProvider.notifier)
+                      .setCategory(category);
                 },
               );
             }).toList(),
@@ -55,7 +56,7 @@ class UIPatternsPage extends ConsumerWidget {
                 border: OutlineInputBorder(),
               ),
               onChanged: (value) {
-                ref.read(uiPatternsSearchProvider.notifier).state = value;
+                ref.read(uiPatternsSearchProvider.notifier).setQuery(value);
               },
             ),
           ),
