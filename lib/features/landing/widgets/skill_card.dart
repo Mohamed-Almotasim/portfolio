@@ -9,7 +9,12 @@ class SkillCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = skill.color;
+    // Pull the brand color toward the text color so labels pass contrast in both themes.
+    final color = Color.lerp(
+      skill.color,
+      Theme.of(context).colorScheme.onSurface,
+      0.3,
+    )!;
 
     return HoverCard(
       child: Container(

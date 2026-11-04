@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:portfolio/core/content/profile.dart';
 import 'package:portfolio/core/routing/app_routes.dart';
 import 'package:portfolio/core/state/profile_provider.dart';
+import 'package:portfolio/core/theme/app_spacing.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AppFooter extends ConsumerWidget {
@@ -12,7 +13,7 @@ class AppFooter extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final links = ref.watch(profileProvider).contactLinks;
-    final isDesktop = MediaQuery.of(context).size.width > 600;
+    final isDesktop = !AppBreakpoints.isMobile(context);
 
     return Container(
       color: Theme.of(
@@ -21,7 +22,9 @@ class AppFooter extends ConsumerWidget {
       padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 24),
       child: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1100),
+          constraints: const BoxConstraints(
+            maxWidth: AppSpacing.maxContentWidth,
+          ),
           child: Column(
             children: [
               // Top section
@@ -219,7 +222,7 @@ class _SocialLinkState extends State<_SocialLink> {
           decoration: BoxDecoration(
             color: _isHovered
                 ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)
-                : Colors.transparent,
+                : Theme.of(context).colorScheme.primary.withValues(alpha: 0),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Row(
@@ -233,12 +236,15 @@ class _SocialLinkState extends State<_SocialLink> {
                     : Theme.of(context).colorScheme.onSurface,
               ),
               const SizedBox(width: 8),
-              Text(
-                widget.link.label,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: _isHovered
-                      ? Theme.of(context).colorScheme.primary
-                      : Theme.of(context).colorScheme.onSurface,
+              Flexible(
+                child: Text(
+                  widget.link.label,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: _isHovered
+                        ? Theme.of(context).colorScheme.primary
+                        : Theme.of(context).colorScheme.onSurface,
+                  ),
                 ),
               ),
             ],

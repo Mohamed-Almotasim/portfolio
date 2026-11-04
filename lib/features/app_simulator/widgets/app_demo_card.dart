@@ -121,7 +121,7 @@ class DeveloperInfoPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Colors.blue[50],
+      color: Theme.of(context).colorScheme.primaryContainer,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(

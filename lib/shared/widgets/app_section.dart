@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:portfolio/shared/theme/app_spacing.dart';
+import 'package:portfolio/core/theme/app_spacing.dart';
 
 class AppSection extends StatelessWidget {
   const AppSection({
@@ -21,9 +21,7 @@ class AppSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(
-            vertical: AppSpacing.sectionSpacing / 2,
-          ),
+          padding: const EdgeInsets.symmetric(vertical: AppSpacing.s64 / 2),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -40,7 +38,7 @@ class AppSection extends StatelessWidget {
                     ),
                   ),
                 ],
-                const SizedBox(height: AppSpacing.componentSpacing),
+                const SizedBox(height: AppSpacing.s24),
               ],
               child,
             ],

@@ -40,7 +40,7 @@ class ProfileCardPreview extends StatelessWidget {
                       'Flutter Developer',
                       style: TextStyle(
                         fontSize: isCompact ? 10 : 12,
-                        color: Colors.grey,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                     const SizedBox(height: 8),

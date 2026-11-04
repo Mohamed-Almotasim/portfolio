@@ -61,17 +61,21 @@ class PatternCard extends StatelessWidget {
             Text(description, style: theme.textTheme.bodySmall),
             const SizedBox(height: 16),
             Container(
-              constraints: const BoxConstraints(minHeight: 140, maxHeight: 220),
+              constraints: const BoxConstraints(minHeight: 140, maxHeight: 260),
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.shade300),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outlineVariant,
+                ),
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: Material(
-                  color: Colors.transparent,
-                  // Previews taller than the 220px cap scroll instead of overflowing.
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.primary.withValues(alpha: 0),
+                  // Previews taller than the 260px cap scroll instead of overflowing.
                   child: LayoutBuilder(
                     builder: (context, c) => SingleChildScrollView(
                       child: ConstrainedBox(

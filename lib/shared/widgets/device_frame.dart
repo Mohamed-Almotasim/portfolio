@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:portfolio/core/theme/app_decorations.dart';
 
 class DeviceFrame extends StatelessWidget {
   const DeviceFrame({super.key, required this.child});
@@ -11,9 +12,12 @@ class DeviceFrame extends StatelessWidget {
       width: 300,
       height: 600,
       decoration: BoxDecoration(
-        color: Colors.black,
+        color: AppDecorations.of(context).deviceBezel,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.grey[800]!, width: 8),
+        border: Border.all(
+          color: AppDecorations.of(context).deviceBezel,
+          width: 8,
+        ),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),

@@ -55,4 +55,4 @@ Refactor phase rules:
 
 ## Theme
 
-Defined in `core/theme/app_theme.dart`. Primary seed color `#1976D2` (blue). Uses Material 3 (`useMaterial3: true`). Add spacing constants to `shared/theme/app_spacing.dart`.
+`core/theme/`: `app_colors.dart` (palette + light/dark `ColorScheme`), `app_typography.dart` (Space Grotesk + Inter via bundled google_fonts), `app_spacing.dart` (spacing/radius scale, breakpoints, max width), `app_decorations.dart` (`AppDecorations` ThemeExtension), `app_theme.dart` (component themes). Theme mode comes from `themeModeProvider` (default dark). Fonts live in `assets/google_fonts/`; runtime fetching is disabled.

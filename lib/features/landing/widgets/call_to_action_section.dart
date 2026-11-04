@@ -9,7 +9,7 @@ class CallToActionSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Card(
-        elevation: 2,
+        elevation: 0,
         color: Theme.of(
           context,
         ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
@@ -31,8 +31,10 @@ class CallToActionSection extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 32),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              Wrap(
+                alignment: WrapAlignment.center,
+                spacing: 16,
+                runSpacing: 12,
                 children: [
                   ElevatedButton(
                     onPressed: () => context.go(AppRoutes.contact),
@@ -44,7 +46,6 @@ class CallToActionSection extends StatelessWidget {
                     ),
                     child: const Text('Contact Me'),
                   ),
-                  const SizedBox(width: 16),
                   OutlinedButton(
                     onPressed: () => context.go(AppRoutes.appDemos),
                     style: OutlinedButton.styleFrom(

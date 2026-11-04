@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:portfolio/core/routing/app_routes.dart';
 import 'package:portfolio/core/state/developer_mode_provider.dart';
+import 'package:portfolio/core/state/theme_mode_provider.dart';
+import 'package:portfolio/core/theme/app_spacing.dart';
 import 'package:portfolio/shared/widgets/app_footer.dart';
 import 'package:portfolio/shared/widgets/app_navbar.dart';
 import 'package:portfolio/shared/widgets/scroll_to_top_button.dart';
@@ -31,22 +33,24 @@ class _AppPageState extends ConsumerState<AppPage> {
   @override
   Widget build(BuildContext context) {
     final isDeveloperMode = ref.watch(developerModeProvider);
+    final scheme = Theme.of(context).colorScheme;
     final currentLocation = GoRouter.of(
       context,
     ).routerDelegate.currentConfiguration.uri.toString();
 
     return Scaffold(
       key: _scaffoldKey,
-      drawer: MediaQuery.sizeOf(context).width < AppNavbar.collapseBelow
+      drawer: !AppBreakpoints.isDesktop(context)
           ? Drawer(
               child: ListView(
                 padding: EdgeInsets.zero,
                 children: [
-                  const DrawerHeader(
-                    decoration: BoxDecoration(color: Colors.blue),
+                  DrawerHeader(
+                    decoration: BoxDecoration(color: scheme.primary),
                     child: Text(
                       'Portfolio',
-                      style: TextStyle(color: Colors.white, fontSize: 24),
+                      style: Theme.of(context).textTheme.headlineMedium
+                          ?.copyWith(color: scheme.onPrimary),
                     ),
                   ),
                   for (final d in navDestinations)
@@ -59,6 +63,14 @@ class _AppPageState extends ConsumerState<AppPage> {
                       },
                     ),
                   const Divider(),
+                  SwitchListTile(
+                    title: const Text('Dark theme'),
+                    secondary: const Icon(Icons.dark_mode_outlined),
+                    value: Theme.of(context).brightness == Brightness.dark,
+                    onChanged: (_) => ref
+                        .read(themeModeProvider.notifier)
+                        .toggle(Theme.of(context).brightness),
+                  ),
                   ListTile(
                     title: const Text('Developer Mode'),
                     trailing: Switch(
@@ -94,7 +106,9 @@ class _AppPageState extends ConsumerState<AppPage> {
               controller: _scrollController,
               child: Center(
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 1100),
+                  constraints: const BoxConstraints(
+                    maxWidth: AppSpacing.maxContentWidth,
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.all(24.0),
                     child: Column(

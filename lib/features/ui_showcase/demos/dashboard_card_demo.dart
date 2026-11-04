@@ -155,7 +155,7 @@ class _MetricCardState extends State<_MetricCard> {
           border: Border.all(
             color: _isHovered
                 ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.3)
-                : Colors.grey.shade200,
+                : Theme.of(context).colorScheme.outlineVariant,
           ),
           boxShadow: _isHovered
               ? [

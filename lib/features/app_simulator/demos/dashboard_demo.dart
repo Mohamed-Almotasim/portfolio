@@ -12,7 +12,7 @@ class DashboardDemo extends StatelessWidget {
           // Side Navigation
           Container(
             width: 200,
-            color: Colors.grey[200],
+            color: Theme.of(context).colorScheme.surfaceContainerHighest,
             child: Column(
               children: [
                 ListTile(

@@ -18,7 +18,7 @@ class DashboardPreview extends StatelessWidget {
                 child: Container(
                   height: compact ? 20.0 + (index * 4) : 30.0 + (index * 6),
                   decoration: BoxDecoration(
-                    color: Colors.blueAccent,
+                    color: Theme.of(context).colorScheme.primary,
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
@@ -58,9 +58,9 @@ class _StatBox extends StatelessWidget {
     return Container(
       height: compact ? 40 : 50,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey.shade300),
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
       ),
       // Horizontal-only: vertical padding left too little room for two lines.
       padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -76,7 +76,10 @@ class _StatBox extends StatelessWidget {
           ),
           Text(
             'Stats',
-            style: TextStyle(fontSize: compact ? 10 : 12, color: Colors.grey),
+            style: TextStyle(
+              fontSize: compact ? 10 : 12,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
         ],
       ),

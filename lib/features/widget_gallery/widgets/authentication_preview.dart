@@ -33,6 +33,10 @@ class AuthenticationPreview extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   isDense: true,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                 ),
                 style: TextStyle(fontSize: isCompact ? 12 : 14),
               ),
@@ -45,6 +49,10 @@ class AuthenticationPreview extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   isDense: true,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                 ),
                 obscureText: true,
                 style: TextStyle(fontSize: isCompact ? 12 : 14),

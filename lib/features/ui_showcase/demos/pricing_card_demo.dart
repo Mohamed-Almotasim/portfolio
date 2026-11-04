@@ -79,7 +79,7 @@ class _PricingCardDemoState extends ConsumerState<PricingCardDemo>
                         border: Border.all(
                           color: _isHovered
                               ? Theme.of(context).colorScheme.primary
-                              : Colors.grey.shade200,
+                              : Theme.of(context).colorScheme.outlineVariant,
                           width: _isHovered ? 2 : 1,
                         ),
                         boxShadow: [

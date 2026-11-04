@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:portfolio/core/theme/app_decorations.dart';
+import 'package:portfolio/core/theme/app_typography.dart';
 
 class CodeViewer extends StatelessWidget {
   final String code;
@@ -8,11 +10,12 @@ class CodeViewer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final deco = AppDecorations.of(context);
     return Container(
       width: double.infinity,
       constraints: const BoxConstraints(maxHeight: 300),
       decoration: BoxDecoration(
-        color: Colors.grey[900],
+        color: deco.codeBackground,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -24,11 +27,7 @@ class CodeViewer extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 child: SelectableText(
                   code,
-                  style: const TextStyle(
-                    color: Colors.greenAccent,
-                    fontFamily: 'monospace',
-                    fontSize: 14,
-                  ),
+                  style: AppTypography.code(deco.codeForeground),
                 ),
               ),
             ),
@@ -36,7 +35,10 @@ class CodeViewer extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              color: Colors.grey[800],
+              color: Color.alphaBlend(
+                deco.codeForeground.withValues(alpha: 0.06),
+                deco.codeBackground,
+              ),
               borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(8),
                 bottomRight: Radius.circular(8),
@@ -46,7 +48,7 @@ class CodeViewer extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 IconButton(
-                  icon: const Icon(Icons.copy, color: Colors.white),
+                  icon: Icon(Icons.copy, color: deco.codeForeground),
                   onPressed: () {
                     Clipboard.setData(ClipboardData(text: code)).then((_) {
                       if (context.mounted) {

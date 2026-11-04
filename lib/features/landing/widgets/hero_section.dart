@@ -30,7 +30,9 @@ class HeroSection extends ConsumerWidget {
                     Theme.of(
                       context,
                     ).colorScheme.secondary.withValues(alpha: 0.03),
-                    Colors.transparent,
+                    Theme.of(
+                      context,
+                    ).colorScheme.secondary.withValues(alpha: 0),
                   ],
                   stops: const [0.0, 0.5, 1.0],
                 ),
@@ -84,7 +86,9 @@ class HeroSection extends ConsumerWidget {
           child: _buildDescription(context, profile.shortBio),
         ),
         const SizedBox(height: 48),
-        Row(
+        Wrap(
+          spacing: 16,
+          runSpacing: 12,
           children: [
             ElevatedButton(
               onPressed: () => context.go(AppRoutes.appDemos),
@@ -96,7 +100,6 @@ class HeroSection extends ConsumerWidget {
               ),
               child: const Text('View Projects'),
             ),
-            const SizedBox(width: 16),
             OutlinedButton(
               onPressed: () => context.go(AppRoutes.contact),
               style: OutlinedButton.styleFrom(
@@ -154,10 +157,10 @@ class HeroSection extends ConsumerWidget {
                     ),
                   ],
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.person,
                   size: 100,
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.onPrimaryContainer,
                 ), // Placeholder avatar
               ),
             ),

@@ -123,7 +123,7 @@ class _OverviewLayerCardState extends State<_OverviewLayerCard> {
           border: Border.all(
             color: _isHovered
                 ? theme.colorScheme.primary
-                : Colors.grey.shade300,
+                : Theme.of(context).colorScheme.outlineVariant,
           ),
           color: _isHovered
               ? theme.colorScheme.primary.withValues(alpha: 0.05)
