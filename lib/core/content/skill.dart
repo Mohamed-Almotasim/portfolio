@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
 
-enum SkillCategory { language, framework, backend, stateManagement, navigation }
+enum SkillCategory {
+  language('Languages'),
+  framework('Frameworks'),
+  backend('Backend & APIs'),
+  stateManagement('State management'),
+  navigation('Navigation');
+
+  const SkillCategory(this.label);
+  final String label;
+}
 
 class Skill {
   const Skill({

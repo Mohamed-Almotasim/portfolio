@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:portfolio/app.dart';
 import 'package:portfolio/core/routing/app_router.dart';
 import 'package:portfolio/features/landing/landing_page.dart';
+import 'package:portfolio/features/landing/widgets/landing_sections.dart';
 import 'package:portfolio/shared/widgets/app_navbar.dart';
 
 const routes = [
@@ -32,6 +33,13 @@ Future<void> pumpAt(WidgetTester tester, double width, String path) async {
     ),
   );
   await tester.pump(const Duration(seconds: 1));
+}
+
+// The landing page loops background animations, so pumpAndSettle never settles.
+Future<void> settle(WidgetTester tester) async {
+  for (var i = 0; i < 5; i++) {
+    await tester.pump(const Duration(milliseconds: 200));
+  }
 }
 
 // The default test font has square glyphs, far wider than Roboto; load the
@@ -81,7 +89,7 @@ void main() {
     await pumpAt(tester, 1023, '/');
     expect(find.byType(Drawer), findsNothing);
     await tester.tap(find.byIcon(Icons.menu));
-    await tester.pumpAndSettle();
+    await settle(tester);
     expect(find.byType(Drawer), findsOneWidget);
   });
 
@@ -94,7 +102,7 @@ void main() {
     await pumpAt(tester, 1280, '/nope');
     expect(find.text('404'), findsOneWidget);
     await tester.tap(find.text('Back home'));
-    await tester.pumpAndSettle();
+    await settle(tester);
     expect(find.text('404'), findsNothing);
   });
 
@@ -107,10 +115,31 @@ void main() {
         matching: find.text('Architecture'),
       ),
     );
-    await tester.pumpAndSettle();
+    await settle(tester);
     expect(find.text('Architecture'), findsWidgets);
     expect(find.byType(LandingPage), findsNothing);
     // Same element: the shell was not rebuilt from scratch.
     expect(tester.element(find.byType(AppNavbar)), same(navbar));
+  });
+
+  testWidgets('sections below the fold reveal only once scrolled into view', (
+    tester,
+  ) async {
+    await pumpAt(tester, 1280, '/');
+    double opacityOf(Type section) => tester
+        .widget<FadeTransition>(
+          find
+              .ancestor(
+                of: find.byType(section),
+                matching: find.byType(FadeTransition),
+              )
+              .first,
+        )
+        .opacity
+        .value;
+    expect(opacityOf(FinalCtaBand), 0);
+    await tester.scrollUntilVisible(find.byType(FinalCtaBand), 300);
+    await settle(tester);
+    expect(opacityOf(FinalCtaBand), 1);
   });
 }

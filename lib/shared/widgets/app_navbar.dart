@@ -32,8 +32,10 @@ class AppNavbar extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final deco = AppDecorations.of(context);
     final isDesktop = AppBreakpoints.isDesktop(context);
-    // The full name only fits next to 7 links on wide screens.
-    final showName = !isDesktop || MediaQuery.sizeOf(context).width >= 1200;
+    // The name only fits next to 7 links on wide screens, and not on tiny phones.
+    final width = MediaQuery.sizeOf(context).width;
+    // No room for the name on tiny phones either.
+    final showName = isDesktop ? width >= 1200 : width >= 400;
 
     return ClipRect(
       child: BackdropFilter(

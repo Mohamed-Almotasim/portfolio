@@ -8,6 +8,7 @@ class ResponsiveGrid extends StatelessWidget {
     required this.children,
     this.spacing = 16.0,
     this.childAspectRatio = 1,
+    this.wideColumns,
   });
 
   final List<Widget> children;
@@ -15,12 +16,17 @@ class ResponsiveGrid extends StatelessWidget {
 
   final double childAspectRatio;
 
+  /// Column count from 900px up, e.g. 4 so four process steps share a row.
+  final int? wideColumns;
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
         int crossAxisCount;
-        if (constraints.maxWidth >= 1200) {
+        if (wideColumns != null && constraints.maxWidth >= 900) {
+          crossAxisCount = wideColumns!;
+        } else if (constraints.maxWidth >= 1200) {
           crossAxisCount = 4;
         } else if (constraints.maxWidth >= 900) {
           crossAxisCount = 3;

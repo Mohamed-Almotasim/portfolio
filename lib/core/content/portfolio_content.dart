@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:portfolio/core/content/case_study.dart';
+import 'package:portfolio/core/content/process_step.dart';
 import 'package:portfolio/core/content/profile.dart';
+import 'package:portfolio/core/content/proof_stat.dart';
 import 'package:portfolio/core/content/service_offering.dart';
 import 'package:portfolio/core/content/skill.dart';
 
@@ -205,5 +207,42 @@ const serviceOfferings = [
     description: 'Audit and restructure existing Flutter codebases.',
     deliverables: ['Written report', 'Refactor plan', 'Pairing sessions'],
     icon: Icons.account_tree,
+  ),
+];
+
+// Proof strip on the landing page. Stats with a null value are hidden, so
+// nothing is shown until you fill in a real number. Case-study and demo
+// counts are added automatically from the content above.
+const proofStats = [
+  ProofStat(label: 'Years building with Flutter'), // TODO(me): e.g. value: '4+'
+  ProofStat(label: 'Apps shipped to production'), // TODO(me): e.g. value: '12'
+  // TODO(me): confirm the platforms you actually ship to.
+  ProofStat(label: 'Platforms from one codebase', value: 'iOS · Android · Web'),
+];
+
+const processSteps = [
+  ProcessStep(
+    title: 'Discover',
+    description:
+        'We pin down the problem, the users and what "done" means before any code is written.',
+    icon: Icons.travel_explore,
+  ),
+  ProcessStep(
+    title: 'Design',
+    description:
+        'Flows and screens are prototyped and agreed, so the build has no surprises.',
+    icon: Icons.design_services_outlined,
+  ),
+  ProcessStep(
+    title: 'Build',
+    description:
+        'Iterative delivery with a working build you can try every week, tests included.',
+    icon: Icons.construction,
+  ),
+  ProcessStep(
+    title: 'Ship',
+    description:
+        'Store release or web deploy, monitoring, and a clean handover of the codebase.',
+    icon: Icons.rocket_launch_outlined,
   ),
 ];

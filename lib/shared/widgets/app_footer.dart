@@ -5,6 +5,7 @@ import 'package:portfolio/core/content/profile.dart';
 import 'package:portfolio/core/routing/app_routes.dart';
 import 'package:portfolio/core/state/profile_provider.dart';
 import 'package:portfolio/core/theme/app_spacing.dart';
+import 'package:portfolio/shared/widgets/brand_logo.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AppFooter extends ConsumerWidget {
@@ -12,7 +13,8 @@ class AppFooter extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final links = ref.watch(profileProvider).contactLinks;
+    final profile = ref.watch(profileProvider);
+    final links = profile.contactLinks;
     final isDesktop = !AppBreakpoints.isMobile(context);
 
     return Container(
@@ -38,14 +40,7 @@ class AppFooter extends ConsumerWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'Portfolio',
-                            style: Theme.of(context).textTheme.titleLarge
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                          ),
+                          const BrandLogo(),
                           const SizedBox(height: 16),
                           Text(
                             'A showcase of Flutter development skills, featuring UI components, '
@@ -103,13 +98,7 @@ class AppFooter extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Portfolio description
-                    Text(
-                      'Portfolio',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    ),
+                    const BrandLogo(),
                     const SizedBox(height: 16),
                     Text(
                       'A showcase of Flutter development skills, featuring UI components, '
@@ -164,7 +153,7 @@ class AppFooter extends ConsumerWidget {
 
               // Bottom section - Copyright
               Text(
-                '© ${DateTime.now().year} Portfolio. All rights reserved.',
+                '© ${DateTime.now().year} ${profile.name}. All rights reserved.',
                 style: Theme.of(context).textTheme.bodyMedium,
                 textAlign: TextAlign.center,
               ),

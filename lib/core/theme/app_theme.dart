@@ -35,6 +35,11 @@ abstract final class AppTheme {
       textTheme: text,
       extensions: [d],
       splashFactory: InkSparkle.splashFactory,
+      textSelectionTheme: TextSelectionThemeData(
+        cursorColor: s.primary,
+        selectionColor: s.primary.withValues(alpha: 0.28),
+        selectionHandleColor: s.primary,
+      ),
       cardTheme: CardThemeData(
         elevation: 0,
         shadowColor: s.shadow.withValues(alpha: 0.4),

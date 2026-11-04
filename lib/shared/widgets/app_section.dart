@@ -8,12 +8,16 @@ class AppSection extends StatelessWidget {
     this.subtitle,
     required this.child,
     this.showDivider = false,
+    this.action,
   });
 
   final String? title;
   final String? subtitle;
   final Widget child;
   final bool showDivider;
+
+  /// Optional link shown at the end of the title row, e.g. "All services".
+  final Widget? action;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +30,18 @@ class AppSection extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (title != null) ...[
-                Text(title!, style: Theme.of(context).textTheme.headlineLarge),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        title!,
+                        style: Theme.of(context).textTheme.headlineLarge,
+                      ),
+                    ),
+                    ?action,
+                  ],
+                ),
                 if (subtitle != null) ...[
                   const SizedBox(height: 8),
                   Text(

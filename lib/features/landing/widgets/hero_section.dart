@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:portfolio/core/content/profile.dart';
 import 'package:portfolio/core/routing/app_routes.dart';
 import 'package:portfolio/core/state/profile_provider.dart';
+import 'package:portfolio/core/theme/app_decorations.dart';
+import 'package:portfolio/core/theme/app_spacing.dart';
+import 'package:portfolio/features/landing/widgets/hero_backdrop.dart';
+import 'package:portfolio/features/landing/widgets/hero_visual.dart';
+
+const _months = [
+  'January', 'February', 'March', 'April', 'May', 'June', //
+  'July', 'August', 'September', 'October', 'November', 'December',
+];
 
 class HeroSection extends ConsumerWidget {
   const HeroSection({super.key});
@@ -11,161 +19,136 @@ class HeroSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final profile = ref.watch(profileProvider);
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 64),
-      constraints: const BoxConstraints(minHeight: 400),
-      child: Stack(
-        children: [
-          // Background accent
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: RadialGradient(
-                  center: Alignment.centerLeft,
-                  radius: 0.8,
-                  colors: [
-                    Theme.of(
-                      context,
-                    ).colorScheme.primary.withValues(alpha: 0.05),
-                    Theme.of(
-                      context,
-                    ).colorScheme.secondary.withValues(alpha: 0.03),
-                    Theme.of(
-                      context,
-                    ).colorScheme.secondary.withValues(alpha: 0),
-                  ],
-                  stops: const [0.0, 0.5, 1.0],
+    final scheme = Theme.of(context).colorScheme;
+    final text = Theme.of(context).textTheme;
+    final deco = AppDecorations.of(context);
+    final month = _months[DateTime.now().month - 1];
+
+    final content = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.s12,
+            vertical: 6,
+          ),
+          decoration: BoxDecoration(
+            color: scheme.surface.withValues(alpha: 0.7),
+            borderRadius: BorderRadius.circular(AppRadius.pill),
+            border: Border.all(color: deco.cardBorder),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  color: deco.success,
+                  shape: BoxShape.circle,
                 ),
               ),
+              const SizedBox(width: AppSpacing.s8),
+              Flexible(
+                child: Text(
+                  '${profile.availability} — $month',
+                  style: text.labelMedium,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: AppSpacing.s24),
+        Text(profile.tagline, style: text.displayMedium),
+        const SizedBox(height: AppSpacing.s16),
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 560),
+          child: Text.rich(
+            TextSpan(
+              style: text.bodyLarge?.copyWith(color: scheme.onSurfaceVariant),
+              // Odd segments sat between *asterisks* and get highlighted.
+              children: [
+                TextSpan(
+                  text: "I'm ${profile.name}. ",
+                  style: TextStyle(
+                    color: scheme.onSurface,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                for (final (i, part) in profile.shortBio.split('*').indexed)
+                  TextSpan(
+                    text: part,
+                    style: i.isOdd
+                        ? TextStyle(
+                            color: scheme.onSurface,
+                            fontWeight: FontWeight.w600,
+                          )
+                        : null,
+                  ),
+              ],
             ),
           ),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final isDesktop = constraints.maxWidth > 800;
-
-              if (isDesktop) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(flex: 2, child: _buildContent(context, profile)),
-                    Expanded(child: _buildAvatar(context)),
-                  ],
-                );
-              } else {
-                return Column(
-                  children: [
-                    _buildContent(context, profile),
-                    const SizedBox(height: 32),
-                    _buildAvatar(context),
-                  ],
-                );
-              }
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildContent(BuildContext context, Profile profile) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          profile.name,
-          style: Theme.of(
-            context,
-          ).textTheme.displayLarge?.copyWith(fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 16),
-        Text(profile.title, style: Theme.of(context).textTheme.headlineMedium),
-        const SizedBox(height: 24),
-        ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 500),
-          child: _buildDescription(context, profile.shortBio),
-        ),
-        const SizedBox(height: 48),
+        const SizedBox(height: AppSpacing.s32),
         Wrap(
-          spacing: 16,
-          runSpacing: 12,
+          spacing: AppSpacing.s12,
+          runSpacing: AppSpacing.s12,
           children: [
-            ElevatedButton(
-              onPressed: () => context.go(AppRoutes.appDemos),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 32,
-                  vertical: 16,
-                ),
-              ),
-              child: const Text('View Projects'),
+            FilledButton.icon(
+              onPressed: () => context.go(AppRoutes.contact),
+              icon: const Icon(Icons.arrow_forward, size: 18),
+              iconAlignment: IconAlignment.end,
+              label: const Text('Start a project'),
             ),
             OutlinedButton(
-              onPressed: () => context.go(AppRoutes.contact),
-              style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 32,
-                  vertical: 16,
-                ),
-              ),
-              child: const Text('Contact Me'),
+              onPressed: () => context.go(AppRoutes.services),
+              child: const Text('See my work'),
             ),
           ],
         ),
       ],
     );
-  }
 
-  Widget _buildDescription(BuildContext context, String bio) {
-    final highlight = TextStyle(color: Theme.of(context).colorScheme.primary);
-    return RichText(
-      textAlign: TextAlign.left,
-      text: TextSpan(
-        style: Theme.of(context).textTheme.bodyLarge,
-        // Odd segments sat between *asterisks* and get highlighted.
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(AppRadius.xl),
+      child: Stack(
         children: [
-          for (final (i, part) in bio.split('*').indexed)
-            TextSpan(text: part, style: i.isOdd ? highlight : null),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAvatar(BuildContext context) {
-    return Center(
-      child: TweenAnimationBuilder(
-        tween: Tween<double>(begin: 0, end: 1),
-        duration: const Duration(seconds: 2),
-        builder: (context, double value, child) {
-          return Transform.translate(
-            offset: Offset(0, 10 * (1 - value)),
-            child: Opacity(
-              opacity: value,
-              child: Container(
-                width: 200,
-                height: 200,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Theme.of(context).colorScheme.primaryContainer,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.shadow.withValues(alpha: 0.2),
-                      blurRadius: 20,
-                      offset: const Offset(0, 10),
+          const Positioned.fill(child: HeroBackdrop()),
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.s24,
+              vertical: AppSpacing.s48,
+            ),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                if (constraints.maxWidth >= 900) {
+                  return Row(
+                    children: [
+                      Expanded(child: content),
+                      const SizedBox(width: AppSpacing.s32),
+                      const HeroVisual(),
+                    ],
+                  );
+                }
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    content,
+                    const SizedBox(height: AppSpacing.s48),
+                    Center(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxWidth: HeroVisual.size.width,
+                        ),
+                        child: const FittedBox(child: HeroVisual()),
+                      ),
                     ),
                   ],
-                ),
-                child: Icon(
-                  Icons.person,
-                  size: 100,
-                  color: Theme.of(context).colorScheme.onPrimaryContainer,
-                ), // Placeholder avatar
-              ),
+                );
+              },
             ),
-          );
-        },
+          ),
+        ],
       ),
     );
   }
