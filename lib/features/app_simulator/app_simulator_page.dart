@@ -7,15 +7,7 @@ import 'package:portfolio/shared/layout/responsive_grid.dart';
 class AppSimulatorPage extends StatelessWidget {
   const AppSimulatorPage({super.key});
 
-  static Widget _card(DemoApp demo) => AppDemoCard(
-    title: demo.title,
-    description: demo.description,
-    demoWidget: demo.demoWidget,
-    uiPatterns: demo.uiPatterns,
-    layoutStructure: demo.layoutStructure,
-    widgetsUsed: demo.widgetsUsed,
-    useDeviceFrame: demo.useDeviceFrame,
-  );
+  static Widget _card(DemoApp demo) => AppDemoCard(demo: demo);
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +22,7 @@ class AppSimulatorPage extends StatelessWidget {
           ),
           const SizedBox(height: 32),
           ResponsiveGrid(
-            childAspectRatio: 1.58,
+            childAspectRatio: 2,
             children: DemoAppRegistry.demos.map(_card).toList(),
           ),
           const SizedBox(height: 40),
@@ -45,7 +37,7 @@ class AppSimulatorPage extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           ResponsiveGrid(
-            childAspectRatio: 1.7,
+            childAspectRatio: 2,
             children: DemoAppRegistry.animations.map(_card).toList(),
           ),
         ],

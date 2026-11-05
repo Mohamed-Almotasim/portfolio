@@ -10,28 +10,31 @@ class DashboardDemo extends StatelessWidget {
       body: Row(
         children: [
           // Side Navigation
-          Container(
-            width: 200,
+          // Material (not a coloured Container) so the ListTile ink shows.
+          Material(
             color: Theme.of(context).colorScheme.surfaceContainerHighest,
-            child: Column(
-              children: [
-                ListTile(
-                  leading: const Icon(Icons.dashboard),
-                  title: const Text('Dashboard'),
-                  selected: true,
-                  onTap: () {},
-                ),
-                ListTile(
-                  leading: const Icon(Icons.analytics),
-                  title: const Text('Analytics'),
-                  onTap: () {},
-                ),
-                ListTile(
-                  leading: const Icon(Icons.settings),
-                  title: const Text('Settings'),
-                  onTap: () {},
-                ),
-              ],
+            child: SizedBox(
+              width: 200,
+              child: Column(
+                children: [
+                  ListTile(
+                    leading: const Icon(Icons.dashboard),
+                    title: const Text('Dashboard'),
+                    selected: true,
+                    onTap: () {},
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.analytics),
+                    title: const Text('Analytics'),
+                    onTap: () {},
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.settings),
+                    title: const Text('Settings'),
+                    onTap: () {},
+                  ),
+                ],
+              ),
             ),
           ),
           // Main Content

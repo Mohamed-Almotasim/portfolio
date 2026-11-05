@@ -65,6 +65,10 @@ flutter:
   assets:
     - assets/images/
     - assets/google_fonts/
+    # Demo sources: developer mode shows the real code (source_snippet.dart).
+    - lib/features/ui_showcase/demos/
+    - lib/features/ui_showcase/widgets/analytics_dashboard_demo.dart
+    - lib/shared/widgets/faq_accordion.dart
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

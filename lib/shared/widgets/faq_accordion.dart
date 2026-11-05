@@ -91,6 +91,7 @@ class _FaqItemWidgetState extends State<_FaqItemWidget>
   }
 
   @override
+  // #region snippet
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
@@ -163,4 +164,5 @@ class _FaqItemWidgetState extends State<_FaqItemWidget>
       ),
     );
   }
+  // #endregion
 }

@@ -32,12 +32,7 @@ class FaqAccordionDemo extends StatelessWidget {
           'An accordion-style FAQ component with smooth expand/collapse animations. Features staggered animations and clean typography for an elegant user experience.',
       label: 'UI Pattern',
       demoWidget: FaqAccordion(items: _faqs),
-      codeSnippet: '''
-class FaqAccordionDemo extends ConsumerStatefulWidget {
-  // Expandable FAQ accordion with smooth animations
-  // Features staggered expansion and clean interactions
-  // Demonstrates list-based UI patterns
-}''',
+      sourcePath: 'lib/shared/widgets/faq_accordion.dart',
     );
   }
 }

@@ -104,11 +104,7 @@ class _DashboardCardDemoState extends ConsumerState<DashboardCardDemo>
           );
         },
       ),
-      codeSnippet: '''
-class _MetricCard extends StatefulWidget {
-  // Animated metric card with hover effects
-  // Features smooth number animation and mini chart
-}''',
+      sourcePath: 'lib/features/ui_showcase/demos/dashboard_card_demo.dart',
     );
   }
 }
@@ -140,6 +136,7 @@ class _MetricCardState extends State<_MetricCard> {
   bool _isHovered = false;
 
   @override
+  // #region snippet
   Widget build(BuildContext context) {
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
@@ -238,4 +235,5 @@ class _MetricCardState extends State<_MetricCard> {
       ),
     );
   }
+  // #endregion
 }

@@ -182,6 +182,7 @@ class _StatCard extends StatelessWidget {
   final int decimals;
 
   @override
+  // #region snippet
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
@@ -244,6 +245,7 @@ class _StatCard extends StatelessWidget {
       ),
     );
   }
+  // #endregion
 }
 
 class _ChartPanel extends StatelessWidget {

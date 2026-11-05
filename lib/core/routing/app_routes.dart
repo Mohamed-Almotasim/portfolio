@@ -4,6 +4,10 @@ abstract final class AppRoutes {
   static const home = '/';
   static const work = '/work';
   static String caseStudy(String slug) => '/work/$slug';
+  static const playground = '/playground';
+  static const playgroundPatterns = '/playground?tab=patterns';
+
+  // Old URLs, kept as redirects into the playground.
   static const uiShowcase = '/ui-showcase';
   static const widgetGallery = '/widget-gallery';
   static const appDemos = '/app-demos';
@@ -29,14 +33,9 @@ const navDestinations = [
   NavDestination(label: 'Home', path: AppRoutes.home, icon: Icons.home),
   NavDestination(label: 'Work', path: AppRoutes.work, icon: Icons.work_outline),
   NavDestination(
-    label: 'UI Showcase',
-    path: AppRoutes.uiShowcase,
-    icon: Icons.widgets,
-  ),
-  NavDestination(
-    label: 'UI Patterns',
-    path: AppRoutes.widgetGallery,
-    icon: Icons.dashboard_customize,
+    label: 'Playground',
+    path: AppRoutes.playground,
+    icon: Icons.widgets_outlined,
   ),
   NavDestination(
     label: 'App Demos',

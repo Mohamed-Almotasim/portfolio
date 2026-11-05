@@ -10,9 +10,8 @@ import 'package:portfolio/features/architecture/architecture_page.dart';
 import 'package:portfolio/features/contact/contact_page.dart';
 import 'package:portfolio/features/landing/landing_page.dart';
 import 'package:portfolio/features/not_found/not_found_page.dart';
+import 'package:portfolio/features/playground/playground_page.dart';
 import 'package:portfolio/features/services/services_page.dart';
-import 'package:portfolio/features/ui_showcase/ui_showcase_page.dart';
-import 'package:portfolio/features/widget_gallery/ui_patterns_page.dart';
 import 'package:portfolio/features/work/case_study_page.dart';
 import 'package:portfolio/features/work/work_page.dart';
 import 'package:portfolio/shared/layout/app_shell.dart';
@@ -94,8 +93,20 @@ GoRouter createRouter({
             AppRoutes.caseStudy(':slug'),
             (s) => CaseStudyPage(slug: s.pathParameters['slug']!),
           ),
-          route(AppRoutes.uiShowcase, (_) => const UIShowcasePage()),
-          route(AppRoutes.widgetGallery, (_) => const UIPatternsPage()),
+          route(
+            AppRoutes.playground,
+            (s) => PlaygroundPage(
+              showPatterns: s.uri.queryParameters['tab'] == 'patterns',
+            ),
+          ),
+          GoRoute(
+            path: AppRoutes.uiShowcase,
+            redirect: (_, _) => AppRoutes.playground,
+          ),
+          GoRoute(
+            path: AppRoutes.widgetGallery,
+            redirect: (_, _) => AppRoutes.playgroundPatterns,
+          ),
           route(AppRoutes.appDemos, (_) => const AppSimulatorPage()),
           route(AppRoutes.architecture, (_) => const ArchitecturePage()),
           route(AppRoutes.services, (_) => const ServicesPage()),

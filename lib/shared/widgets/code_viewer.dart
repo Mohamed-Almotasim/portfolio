@@ -1,71 +1,114 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:portfolio/core/theme/app_decorations.dart';
+import 'package:portfolio/core/theme/app_spacing.dart';
 import 'package:portfolio/core/theme/app_typography.dart';
+import 'package:portfolio/core/theme/code_syntax.dart';
+import 'package:portfolio/shared/widgets/dart_highlighter.dart';
 
-class CodeViewer extends StatelessWidget {
+/// Read-only code block: filename header, copy button, line numbers and
+/// Dart syntax highlighting.
+class CodeViewer extends StatefulWidget {
+  const CodeViewer({super.key, required this.code, this.filename});
+
   final String code;
+  final String? filename;
 
-  const CodeViewer({super.key, required this.code});
+  @override
+  State<CodeViewer> createState() => _CodeViewerState();
+}
+
+class _CodeViewerState extends State<CodeViewer> {
+  bool _copied = false;
+
+  Future<void> _copy() async {
+    await Clipboard.setData(ClipboardData(text: widget.code));
+    if (!mounted) return;
+    setState(() => _copied = true);
+    await Future<void>.delayed(const Duration(seconds: 2));
+    if (mounted) setState(() => _copied = false);
+  }
 
   @override
   Widget build(BuildContext context) {
+    const syntax = CodeSyntax.standard;
     final deco = AppDecorations.of(context);
-    return Container(
-      width: double.infinity,
-      constraints: const BoxConstraints(maxHeight: 300),
-      decoration: BoxDecoration(
+    final style = AppTypography.code(syntax.plain);
+    final lineCount = '\n'.allMatches(widget.code).length + 1;
+    final header = Color.alphaBlend(
+      syntax.plain.withValues(alpha: 0.06),
+      deco.codeBackground,
+    );
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(AppRadius.md),
+      child: ColoredBox(
         color: deco.codeBackground,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(
+              color: header,
+              padding: const EdgeInsets.only(left: AppSpacing.s16),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      widget.filename ?? 'snippet.dart',
+                      overflow: TextOverflow.ellipsis,
+                      style: style.copyWith(color: syntax.comment),
+                    ),
+                  ),
+                  TextButton.icon(
+                    onPressed: _copy,
+                    style: TextButton.styleFrom(
+                      foregroundColor: _copied ? deco.success : syntax.plain,
+                    ),
+                    icon: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 150),
+                      child: Icon(
+                        _copied ? Icons.check : Icons.copy,
+                        key: ValueKey(_copied),
+                        size: 16,
+                      ),
+                    ),
+                    label: Text(_copied ? 'Copied' : 'Copy'),
+                  ),
+                ],
+              ),
+            ),
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 360),
               child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: SelectableText(
-                  code,
-                  style: AppTypography.code(deco.codeForeground),
-                ),
-              ),
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              color: Color.alphaBlend(
-                deco.codeForeground.withValues(alpha: 0.06),
-                deco.codeBackground,
-              ),
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(8),
-                bottomRight: Radius.circular(8),
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                IconButton(
-                  icon: Icon(Icons.copy, color: deco.codeForeground),
-                  onPressed: () {
-                    Clipboard.setData(ClipboardData(text: code)).then((_) {
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Code copied to clipboard'),
+                padding: const EdgeInsets.all(AppSpacing.s16),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ExcludeSemantics(
+                      child: Text(
+                        [for (var i = 1; i <= lineCount; i++) '$i'].join('\n'),
+                        textAlign: TextAlign.right,
+                        style: style.copyWith(color: syntax.lineNumber),
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.s16),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: SelectableText.rich(
+                          TextSpan(
+                            style: style,
+                            children: highlightDart(widget.code, syntax),
                           ),
-                        );
-                      }
-                    });
-                  },
-                  tooltip: 'Copy code',
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

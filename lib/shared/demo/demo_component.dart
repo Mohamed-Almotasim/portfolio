@@ -1,223 +1,119 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portfolio/core/state/developer_mode_provider.dart';
+import 'package:portfolio/core/theme/app_decorations.dart';
+import 'package:portfolio/core/theme/app_spacing.dart';
+import 'package:portfolio/shared/demo/source_snippet.dart';
 import 'package:portfolio/shared/widgets/code_viewer.dart';
 
+/// Showcase card: live preview always; in developer mode, the real code
+/// excerpt from [sourcePath] (between `// #region snippet` markers).
 class DemoComponent extends ConsumerStatefulWidget {
-  final String title;
-  final String description;
-  final Widget demoWidget;
-  final String codeSnippet;
-  final String? label;
-
   const DemoComponent({
     super.key,
     required this.title,
     required this.description,
     required this.demoWidget,
-    required this.codeSnippet,
+    required this.sourcePath,
     this.label,
   });
+
+  final String title;
+  final String description;
+  final Widget demoWidget;
+
+  /// Asset path of the demo's own source file, listed in pubspec.yaml.
+  final String sourcePath;
+  final String? label;
 
   @override
   ConsumerState<DemoComponent> createState() => _DemoComponentState();
 }
 
-class _DemoComponentState extends ConsumerState<DemoComponent>
-    with SingleTickerProviderStateMixin {
+class _DemoComponentState extends ConsumerState<DemoComponent> {
   bool _showCode = false;
-  late AnimationController _animationController;
-  late Animation<double> _heightAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
-    _heightAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
-    );
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
-  }
-
-  void _toggleCode() {
-    setState(() {
-      _showCode = !_showCode;
-      if (_showCode) {
-        _animationController.forward();
-      } else {
-        _animationController.reverse();
-      }
-    });
-  }
+  late final Future<String> _snippet = loadSnippet(widget.sourcePath);
 
   @override
   Widget build(BuildContext context) {
-    return Consumer(
-      builder: (context, ref, child) {
-        final isDeveloperMode = ref.watch(developerModeProvider);
-        return LayoutBuilder(
-          builder: (context, constraints) {
-            // Constrain max width for better UX on very wide screens
-            final maxCardWidth = constraints.maxWidth > 600
-                ? 600.0
-                : constraints.maxWidth;
-            return Center(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: maxCardWidth),
-                child: Card(
-                  margin: EdgeInsets.zero,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      gradient: LinearGradient(
-                        colors: [
-                          Theme.of(context).colorScheme.surface,
-                          Theme.of(
-                            context,
-                          ).colorScheme.surface.withValues(alpha: 0.8),
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
+    final isDeveloperMode = ref.watch(developerModeProvider);
+    final scheme = Theme.of(context).colorScheme;
+    final text = Theme.of(context).textTheme;
+    final deco = AppDecorations.of(context);
+
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.s16),
+      decoration: BoxDecoration(
+        color: scheme.surface,
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        border: Border.all(color: deco.cardBorder),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (widget.label != null) ...[
+            Text(
+              widget.label!,
+              style: text.labelMedium?.copyWith(color: scheme.primary),
+            ),
+            const SizedBox(height: AppSpacing.s8),
+          ],
+          Text(widget.title, style: text.titleLarge),
+          const SizedBox(height: AppSpacing.s16),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(AppSpacing.s16),
+            decoration: BoxDecoration(
+              color: scheme.surfaceContainerLow,
+              borderRadius: BorderRadius.circular(AppRadius.md),
+              border: Border.all(color: scheme.outlineVariant),
+            ),
+            child: widget.demoWidget,
+          ),
+          const SizedBox(height: AppSpacing.s16),
+          Text(
+            widget.description,
+            style: text.bodyMedium?.copyWith(color: scheme.onSurfaceVariant),
+          ),
+          AnimatedSize(
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.easeOutCubic,
+            alignment: Alignment.topCenter,
+            child: !isDeveloperMode
+                ? const SizedBox(width: double.infinity)
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: AppSpacing.s12),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: TextButton.icon(
+                          onPressed: () =>
+                              setState(() => _showCode = !_showCode),
+                          icon: const Icon(Icons.code, size: 18),
+                          label: Text(_showCode ? 'Hide code' : 'Show code'),
+                        ),
                       ),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Label
-                          if (widget.label != null) ...[
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 6,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.primary.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Text(
-                                widget.label!,
-                                style: Theme.of(context).textTheme.labelSmall
-                                    ?.copyWith(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.primary,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                          ],
-
-                          // Title
-                          Text(
-                            widget.title,
-                            style: Theme.of(context).textTheme.titleLarge
-                                ?.copyWith(fontWeight: FontWeight.bold),
-                          ),
-
-                          const SizedBox(height: 16),
-
-                          // Live widget preview area
-                          Container(
-                            padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.outlineVariant,
-                              ),
-                              borderRadius: BorderRadius.circular(12),
-                              color: Theme.of(context).colorScheme.surface,
-                            ),
-                            child: LayoutBuilder(
-                              builder: (context, constraints) {
-                                return SizedBox(
-                                  width: double.infinity,
-                                  child: widget.demoWidget,
-                                );
-                              },
-                            ),
-                          ),
-
-                          const SizedBox(height: 16),
-
-                          // Description - remove maxLines to allow natural wrapping
-                          Text(
-                            widget.description,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-
-                          const SizedBox(height: 16),
-
-                          // Code section
-                          if (isDeveloperMode) ...[
-                            const Divider(),
-                            const SizedBox(height: 12),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'Code',
-                                  style: Theme.of(
-                                    context,
-                                  ).textTheme.titleMedium,
-                                ),
-                                TextButton.icon(
-                                  onPressed: _toggleCode,
-                                  icon: AnimatedRotation(
-                                    turns: _showCode ? 0.5 : 0,
-                                    duration: const Duration(milliseconds: 300),
-                                    child: const Icon(Icons.code),
-                                  ),
-                                  label: Text(
-                                    _showCode ? 'Hide Code' : 'Show Code',
-                                  ),
-                                ),
-                              ],
-                            ),
-                            AnimatedBuilder(
-                              animation: _heightAnimation,
-                              builder: (context, child) {
-                                return ClipRect(
-                                  child: Align(
-                                    alignment: Alignment.topCenter,
-                                    heightFactor: _heightAnimation.value,
-                                    child: child,
-                                  ),
-                                );
-                              },
-                              child: Container(
-                                margin: const EdgeInsets.only(top: 12),
-                                child: CodeViewer(code: widget.codeSnippet),
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
+                      if (_showCode)
+                        FutureBuilder<String>(
+                          future: _snippet,
+                          builder: (context, snap) => snap.hasData
+                              ? CodeViewer(
+                                  code: snap.data!,
+                                  filename: widget.sourcePath.split('/').last,
+                                )
+                              : snap.hasError
+                              ? Text(
+                                  'Source unavailable',
+                                  style: text.bodySmall,
+                                )
+                              : const LinearProgressIndicator(),
+                        ),
+                    ],
                   ),
-                ),
-              ),
-            );
-          },
-        );
-      },
+          ),
+        ],
+      ),
     );
   }
 }

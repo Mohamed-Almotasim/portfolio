@@ -38,6 +38,7 @@ class _ThemeSwitcherDemoState extends ConsumerState<ThemeSwitcherDemo>
     super.dispose();
   }
 
+  // #region snippet
   void _switchTheme(ThemeMode theme) {
     setState(() {
       _currentTheme = theme;
@@ -64,6 +65,7 @@ class _ThemeSwitcherDemoState extends ConsumerState<ThemeSwitcherDemo>
     });
     _animationController.forward(from: 0);
   }
+  // #endregion
 
   @override
   Widget build(BuildContext context) {
@@ -133,12 +135,7 @@ class _ThemeSwitcherDemoState extends ConsumerState<ThemeSwitcherDemo>
           );
         },
       ),
-      codeSnippet: '''
-class ThemeSwitcherDemo extends ConsumerStatefulWidget {
-  // Animated theme switcher with smooth transitions
-  // Demonstrates state management and UI animations
-  // Features light, dark, and gradient modes
-}''',
+      sourcePath: 'lib/features/ui_showcase/demos/theme_switcher_demo.dart',
     );
   }
 

@@ -54,6 +54,7 @@ class _SmartSearchDemoState extends ConsumerState<SmartSearchDemo>
     super.dispose();
   }
 
+  // #region snippet
   void _onSearchChanged() {
     final query = _controller.text.toLowerCase();
     setState(() {
@@ -73,6 +74,7 @@ class _SmartSearchDemoState extends ConsumerState<SmartSearchDemo>
       }
     });
   }
+  // #endregion
 
   void _selectSuggestion(String suggestion) {
     _controller.text = suggestion;
@@ -224,12 +226,7 @@ class _SmartSearchDemoState extends ConsumerState<SmartSearchDemo>
           ),
         ],
       ),
-      codeSnippet: '''
-class SmartSearchDemo extends ConsumerStatefulWidget {
-  // Intelligent search with animated suggestions
-  // Features filtering, selection, and smooth transitions
-  // Demonstrates advanced text input interactions
-}''',
+      sourcePath: 'lib/features/ui_showcase/demos/smart_search_demo.dart',
     );
   }
 }

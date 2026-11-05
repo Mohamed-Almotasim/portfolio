@@ -16,6 +16,7 @@ class _PricingCardDemoState extends ConsumerState<PricingCardDemo>
   late Animation<double> _scaleAnimation;
   late Animation<double> _buttonScaleAnimation;
 
+  // #region snippet
   @override
   void initState() {
     super.initState();
@@ -49,6 +50,7 @@ class _PricingCardDemoState extends ConsumerState<PricingCardDemo>
       }
     });
   }
+  // #endregion
 
   @override
   Widget build(BuildContext context) {
@@ -204,12 +206,7 @@ class _PricingCardDemoState extends ConsumerState<PricingCardDemo>
           },
         ),
       ),
-      codeSnippet: '''
-class PricingCardDemo extends ConsumerStatefulWidget {
-  // Animated pricing card with hover effects
-  // Features smooth scaling and button animations
-  // Demonstrates micro-interactions for CTAs
-}''',
+      sourcePath: 'lib/features/ui_showcase/demos/pricing_card_demo.dart',
     );
   }
 }

@@ -14,6 +14,8 @@ const routes = [
   '/work',
   '/work/student-management-system',
   '/',
+  '/playground',
+  '/playground?tab=patterns',
   '/ui-showcase',
   '/widget-gallery',
   '/architecture',

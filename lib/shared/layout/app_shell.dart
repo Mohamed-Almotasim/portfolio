@@ -39,8 +39,39 @@ class _AppShellState extends ConsumerState<AppShell> {
     return false;
   }
 
+  bool _devBannerShown = false;
+
+  /// Explains developer mode the first time it's switched on.
+  void _maybeShowDevBanner(bool enabled) {
+    final messenger = ScaffoldMessenger.of(context);
+    if (!enabled) {
+      messenger.hideCurrentMaterialBanner();
+      return;
+    }
+    if (_devBannerShown) return;
+    _devBannerShown = true;
+    messenger.showMaterialBanner(
+      MaterialBanner(
+        leading: const Icon(Icons.code),
+        content: const Text(
+          'Developer mode is on. Showcase components now show the real source '
+          'they run, and app demos list their layout and widgets.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: messenger.hideCurrentMaterialBanner,
+            child: const Text('Got it'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    ref.listen(developerModeProvider, (_, enabled) {
+      _maybeShowDevBanner(enabled);
+    });
     return Scaffold(
       key: _scaffoldKey,
       drawer: AppBreakpoints.isDesktop(context)
