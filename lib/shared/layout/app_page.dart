@@ -19,10 +19,14 @@ class AppPage extends StatefulWidget {
 
 class _AppPageState extends State<AppPage> {
   final _scrollController = ScrollController();
+  // Text stays selectable with mouse and touch, but the selection area is
+  // not a keyboard tab stop (it would be an invisible, useless one).
+  final _selectionFocus = FocusNode(skipTraversal: true);
 
   @override
   void dispose() {
     _scrollController.dispose();
+    _selectionFocus.dispose();
     super.dispose();
   }
 
@@ -45,6 +49,7 @@ class _AppPageState extends State<AppPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SelectionArea(
+                      focusNode: _selectionFocus,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [

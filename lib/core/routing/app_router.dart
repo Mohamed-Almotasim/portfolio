@@ -5,16 +5,19 @@ import 'package:portfolio/core/content/portfolio_content.dart' as content;
 import 'package:portfolio/core/content/profile.dart';
 import 'package:portfolio/core/routing/app_routes.dart';
 import 'package:portfolio/core/state/profile_provider.dart';
-import 'package:portfolio/features/app_simulator/app_simulator_page.dart';
+import 'package:portfolio/features/app_simulator/app_simulator_page.dart'
+    deferred as app_demos;
 import 'package:portfolio/features/architecture/architecture_page.dart';
 import 'package:portfolio/features/contact/contact_page.dart';
 import 'package:portfolio/features/landing/landing_page.dart';
 import 'package:portfolio/features/not_found/not_found_page.dart';
-import 'package:portfolio/features/playground/playground_page.dart';
+import 'package:portfolio/features/playground/playground_page.dart'
+    deferred as playground;
 import 'package:portfolio/features/services/services_page.dart';
 import 'package:portfolio/features/work/case_study_page.dart';
 import 'package:portfolio/features/work/work_page.dart';
 import 'package:portfolio/shared/layout/app_shell.dart';
+import 'package:portfolio/shared/layout/deferred_page.dart';
 
 /// Browser tab title: `Page — Name`, or `Name — Title` on the home page.
 String pageTitle(String path, Profile profile) {
@@ -71,6 +74,9 @@ GoRouter createRouter({
 
   return GoRouter(
     initialLocation: initialLocation,
+    // Pages must not grab focus on push, or keyboard users start inside the
+    // page and reach the navbar last. Focus order is set in AppShell.
+    requestFocus: false,
     // errorBuilder bypasses ShellRoute, so wrap the 404 in the shell here.
     errorBuilder: (context, state) => AppShell(
       location: state.uri.path,
@@ -95,8 +101,11 @@ GoRouter createRouter({
           ),
           route(
             AppRoutes.playground,
-            (s) => PlaygroundPage(
-              showPatterns: s.uri.queryParameters['tab'] == 'patterns',
+            (s) => DeferredPage(
+              load: playground.loadLibrary,
+              builder: (_) => playground.PlaygroundPage(
+                showPatterns: s.uri.queryParameters['tab'] == 'patterns',
+              ),
             ),
           ),
           GoRoute(
@@ -107,7 +116,13 @@ GoRouter createRouter({
             path: AppRoutes.widgetGallery,
             redirect: (_, _) => AppRoutes.playgroundPatterns,
           ),
-          route(AppRoutes.appDemos, (_) => const AppSimulatorPage()),
+          route(
+            AppRoutes.appDemos,
+            (_) => DeferredPage(
+              load: app_demos.loadLibrary,
+              builder: (_) => app_demos.AppSimulatorPage(),
+            ),
+          ),
           route(AppRoutes.architecture, (_) => const ArchitecturePage()),
           route(AppRoutes.services, (_) => const ServicesPage()),
           route(AppRoutes.contact, (_) => const ContactPage()),

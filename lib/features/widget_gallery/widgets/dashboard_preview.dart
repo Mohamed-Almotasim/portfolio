@@ -56,7 +56,8 @@ class _StatBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: compact ? 40 : 50,
+      // A minimum, not a fixed height: large text sizes must not overflow.
+      constraints: BoxConstraints(minHeight: compact ? 40 : 50),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(8),
@@ -65,6 +66,7 @@ class _StatBox extends StatelessWidget {
       // Horizontal-only: vertical padding left too little room for two lines.
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(

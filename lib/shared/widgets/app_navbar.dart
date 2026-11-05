@@ -189,7 +189,7 @@ class _NavLinkState extends State<_NavLink> {
             horizontal: AppSpacing.s12,
             vertical: AppSpacing.s8,
           ),
-          minimumSize: Size.zero,
+          minimumSize: const Size(44, 44),
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),
         child: Column(

@@ -177,7 +177,7 @@ class _FooterNavLink extends StatelessWidget {
       onPressed: onPressed,
       style: TextButton.styleFrom(
         padding: EdgeInsets.zero,
-        minimumSize: Size.zero,
+        minimumSize: const Size(44, 44),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         alignment: Alignment.centerLeft,
       ),
@@ -207,7 +207,7 @@ class _SocialLinkState extends ConsumerState<_SocialLink> {
         onTap: () => openLink(context, ref, Uri.parse(widget.link.url)),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
           decoration: BoxDecoration(
             color: _isHovered
                 ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)

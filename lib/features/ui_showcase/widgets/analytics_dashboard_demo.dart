@@ -301,21 +301,27 @@ class _ChartPanel extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        AnimatedContainer(
-                          duration: Duration(milliseconds: 450 + (index * 80)),
-                          curve: Curves.easeOutCubic,
-                          height: barHeights[index],
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(999),
-                            gradient: LinearGradient(
-                              colors: [
-                                theme.colorScheme.primary.withValues(
-                                  alpha: 0.35,
-                                ),
-                                theme.colorScheme.primary,
-                              ],
-                              begin: Alignment.bottomCenter,
-                              end: Alignment.topCenter,
+                        // Flexible: at large text sizes the bar gives up a
+                        // few pixels instead of overflowing the fixed chart.
+                        Flexible(
+                          child: AnimatedContainer(
+                            duration: Duration(
+                              milliseconds: 450 + (index * 80),
+                            ),
+                            curve: Curves.easeOutCubic,
+                            height: barHeights[index],
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(999),
+                              gradient: LinearGradient(
+                                colors: [
+                                  theme.colorScheme.primary.withValues(
+                                    alpha: 0.35,
+                                  ),
+                                  theme.colorScheme.primary,
+                                ],
+                                begin: Alignment.bottomCenter,
+                                end: Alignment.topCenter,
+                              ),
                             ),
                           ),
                         ),

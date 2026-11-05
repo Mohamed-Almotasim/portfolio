@@ -8,7 +8,7 @@ import 'package:portfolio/core/state/theme_mode_provider.dart';
 import 'package:portfolio/core/theme/app_decorations.dart';
 import 'package:portfolio/core/theme/app_spacing.dart';
 import 'package:portfolio/core/theme/app_typography.dart';
-import 'package:portfolio/features/app_simulator/demo_app_registry.dart';
+import 'package:portfolio/features/app_simulator/demo_count.dart';
 
 /// Layered-card composition, gently floating: a code card (decorative), a
 /// working theme switch and a link to the live demos. Everything shown is
@@ -227,8 +227,7 @@ class _DemosToast extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final text = Theme.of(context).textTheme;
-    final count =
-        DemoAppRegistry.demos.length + DemoAppRegistry.animations.length;
+    final count = liveDemoCount;
     return _Panel(
       width: 230,
       child: InkWell(

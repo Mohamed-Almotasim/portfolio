@@ -1,12 +1,12 @@
 {
-    "name": "portfolio",
-    "short_name": "portfolio",
+    "name": "Your Name — Flutter Developer",
+    "short_name": "Portfolio",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
-    "orientation": "portrait-primary",
+    "background_color": "#0B0F17",
+    "theme_color": "#4F46E5",
+    "description": "Flutter developer portfolio: case studies, live app demos and the code behind them.",
+    "orientation": "any",
     "prefer_related_applications": false,
     "icons": [
         {

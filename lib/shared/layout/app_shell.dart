@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:portfolio/core/routing/app_routes.dart';
@@ -77,25 +78,51 @@ class _AppShellState extends ConsumerState<AppShell> {
       drawer: AppBreakpoints.isDesktop(context)
           ? null
           : _AppDrawer(location: widget.location),
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: NotificationListener<ScrollNotification>(
-              onNotification: _onScroll,
-              child: widget.child,
-            ),
+      // The navbar is painted last (on top), but keyboard focus and screen
+      // readers should reach it first, so both orders are set explicitly.
+      body: FocusTraversalGroup(
+        policy: OrderedTraversalPolicy(),
+        // Invisible starting point: the first Tab goes to the first item in
+        // the order above (the navbar). Routes don't take focus on push.
+        child: Focus(
+          autofocus: true,
+          skipTraversal: true,
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: FocusTraversalOrder(
+                  order: const NumericFocusOrder(2),
+                  child: Semantics(
+                    sortKey: const OrdinalSortKey(2),
+                    child: NotificationListener<ScrollNotification>(
+                      onNotification: _onScroll,
+                      child: widget.child,
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: FocusTraversalOrder(
+                  order: const NumericFocusOrder(1),
+                  child: Semantics(
+                    sortKey: const OrdinalSortKey(1),
+                    container: true,
+                    explicitChildNodes: true,
+                    child: AppNavbar(
+                      location: widget.location,
+                      scrolled: _scrolled,
+                      onMenuPressed: () =>
+                          _scaffoldKey.currentState?.openDrawer(),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: AppNavbar(
-              location: widget.location,
-              scrolled: _scrolled,
-              onMenuPressed: () => _scaffoldKey.currentState?.openDrawer(),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
