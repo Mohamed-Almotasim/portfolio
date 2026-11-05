@@ -63,6 +63,8 @@ class AnalyticsDashboardDemo extends StatelessWidget {
 
               if (constraints.maxWidth < 350) {
                 return Column(
+                  // Stretch, or cards of different widths stack staggered.
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     for (var index = 0; index < stats.length; index++) ...[
                       if (index > 0) const SizedBox(height: 12),
@@ -99,65 +101,76 @@ class _DashboardHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    final title = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Analytics Overview',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'Traffic, revenue, and conversion trends at a glance.',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                ),
-              ),
-            ],
+        Text(
+          'Analytics Overview',
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w700,
           ),
         ),
-        const SizedBox(width: 12),
-        DecoratedBox(
-          decoration: BoxDecoration(
-            color: theme.colorScheme.surface.withValues(alpha: 0.85),
-            borderRadius: BorderRadius.circular(999),
-            border: Border.all(
-              color: theme.colorScheme.outlineVariant.withValues(alpha: 0.8),
-            ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  Icons.calendar_today_outlined,
-                  size: 16,
-                  color: theme.colorScheme.primary,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'This Week',
-                  style: theme.textTheme.labelLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(width: 4),
-                Icon(
-                  Icons.expand_more,
-                  size: 18,
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              ],
-            ),
+        const SizedBox(height: 4),
+        Text(
+          'Traffic, revenue, and conversion trends at a glance.',
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
           ),
         ),
       ],
+    );
+    // Stack on narrow widths so the title isn't squeezed into a thin column.
+    return LayoutBuilder(
+      builder: (context, c) => c.maxWidth < 360
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [title, const SizedBox(height: 12), _rangePill()],
+            )
+          : Row(
+              children: [
+                Expanded(child: title),
+                const SizedBox(width: 12),
+                _rangePill(),
+              ],
+            ),
+    );
+  }
+
+  Widget _rangePill() {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface.withValues(alpha: 0.85),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(
+          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.8),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.calendar_today_outlined,
+              size: 16,
+              color: theme.colorScheme.primary,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              'This Week',
+              style: theme.textTheme.labelLarge?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(width: 4),
+            Icon(
+              Icons.expand_more,
+              size: 18,
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
