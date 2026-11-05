@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 /// Grid whose cells are at least `width / childAspectRatio` tall but grow to
 /// fit their content, so cards never overflow at in-between widths.
-class ResponsiveGrid extends StatelessWidget {
+class ResponsiveGrid extends StatefulWidget {
   const ResponsiveGrid({
     super.key,
     required this.children,
@@ -20,12 +20,37 @@ class ResponsiveGrid extends StatelessWidget {
   final int? wideColumns;
 
   @override
+  State<ResponsiveGrid> createState() => _ResponsiveGridState();
+}
+
+class _ResponsiveGridState extends State<ResponsiveGrid> {
+  // RenderParagraph keeps its intrinsic-size text layout across font loads, so
+  // IntrinsicHeight would keep fallback-font heights. Remount rows instead.
+  var _fontGeneration = 0;
+
+  void _fontsChanged() => setState(() => _fontGeneration++);
+
+  @override
+  void initState() {
+    super.initState();
+    PaintingBinding.instance.systemFonts.addListener(_fontsChanged);
+  }
+
+  @override
+  void dispose() {
+    PaintingBinding.instance.systemFonts.removeListener(_fontsChanged);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final ResponsiveGrid(:children, :spacing, :childAspectRatio, :wideColumns) =
+        widget;
     return LayoutBuilder(
       builder: (context, constraints) {
         int crossAxisCount;
         if (wideColumns != null && constraints.maxWidth >= 900) {
-          crossAxisCount = wideColumns!;
+          crossAxisCount = wideColumns;
         } else if (constraints.maxWidth >= 1200) {
           crossAxisCount = 4;
         } else if (constraints.maxWidth >= 900) {
@@ -46,6 +71,7 @@ class ResponsiveGrid extends StatelessWidget {
               if (row > 0) SizedBox(height: spacing),
               // Equal heights per row, sized to the tallest card.
               IntrinsicHeight(
+                key: ValueKey((row, _fontGeneration)),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [

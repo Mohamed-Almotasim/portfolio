@@ -23,6 +23,7 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
+          flutter-version: 3.47.7
           cache: true
       - run: flutter pub get
       - run: dart format --output=none --set-exit-if-changed .
@@ -41,6 +42,7 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
+          flutter-version: 3.47.7
           cache: true
       - run: flutter pub get
       # Project pages live under /<repo>/. With a custom domain use "/".

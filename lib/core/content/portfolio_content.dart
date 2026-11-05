@@ -316,3 +316,8 @@ const contactBudgets = [
   'Medium (1–3 months)',
   'Large (3+ months)',
 ];
+
+/// Formspree form URL, e.g. 'https://formspree.io/f/abcdwxyz'. While null the
+/// contact form opens a prefilled email instead.
+// TODO(me): create a form at formspree.io and paste its endpoint here.
+const String? contactFormEndpoint = null;

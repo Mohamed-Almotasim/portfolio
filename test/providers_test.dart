@@ -34,8 +34,8 @@ void main() {
   });
 
   group('theme mode', () {
-    test('defaults to dark', () {
-      expect(_container().read(themeModeProvider), ThemeMode.dark);
+    test('follows the system until the visitor picks', () {
+      expect(_container().read(themeModeProvider), ThemeMode.system);
     });
 
     test('toggle flips whatever is shown, even from system', () {

@@ -20,6 +20,12 @@ class _Dev extends DeveloperModeNotifier {
   bool build() => true;
 }
 
+// Default follows the OS (light in tests), so both modes are explicit.
+class _Dark extends ThemeModeNotifier {
+  @override
+  ThemeMode build() => ThemeMode.dark;
+}
+
 class _Light extends ThemeModeNotifier {
   @override
   ThemeMode build() => ThemeMode.light;
@@ -29,6 +35,7 @@ void main() {
   final out = Platform.environment['SHOT_DIR'];
   if (out == null) return; // only runs when asked for screenshots
   setUpAll(() async {
+    loadCodeFont();
     await preloadFonts();
     final dir =
         '${Platform.environment['FLUTTER_ROOT']}/bin/cache/artifacts/material_fonts';
@@ -63,7 +70,7 @@ void main() {
                 routerProvider.overrideWithValue(
                   createRouter(initialLocation: path),
                 ),
-                if (light) themeModeProvider.overrideWith(_Light.new),
+                themeModeProvider.overrideWith(light ? _Light.new : _Dark.new),
                 if (Platform.environment['SHOT_DEV'] != null)
                   developerModeProvider.overrideWith(_Dev.new),
               ],

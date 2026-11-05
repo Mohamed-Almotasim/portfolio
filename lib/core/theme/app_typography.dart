@@ -38,19 +38,16 @@ abstract final class AppTypography {
       GoogleFonts.jetBrainsMono(fontSize: 13, height: 1.6, color: color);
 }
 
-/// Loads every bundled weight before the first frame. Without this, text is
-/// first laid out in a fallback font, and widgets that cache intrinsic sizes
-/// (IntrinsicHeight in ResponsiveGrid) keep the stale, taller measurement.
+/// Starts loading the weights [AppTypography.textTheme] uses; main() keeps the
+/// HTML splash up until this completes. Only these files are bundled.
 Future<void> preloadFonts() {
-  for (final w in [
-    FontWeight.w400,
-    FontWeight.w500,
-    FontWeight.w600,
-    FontWeight.w700,
-  ]) {
+  for (final w in [FontWeight.w400, FontWeight.w500, FontWeight.w600]) {
     GoogleFonts.inter(fontWeight: w);
-    if (w != FontWeight.w400) GoogleFonts.spaceGrotesk(fontWeight: w);
   }
-  GoogleFonts.jetBrainsMono();
+  GoogleFonts.spaceGrotesk(fontWeight: FontWeight.w600);
+  GoogleFonts.spaceGrotesk(fontWeight: FontWeight.w700);
   return GoogleFonts.pendingFonts();
 }
+
+/// JetBrains Mono, loaded on demand (developer mode, code blocks).
+void loadCodeFont() => GoogleFonts.jetBrainsMono();

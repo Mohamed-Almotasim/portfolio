@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:portfolio/core/content/case_study.dart';
 import 'package:portfolio/core/content/portfolio_content.dart' as content;
 import 'package:portfolio/core/content/profile.dart';
 import 'package:portfolio/core/routing/app_routes.dart';
@@ -14,17 +15,18 @@ import 'package:portfolio/features/not_found/not_found_page.dart';
 import 'package:portfolio/features/playground/playground_page.dart'
     deferred as playground;
 import 'package:portfolio/features/services/services_page.dart';
+import 'package:portfolio/features/work/case_studies_provider.dart';
 import 'package:portfolio/features/work/case_study_page.dart';
 import 'package:portfolio/features/work/work_page.dart';
 import 'package:portfolio/shared/layout/app_shell.dart';
 import 'package:portfolio/shared/layout/deferred_page.dart';
 
 /// Browser tab title: `Page — Name`, or `Name — Title` on the home page.
-String pageTitle(String path, Profile profile) {
+String pageTitle(String path, Profile profile, List<CaseStudy> caseStudies) {
   if (path == AppRoutes.home) return '${profile.name} — ${profile.title}';
   if (path.startsWith('${AppRoutes.work}/')) {
     final slug = path.substring(AppRoutes.work.length + 1);
-    final study = content.caseStudies.where((c) => c.slug == slug).firstOrNull;
+    final study = caseStudies.where((c) => c.slug == slug).firstOrNull;
     return '${study?.title ?? 'Not found'} — ${profile.name}';
   }
   final label = navDestinations
@@ -37,9 +39,10 @@ String pageTitle(String path, Profile profile) {
 GoRouter createRouter({
   String initialLocation = AppRoutes.home,
   Profile profile = content.profile,
+  List<CaseStudy> caseStudies = content.caseStudies,
 }) {
   Widget titled(BuildContext context, String path, Widget child) => Title(
-    title: pageTitle(path, profile),
+    title: pageTitle(path, profile, caseStudies),
     color: Theme.of(context).colorScheme.primary,
     child: child,
   );
@@ -134,7 +137,10 @@ GoRouter createRouter({
 
 /// Override in tests with `routerProvider.overrideWithValue(createRouter(...))`.
 final routerProvider = Provider<GoRouter>((ref) {
-  final router = createRouter(profile: ref.read(profileProvider));
+  final router = createRouter(
+    profile: ref.read(profileProvider),
+    caseStudies: ref.read(caseStudiesProvider),
+  );
   ref.onDispose(router.dispose);
   return router;
 });

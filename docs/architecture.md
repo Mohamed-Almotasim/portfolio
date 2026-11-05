@@ -22,7 +22,7 @@ Dependencies point inward: `features` may use `shared` and `core`; `shared` may 
 | `content/` | Immutable, const models (`Profile`, `CaseStudy`, `ServiceOffering`, `Skill`, `ProcessStep`, `EngagementModel`, `FaqItem`, `ProofStat`) and **all site copy** in `portfolio_content.dart`. `TODO(me)` marks what the owner must fill in. |
 | `routing/` | `app_routes.dart` (path constants + `navDestinations`, the single source for navbar, drawer and footer), `app_router.dart` (`createRouter`, `routerProvider`, `pageTitle`). |
 | `state/` | Global Notifiers: `themeModeProvider` (dark by default), `developerModeProvider`, `profileProvider`. |
-| `theme/` | The design system: `app_colors.dart` (palette, light/dark `ColorScheme`), `app_typography.dart` (Space Grotesk / Inter / JetBrains Mono, responsive sizes, `preloadFonts`), `app_spacing.dart` (spacing and radius scales, breakpoints, max width), `app_decorations.dart` (`ThemeExtension` for borders, gradients, glass, code, shadows, status colours), `code_syntax.dart`, `app_theme.dart` (component themes). |
+| `theme/` | The design system: `app_colors.dart` (palette, light/dark `ColorScheme`), `app_typography.dart` (Space Grotesk / Inter / JetBrains Mono, responsive sizes, `preloadFonts` (main() defers the first frame until it completes) and lazy `loadCodeFont`), `app_spacing.dart` (spacing and radius scales, breakpoints, max width), `app_decorations.dart` (`ThemeExtension` for borders, gradients, glass, code, shadows, status colours), `code_syntax.dart`, `app_theme.dart` (component themes). |
 
 ## shared/
 
@@ -43,7 +43,7 @@ Dependencies point inward: `features` may use `shared` and `core`; `shared` may 
 | `playground/` | `/playground[?tab=patterns]` | Tabs over `ui_showcase/` (components) and `widget_gallery/` (patterns). `/ui-showcase` and `/widget-gallery` redirect here. Deferred-loaded. |
 | `app_simulator/` | `/app-demos` | `DemoAppRegistry`; demos in `DeviceFrame`; heavy animations follow the `*_controller / *_model / *_widget` triplet. Deferred-loaded. |
 | `architecture/` | `/architecture` | Diagrams, flows, details, notes on this codebase. |
-| `contact/` | `/contact` | Validated form → prefilled `mailto:` (`contact_mailto.dart`). |
+| `contact/` | `/contact` | Validated form → JSON POST to `contactFormEndpoint` (Formspree) when set, else a prefilled `mailto:` (`contact_mailto.dart`). |
 | `not_found/` | any unknown path | 404 inside the shell. |
 
 ## Routing

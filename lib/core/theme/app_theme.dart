@@ -5,12 +5,23 @@ import 'package:portfolio/core/theme/app_spacing.dart';
 import 'package:portfolio/core/theme/app_typography.dart';
 
 abstract final class AppTheme {
+  // Built once per (brightness, compact): app.dart asks again on every resize.
+  static final _cache = <(Brightness, bool), ThemeData>{};
+
   /// [compact] shrinks display/headline sizes for mobile widths.
   static ThemeData light({bool compact = false}) =>
-      _build(AppColors.light, AppDecorations.light, compact);
+      _cache[(Brightness.light, compact)] ??= _build(
+        AppColors.light,
+        AppDecorations.light,
+        compact,
+      );
 
   static ThemeData dark({bool compact = false}) =>
-      _build(AppColors.dark, AppDecorations.dark, compact);
+      _cache[(Brightness.dark, compact)] ??= _build(
+        AppColors.dark,
+        AppDecorations.dark,
+        compact,
+      );
 
   static ThemeData _build(ColorScheme s, AppDecorations d, bool compact) {
     final text = AppTypography.textTheme(s, compact: compact);

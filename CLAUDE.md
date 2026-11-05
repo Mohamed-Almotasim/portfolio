@@ -33,7 +33,7 @@ Stack: Flutter web, Riverpod 3 (Notifiers), go_router 18 (ShellRoute, path URLs)
 | `/app-demos` | `AppSimulatorPage`, demos from `DemoAppRegistry`; deferred | `app_simulator/` |
 | `/architecture` | `ArchitecturePage` | `architecture/` |
 | `/services` | `ServicesPage` | `services/` |
-| `/contact` | `ContactPage` (mailto flow) | `contact/` |
+| `/contact` | `ContactPage` (Formspree POST, mailto fallback) | `contact/` |
 
 ### Conventions that bite if ignored
 
@@ -57,4 +57,4 @@ Refactor phase rules:
 
 ## Theme
 
-`core/theme/`: indigo primary / cyan accent / slate neutrals, hand-tuned light and dark `ColorScheme`s, Space Grotesk (display) + Inter (body) + JetBrains Mono (code). Theme mode comes from `themeModeProvider` (default dark). Use `AppSpacing`, `AppRadius`, `AppBreakpoints` and `AppDecorations.of(context)`; never `Colors.*` in UI.
+`core/theme/`: indigo primary / cyan accent / slate neutrals, hand-tuned light and dark `ColorScheme`s, Space Grotesk (display) + Inter (body) + JetBrains Mono (code). Theme mode comes from `themeModeProvider` (default `ThemeMode.system`, visitor choice kept in localStorage). Use `AppSpacing`, `AppRadius`, `AppBreakpoints` and `AppDecorations.of(context)`; never `Colors.*` in UI.

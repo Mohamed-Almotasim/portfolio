@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart' as http;
 import 'package:portfolio/core/content/portfolio_content.dart' as content;
 import 'package:portfolio/core/content/profile.dart';
 import 'package:portfolio/core/state/profile_provider.dart';
@@ -16,6 +19,37 @@ final contactProjectTypesProvider = Provider<List<String>>(
 final contactBudgetsProvider = Provider<List<String>>(
   (ref) => content.contactBudgets,
 );
+final contactFormEndpointProvider = Provider<String?>(
+  (ref) => content.contactFormEndpoint,
+);
+
+/// Override with a `MockClient` in tests.
+final httpClientProvider = Provider<http.Client>((ref) {
+  final client = http.Client();
+  ref.onDispose(client.close);
+  return client;
+});
+
+Future<void> _copyEmail(BuildContext context, String email) async {
+  await Clipboard.setData(ClipboardData(text: email));
+  if (context.mounted) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Email address copied')));
+  }
+}
+
+/// Formspree's reason for a rejected submission, if the body has one.
+String? _formspreeError(String body) {
+  try {
+    final json = jsonDecode(body);
+    if (json case {'errors': [{'message': final String m}, ...]}) return m;
+    if (json case {'error': final String m}) return m;
+  } on FormatException {
+    // Not JSON (proxy error page etc.); the caller falls back to the status.
+  }
+  return null;
+}
 
 class ContactPage extends ConsumerWidget {
   const ContactPage({super.key});
@@ -104,14 +138,7 @@ class _Pitch extends ConsumerWidget {
               IconButton(
                 tooltip: 'Copy email address',
                 icon: const Icon(Icons.copy, size: 18),
-                onPressed: () async {
-                  await Clipboard.setData(ClipboardData(text: profile.email));
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Email address copied')),
-                    );
-                  }
-                },
+                onPressed: () => _copyEmail(context, profile.email),
               ),
             ],
           ),
@@ -150,6 +177,7 @@ class _ContactFormState extends ConsumerState<_ContactForm> {
   late String _projectType = ref.read(contactProjectTypesProvider).first;
   String? _budget;
   _Status _status = _Status.idle;
+  String? _error; // why the form service rejected the message
 
   static final _emailPattern = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
 
@@ -165,21 +193,62 @@ class _ContactFormState extends ConsumerState<_ContactForm> {
     if (_status == _Status.sending) return; // no double submits
     if (!_formKey.currentState!.validate()) return;
     setState(() => _status = _Status.sending);
-    final uri = contactMailto(
-      to: ref.read(profileProvider).email,
-      name: _name.text.trim(),
-      email: _email.text.trim(),
-      projectType: _projectType,
-      budget: _budget,
-      message: _message.text.trim(),
-    );
-    bool ok;
-    try {
-      ok = await ref.read(linkLauncherProvider)(uri);
-    } on Exception {
-      ok = false;
+    final endpoint = ref.read(contactFormEndpointProvider);
+    final String? error;
+    if (endpoint != null) {
+      error = await _post(endpoint);
+    } else {
+      final uri = contactMailto(
+        to: ref.read(profileProvider).email,
+        name: _name.text.trim(),
+        email: _email.text.trim(),
+        projectType: _projectType,
+        budget: _budget,
+        message: _message.text.trim(),
+      );
+      bool ok;
+      try {
+        ok = await ref.read(linkLauncherProvider)(uri);
+      } on Exception {
+        ok = false;
+      }
+      error = ok ? null : '';
     }
-    if (mounted) setState(() => _status = ok ? _Status.sent : _Status.failed);
+    if (mounted) {
+      setState(() {
+        _status = error == null ? _Status.sent : _Status.failed;
+        _error = error;
+      });
+    }
+  }
+
+  /// Sends the form to Formspree. Returns null on success, else the reason.
+  Future<String?> _post(String endpoint) async {
+    final name = _name.text.trim();
+    try {
+      final res = await ref
+          .read(httpClientProvider)
+          .post(
+            Uri.parse(endpoint),
+            headers: const {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+            },
+            body: jsonEncode({
+              'name': name,
+              'email': _email.text.trim(),
+              'projectType': _projectType,
+              'budget': ?_budget,
+              'message': _message.text.trim(),
+              '_subject': '$_projectType enquiry from $name',
+            }),
+          );
+      if (res.statusCode >= 200 && res.statusCode < 300) return null;
+      return _formspreeError(res.body) ??
+          'The form service answered ${res.statusCode}.';
+    } on Exception {
+      return "Couldn't reach the form service.";
+    }
   }
 
   String? _required(String? v, String message) =>
@@ -191,6 +260,8 @@ class _ContactFormState extends ConsumerState<_ContactForm> {
     final scheme = Theme.of(context).colorScheme;
     final budgets = ref.watch(contactBudgetsProvider);
     final sending = _status == _Status.sending;
+    final viaForm = ref.watch(contactFormEndpointProvider) != null;
+    final myEmail = ref.watch(profileProvider).email;
 
     return Form(
       key: _formKey,
@@ -280,27 +351,43 @@ class _ContactFormState extends ConsumerState<_ContactForm> {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : const Icon(Icons.send, size: 18),
-              label: Text(sending ? 'Opening your email…' : 'Send message'),
+              label: Text(
+                !sending
+                    ? 'Send message'
+                    : viaForm
+                    ? 'Sending…'
+                    : 'Opening your email…',
+              ),
             ),
             const SizedBox(height: AppSpacing.s16),
             AnimatedSwitcher(
               duration: const Duration(milliseconds: 200),
               child: switch (_status) {
-                _Status.sent => _Notice(
+                _Status.sent when viaForm => _Notice(
                   key: const ValueKey('sent'),
                   icon: Icons.check_circle_outline,
                   color: AppDecorations.of(context).success,
                   message:
-                      'Your email app should now be open with the message '
-                      'filled in. Just press send there.',
+                      "Thanks, your message was sent. I'll reply to "
+                      '${_email.text.trim()}.',
+                ),
+                _Status.sent => _Notice(
+                  key: const ValueKey('sent'),
+                  icon: Icons.check_circle_outline,
+                  color: AppDecorations.of(context).success,
+                  message: 'If no email app opened, email me at $myEmail',
+                  copyEmail: myEmail,
                 ),
                 _Status.failed => _Notice(
                   key: const ValueKey('failed'),
                   icon: Icons.error_outline,
                   color: scheme.error,
-                  message:
-                      "Couldn't open your email app. Please write to "
-                      '${ref.watch(profileProvider).email} directly.',
+                  message: viaForm
+                      ? "Couldn't send your message: $_error "
+                            'Please email me at $myEmail instead.'
+                      : "Couldn't open your email app. Please write to "
+                            '$myEmail directly.',
+                  copyEmail: myEmail,
                 ),
                 _ => const SizedBox.shrink(),
               },
@@ -318,11 +405,15 @@ class _Notice extends StatelessWidget {
     required this.icon,
     required this.color,
     required this.message,
+    this.copyEmail,
   });
 
   final IconData icon;
   final Color color;
   final String message;
+
+  /// Shows a copy button for this address.
+  final String? copyEmail;
 
   @override
   Widget build(BuildContext context) {
@@ -336,6 +427,12 @@ class _Notice extends StatelessWidget {
           Expanded(
             child: Text(message, style: Theme.of(context).textTheme.bodyMedium),
           ),
+          if (copyEmail case final email?)
+            IconButton(
+              tooltip: 'Copy email address',
+              icon: const Icon(Icons.copy, size: 18),
+              onPressed: () => _copyEmail(context, email),
+            ),
         ],
       ),
     );

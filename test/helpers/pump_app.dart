@@ -23,8 +23,11 @@ const allRoutes = [
 ];
 
 /// Call from `setUpAll` so layout is measured with the real bundled fonts
-/// (Inter / Space Grotesk), not the test framework's square placeholder glyphs.
-Future<void> loadAppFonts() => preloadFonts();
+/// (Inter / Space Grotesk / JetBrains Mono), not the test framework's square placeholder glyphs.
+Future<void> loadAppFonts() {
+  loadCodeFont();
+  return preloadFonts();
+}
 
 /// Pumps the whole app (ProviderScope + router + theme) at [path] and [size],
 /// then lets it run a second. Returns the router so tests can read the URL.

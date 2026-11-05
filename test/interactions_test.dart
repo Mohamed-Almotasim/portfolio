@@ -16,6 +16,9 @@ void main() {
   testWidgets('the theme toggle switches between dark and light', (
     tester,
   ) async {
+    // Follows the OS until the visitor picks.
+    tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+    addTearDown(tester.platformDispatcher.clearPlatformBrightnessTestValue);
     await pumpApp(tester);
     expect(_brightness(tester), Brightness.dark);
 

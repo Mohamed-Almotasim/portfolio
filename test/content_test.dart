@@ -37,17 +37,27 @@ void main() {
 
   test('page titles name the page and the owner', () {
     expect(
-      pageTitle(AppRoutes.home, profile),
+      pageTitle(AppRoutes.home, profile, caseStudies),
       '${profile.name} — ${profile.title}',
     );
-    expect(pageTitle(AppRoutes.contact, profile), 'Contact — ${profile.name}');
-    expect(pageTitle('/nope', profile), 'Not found — ${profile.name}');
     expect(
-      pageTitle(AppRoutes.caseStudy(caseStudies.first.slug), profile),
+      pageTitle(AppRoutes.contact, profile, caseStudies),
+      'Contact — ${profile.name}',
+    );
+    expect(
+      pageTitle('/nope', profile, caseStudies),
+      'Not found — ${profile.name}',
+    );
+    expect(
+      pageTitle(
+        AppRoutes.caseStudy(caseStudies.first.slug),
+        profile,
+        caseStudies,
+      ),
       '${caseStudies.first.title} — ${profile.name}',
     );
     expect(
-      pageTitle(AppRoutes.caseStudy('nope'), profile),
+      pageTitle(AppRoutes.caseStudy('nope'), profile, caseStudies),
       'Not found — ${profile.name}',
     );
   });

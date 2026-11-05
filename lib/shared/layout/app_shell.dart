@@ -6,6 +6,7 @@ import 'package:portfolio/core/routing/app_routes.dart';
 import 'package:portfolio/core/state/developer_mode_provider.dart';
 import 'package:portfolio/core/state/theme_mode_provider.dart';
 import 'package:portfolio/core/theme/app_spacing.dart';
+import 'package:portfolio/core/theme/app_typography.dart';
 import 'package:portfolio/shared/widgets/app_navbar.dart';
 import 'package:portfolio/shared/widgets/brand_logo.dart';
 
@@ -71,6 +72,7 @@ class _AppShellState extends ConsumerState<AppShell> {
   @override
   Widget build(BuildContext context) {
     ref.listen(developerModeProvider, (_, enabled) {
+      if (enabled) loadCodeFont();
       _maybeShowDevBanner(enabled);
     });
     return Scaffold(

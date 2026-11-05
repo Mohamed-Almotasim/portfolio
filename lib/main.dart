@@ -5,11 +5,13 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:portfolio/app.dart';
 import 'package:portfolio/core/theme/app_typography.dart';
 
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+void main() {
+  final binding = WidgetsFlutterBinding.ensureInitialized();
   usePathUrlStrategy();
   // Fonts are bundled in assets/google_fonts; never fall back to the CDN.
   GoogleFonts.config.allowRuntimeFetching = false;
-  await preloadFonts();
+  // No frame reaches the screen (so the HTML splash stays) until fonts are in.
+  binding.deferFirstFrame();
+  preloadFonts().whenComplete(binding.allowFirstFrame).ignore();
   runApp(const ProviderScope(child: PortfolioApp()));
 }
