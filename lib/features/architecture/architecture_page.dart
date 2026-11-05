@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:portfolio/features/architecture/widgets/architecture_details_section.dart';
 import 'package:portfolio/features/architecture/widgets/architecture_flow_section.dart';
+import 'package:portfolio/features/architecture/widgets/architecture_notes.dart';
 import 'package:portfolio/features/architecture/widgets/architecture_overview_diagram.dart';
 import 'package:portfolio/shared/layout/app_page.dart';
 
@@ -19,6 +20,8 @@ class ArchitecturePage extends StatelessWidget {
           ArchitectureFlowSection(),
           SizedBox(height: 32),
           ArchitectureDetailsSection(),
+          SizedBox(height: 48),
+          ArchitectureNotes(),
         ],
       ),
     );

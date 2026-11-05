@@ -1,14 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:portfolio/app.dart';
 import 'package:portfolio/core/content/portfolio_content.dart';
-import 'package:portfolio/core/routing/app_router.dart';
 import 'package:portfolio/core/routing/app_routes.dart';
 import 'package:portfolio/features/contact/contact_mailto.dart';
 import 'package:portfolio/shared/utils/link_launcher.dart';
+
+import 'helpers/pump_app.dart';
 
 void main() {
   group('contactMailto', () {
@@ -55,26 +54,17 @@ void main() {
     late List<Uri> launched;
     late FutureOr<bool> Function() result;
 
-    Future<void> pumpContact(WidgetTester tester) async {
-      tester.view.physicalSize = const Size(1280, 1800);
-      tester.view.devicePixelRatio = 1;
-      addTearDown(tester.view.reset);
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            routerProvider.overrideWithValue(
-              createRouter(initialLocation: AppRoutes.contact),
-            ),
-            linkLauncherProvider.overrideWithValue((uri) async {
-              launched.add(uri);
-              return result();
-            }),
-          ],
-          child: const PortfolioApp(),
-        ),
-      );
-      await tester.pump(const Duration(milliseconds: 500));
-    }
+    Future<void> pumpContact(WidgetTester tester) => pumpApp(
+      tester,
+      path: AppRoutes.contact,
+      size: const Size(1280, 1800),
+      overrides: [
+        linkLauncherProvider.overrideWithValue((uri) async {
+          launched.add(uri);
+          return result();
+        }),
+      ],
+    );
 
     Future<void> fillValid(WidgetTester tester) async {
       await tester.enterText(find.widgetWithText(TextFormField, 'Name'), 'Ada');

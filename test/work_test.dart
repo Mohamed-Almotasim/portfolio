@@ -1,29 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:portfolio/app.dart';
 import 'package:portfolio/core/content/portfolio_content.dart';
-import 'package:portfolio/core/routing/app_router.dart';
 import 'package:portfolio/core/routing/app_routes.dart';
 import 'package:portfolio/features/work/case_studies_provider.dart';
 import 'package:portfolio/features/work/widgets/case_study_card.dart';
 
-Future<void> pumpRoute(WidgetTester tester, String path) async {
-  tester.view.physicalSize = const Size(1280, 2400);
-  tester.view.devicePixelRatio = 1;
-  addTearDown(tester.view.reset);
-  await tester.pumpWidget(
-    ProviderScope(
-      overrides: [
-        routerProvider.overrideWithValue(createRouter(initialLocation: path)),
-      ],
-      child: const PortfolioApp(),
-    ),
-  );
-  for (var i = 0; i < 5; i++) {
-    await tester.pump(const Duration(milliseconds: 200));
-  }
-}
+import 'helpers/pump_app.dart';
+
+Future<void> pumpRoute(WidgetTester tester, String path) =>
+    pumpApp(tester, path: path, size: const Size(1280, 2400));
 
 void main() {
   group('case study lookup', () {
