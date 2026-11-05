@@ -1,150 +1,77 @@
-# Flutter Portfolio Architecture
+# Architecture
 
-This document describes the architecture of the Flutter Web portfolio project.
+How the portfolio is put together, and the rules that keep it that way.
 
-The purpose is to demonstrate professional Flutter development structure.
-
----
-
-# High Level Structure
+## Layers
 
 ```
 lib/
-  core/
-  shared/
-  features/
-  app.dart    # MaterialApp.router (light + dark theme, follows system)
-  main.dart   # runApp(ProviderScope(...))
+  main.dart     preload fonts, path URLs, runApp(ProviderScope)
+  app.dart      MaterialApp.router: light/dark themes, themeMode, router
+  core/         app-wide infrastructure, no pages
+  shared/       reusable layout, widgets and utils, no feature imports
+  features/     one folder per area of the site
 ```
 
-Each layer has a clear responsibility.
+Dependencies point inward: `features` may use `shared` and `core`; `shared` may use `core`; `core` never imports a feature (except the router, which wires pages to paths).
 
----
+## core/
 
-# Core Layer
+| Folder | Contents |
+|---|---|
+| `content/` | Immutable, const models (`Profile`, `CaseStudy`, `ServiceOffering`, `Skill`, `ProcessStep`, `EngagementModel`, `FaqItem`, `ProofStat`) and **all site copy** in `portfolio_content.dart`. `TODO(me)` marks what the owner must fill in. |
+| `routing/` | `app_routes.dart` (path constants + `navDestinations`, the single source for navbar, drawer and footer), `app_router.dart` (`createRouter`, `routerProvider`, `pageTitle`). |
+| `state/` | Global Notifiers: `themeModeProvider` (dark by default), `developerModeProvider`, `profileProvider`. |
+| `theme/` | The design system: `app_colors.dart` (palette, light/dark `ColorScheme`), `app_typography.dart` (Space Grotesk / Inter / JetBrains Mono, responsive sizes, `preloadFonts`), `app_spacing.dart` (spacing and radius scales, breakpoints, max width), `app_decorations.dart` (`ThemeExtension` for borders, gradients, glass, code, shadows, status colours), `code_syntax.dart`, `app_theme.dart` (component themes). |
 
-`lib/core/` holds global infrastructure. It contains no UI pages.
+## shared/
 
-```
-core/
-  theme/      app_theme.dart — Material 3 light/dark themes
-  routing/    app_router.dart — GoRouter config
-  state/      developer_mode_provider.dart — global providers
-  dev_mode/   developer_info.dart
-```
+| Folder | Contents |
+|---|---|
+| `layout/` | `AppShell` (Scaffold, drawer, sticky navbar; built once by the `ShellRoute`), `AppPage` (per-page scroll, max width, title, `SelectionArea`, footer, back-to-top), `ResponsiveGrid`, `DeferredPage`. |
+| `demo/` | `DemoComponent` (live preview + real source in developer mode) and `source_snippet.dart` (extracts `// #region snippet` blocks from bundled source files). |
+| `widgets/` | Navbar, footer, brand logo, theme toggle, hover card, code viewer + `dart_highlighter`, device frame, FAQ accordion, CTA band, `AnimatedSection` (scroll reveal), `LazyInView`. |
+| `utils/` | `link_launcher.dart`: `linkLauncherProvider` (overridable in tests) and `openLink`, which opens web links in a new tab and reports failures. |
 
----
+## features/
 
-# Shared Layer
+| Folder | Route | Notes |
+|---|---|---|
+| `landing/` | `/` | Hero (mesh backdrop, layered visual), proof strip, sections. |
+| `work/` | `/work`, `/work/:slug` | Filterable case studies (`workTechFilterProvider`), detail page, Hero cover. |
+| `services/` | `/services` | Offerings, process, engagement models, FAQ. |
+| `playground/` | `/playground[?tab=patterns]` | Tabs over `ui_showcase/` (components) and `widget_gallery/` (patterns). `/ui-showcase` and `/widget-gallery` redirect here. Deferred-loaded. |
+| `app_simulator/` | `/app-demos` | `DemoAppRegistry`; demos in `DeviceFrame`; heavy animations follow the `*_controller / *_model / *_widget` triplet. Deferred-loaded. |
+| `architecture/` | `/architecture` | Diagrams, flows, details, notes on this codebase. |
+| `contact/` | `/contact` | Validated form → prefilled `mailto:` (`contact_mailto.dart`). |
+| `not_found/` | any unknown path | 404 inside the shell. |
 
-`lib/shared/` holds reusable UI building blocks. Shared widgets stay generic and must not depend on feature pages.
+## Routing
 
-```
-shared/
-  layout/   AppPage (page wrapper), responsive grid
-  demo/     DemoComponent (preview + optional code viewer)
-  theme/    app_spacing.dart
-  widgets/  navbar, footer, code viewer, device frame, hover card, ...
-```
+- `ShellRoute` keeps the navbar alive between pages; each `GoRoute` uses a `CustomTransitionPage` (fade + slight slide; none under reduced motion) wrapped in a `Title` for the browser tab.
+- Path URL strategy on the web; hosts must rewrite unknown paths to `index.html` (see README).
+- `/work/:slug` is a sibling of `/work`, not a child: a child route keeps the parent page laid out offstage, which breaks its `SelectionArea`.
+- Routes don't request focus on push; `AppShell` orders traversal so keyboard users reach the navbar first.
 
----
+## State
 
-# Features Layer
+Riverpod 3. Content is exposed through plain `Provider`s; UI state uses `Notifier`s with intent methods (`toggle()`, `set()`, `setQuery()`, `setCategory()`, `setTech()`). Widgets read providers, never `portfolio_content.dart` directly.
 
-`lib/features/` contains the portfolio sections, mostly one folder per route:
+## Design system rules
 
-```
-features/
-  landing/         /
-  ui_showcase/     /ui-showcase
-  widget_gallery/  /widget-gallery
-  architecture/    /architecture
-  services/        /services
-  contact/         /contact
-  app_simulator/   /app-demos
-  projects/        (no route; feeds the landing page's featured projects)
-```
+- Colours only from `Theme.of(context).colorScheme` or `AppDecorations`; never `Colors.*` in UI.
+- Spacing and radii from `AppSpacing` / `AppRadius`; breakpoints from `AppBreakpoints` (mobile < 600, tablet < 1024).
+- Fonts are bundled under `assets/google_fonts/` and preloaded; runtime fetching is disabled.
+- Cards declare elevation once: hairline border at rest, shadow on hover.
 
-Each feature folder contains its page widget and small helper widgets.
+## Testing
 
----
+`test/helpers/pump_app.dart` pumps the full app (ProviderScope + router + theme) with real fonts. The suite covers:
 
-# Routing System
+- every route at 320–1920 px with no layout errors, and at 1.3× text;
+- routing (404, redirects, deep links, case-study slugs, tab URLs), the drawer, nav persistence and Tab order;
+- the contact form (validation, success, failure, double submit) with a fake launcher;
+- theme toggle and developer-mode snippets;
+- unit tests for content validity, Notifiers, filters, the snippet extractor and the highlighter.
 
-Navigation uses GoRouter, defined in `core/routing/app_router.dart`.
-
-```
-/
-/ui-showcase
-/widget-gallery
-/architecture
-/services
-/contact
-/app-demos
-```
-
----
-
-# State Management
-
-State management uses Riverpod. Global providers live in `core/state/`; feature-local providers live next to their page (e.g. `widget_gallery/widget_gallery_search_provider.dart`).
-
-`developerModeProvider` controls whether additional technical information is shown.
-
----
-
-# Developer Mode
-
-Developer Mode lets technical visitors see how the project is built: when enabled, `DemoComponent` shows the source snippet under each live preview. Normal visitors see only the UI.
-
----
-
-# Layout System
-
-Every page is wrapped in `AppPage`:
-
-* sticky navbar (inline links on desktop, `Drawer` at ≤ 600 px)
-* content constrained to a max width of **1100 px**
-* footer and scroll-to-top button
-
----
-
-# Widget Gallery Design
-
-Each gallery item includes:
-
-1. UI preview
-2. explanation
-3. code snippet
-
-Code snippets should be readable and selectable.
-
----
-
-# UI Showcase and App Demos
-
-`/ui-showcase` renders demos listed in `DemoRegistry`. `/app-demos` renders full app demos from `DemoAppRegistry` inside a device frame.
-
-These are demonstrations only and include no backend logic.
-
----
-
-# Animation Strategy
-
-Animations should be subtle and lightweight, built with Flutter's own tools (`AnimatedContainer`, `AnimatedOpacity`, `AnimatedSwitcher`, `TweenAnimationBuilder`, `Hero`, or explicit `AnimationController`s). No animation packages.
-
----
-
-# Performance Considerations
-
-The portfolio targets Flutter Web, so prefer const widgets, avoid heavy rebuilds, and keep state management simple.
-
----
-
-# Design Goals
-
-The portfolio should feel like a real application.
-
-Visitors should think:
-
-"This developer writes production quality Flutter code."
+`test/tool/` holds opt-in generators (icons, screenshots) that only run when their environment variable is set.

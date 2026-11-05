@@ -6,40 +6,42 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 flutter run -d chrome          # Run on web (primary target)
-flutter analyze                # Static analysis / lint check
-flutter test                   # Run all tests
-flutter build web              # Production web build
-flutter test test/<file>_test.dart  # Run a single test file (test/ is currently empty)
+flutter analyze                # Static analysis, must be zero issues
+flutter test                   # All tests
+flutter test test/work_test.dart   # One file
+flutter build web --release    # Production build (add --wasm for WebAssembly)
+GENERATE_ICONS=1 flutter test test/tool/generate_icons_test.dart   # Rebuild web icons from Profile.name
+SHOT_DIR=out SHOT_PATHS="/,/work" SHOT_W=1280 SHOT_H=900 flutter test test/tool/screenshots_test.dart  # Render pages to PNG
 ```
 
-Stack: Flutter web, Riverpod 2 (`ProviderScope` in `main.dart`), GoRouter, `url_launcher`, `equatable`. Design intent lives in `docs/architecture.md`.
+Stack: Flutter web, Riverpod 3 (Notifiers), go_router 18 (ShellRoute, path URLs), google_fonts (bundled, runtime fetching off), url_launcher, flutter_web_plugins. Full design notes: `docs/architecture.md`.
 
 ## Architecture
 
-Three top-level layers under `lib/`:
+- **`core/`**: `content/` (const models + all copy in `portfolio_content.dart`; widgets read it only through providers), `routing/` (`app_routes.dart` paths + `navDestinations`, `app_router.dart` with `createRouter`/`routerProvider`/`pageTitle`), `state/` (theme mode, developer mode, profile Notifiers/providers), `theme/` (design system: colors, typography, spacing/breakpoints, `AppDecorations` extension, code syntax, component themes).
+- **`shared/`**: `layout/` (`AppShell` built once by the ShellRoute, `AppPage` per-page scroll wrapper, `ResponsiveGrid`, `DeferredPage`), `demo/` (`DemoComponent`, `source_snippet.dart`), `widgets/`, `utils/link_launcher.dart` (`openLink` + overridable `linkLauncherProvider`).
+- **`features/`**: one folder per area (see table). Feature-local state is a `Notifier` next to the page. Simulator widgets (`features/app_simulator/widgets/<name>/`) follow the `*_controller` / `*_model` / `*_widget` triplet.
 
-- **`core/`** — App-wide singletons: `theme/app_theme.dart` (Material 3 light/dark; `app.dart` sets no `themeMode`, so it follows the system), `routing/app_router.dart` (static GoRouter), `state/developer_mode_provider.dart` (Riverpod `StateProvider<bool>` toggled from the navbar/drawer), `dev_mode/developer_info.dart`.
-- **`shared/`** — Reusable building blocks consumed across features: `AppPage` layout wrapper, `DemoComponent` shell, responsive layout helpers, and common widgets (navbar, footer, hover card, device frame, code viewer).
-- **`features/`** — Mostly one folder per route; folder names don't always match the path (see table). `features/projects/` has no route and feeds the landing page's featured projects via `projectsProvider`. Feature-local state is plain Riverpod `StateProvider`s next to the page (e.g. `widget_gallery_search_provider.dart`).
-- Interactive simulator widgets (`features/app_simulator/widgets/<name>/`) are split into `*_controller.dart`, `*_model.dart`, `*_widget.dart`; follow that triplet for new ones.
-
-### Routes (`core/routing/app_router.dart`)
+### Routes
 
 | Path | Page | Folder |
 |---|---|---|
 | `/` | `LandingPage` | `landing/` |
-| `/ui-showcase` | `UIShowcasePage` — demos from `DemoRegistry` | `ui_showcase/` |
-| `/widget-gallery` | `UIPatternsPage` — searchable/filterable pattern library | `widget_gallery/` |
+| `/work`, `/work/:slug` | `WorkPage`, `CaseStudyPage` (404 for unknown slug) | `work/` |
+| `/playground[?tab=patterns]` | `PlaygroundPage`, tabs over `ComponentsTab` (`ui_showcase/`) and `PatternsTab` (`widget_gallery/`); deferred | `playground/` |
+| `/ui-showcase`, `/widget-gallery` | redirects into `/playground` | |
+| `/app-demos` | `AppSimulatorPage`, demos from `DemoAppRegistry`; deferred | `app_simulator/` |
 | `/architecture` | `ArchitecturePage` | `architecture/` |
 | `/services` | `ServicesPage` | `services/` |
-| `/contact` | `ContactPage` | `contact/` |
-| `/app-demos` | `AppSimulatorPage` — full app demos in a device frame | `app_simulator/` |
+| `/contact` | `ContactPage` (mailto flow) | `contact/` |
 
-### Key shared patterns
+### Conventions that bite if ignored
 
-- **`AppPage`** (`shared/layout/app_page.dart`) — wrap every page. Provides sticky navbar, 1100 px max-width constraint, padding, footer, and scroll-to-top button. Mobile (≤ 600 px) gets a `Drawer`; desktop gets an inline horizontal navbar.
-- **`DemoComponent`** (`shared/demo/demo_component.dart`) — wrap individual widget showcases. Shows a live preview always; shows a `CodeViewer` with the source snippet only when `developerModeProvider` is `true`.
-- **Registries** — `DemoRegistry` (`features/ui_showcase/`) lists `UIShowcasePage` demos; `DemoAppRegistry` (`features/app_simulator/`) lists full-app demos for the device-frame simulator.
+- New showcase demo: wrap in `DemoComponent(sourcePath: 'lib/...')`, mark the code to show with `// #region snippet` / `// #endregion`, list the file under `assets:` in `pubspec.yaml` and in `showcaseSnippetSources` (a test enforces markers).
+- New app demo: add a `DemoApp` (with `tryHint`) to `DemoAppRegistry` and bump `liveDemoCount` (a test enforces it).
+- External links go through `openLink`, never `launchUrl` directly.
+- Don't use `pumpAndSettle` in widget tests: the landing page loops animations. Use `pumpApp` / `settle` from `test/helpers/pump_app.dart`, and `setUpAll(loadAppFonts)` for any test that measures layout.
+- Don't make `/work/:slug`-style routes children of their list route (offstage parent breaks `SelectionArea`).
 
 ## AI Guardrails (from `AI_RULES.md`)
 
@@ -55,4 +57,4 @@ Refactor phase rules:
 
 ## Theme
 
-`core/theme/`: `app_colors.dart` (palette + light/dark `ColorScheme`), `app_typography.dart` (Space Grotesk + Inter via bundled google_fonts), `app_spacing.dart` (spacing/radius scale, breakpoints, max width), `app_decorations.dart` (`AppDecorations` ThemeExtension), `app_theme.dart` (component themes). Theme mode comes from `themeModeProvider` (default dark). Fonts live in `assets/google_fonts/`; runtime fetching is disabled.
+`core/theme/`: indigo primary / cyan accent / slate neutrals, hand-tuned light and dark `ColorScheme`s, Space Grotesk (display) + Inter (body) + JetBrains Mono (code). Theme mode comes from `themeModeProvider` (default dark). Use `AppSpacing`, `AppRadius`, `AppBreakpoints` and `AppDecorations.of(context)`; never `Colors.*` in UI.
