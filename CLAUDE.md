@@ -43,6 +43,10 @@ Stack: Flutter web, Riverpod 3 (Notifiers), go_router 18 (ShellRoute, path URLs)
 - Don't use `pumpAndSettle` in widget tests: the landing page loops animations. Use `pumpApp` / `settle` from `test/helpers/pump_app.dart`, and `setUpAll(loadAppFonts)` for any test that measures layout.
 - Don't make `/work/:slug`-style routes children of their list route (offstage parent breaks `SelectionArea`).
 
+## Design
+
+Every UI change must follow [docs/DESIGN.md](docs/DESIGN.md) ("The Inspector"): tokens, type, motion, Inspector mode and the banned list.
+
 ## AI Guardrails (from `AI_RULES.md`)
 
 Refactor phase rules:
