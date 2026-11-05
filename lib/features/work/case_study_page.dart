@@ -10,8 +10,8 @@ import 'package:portfolio/features/work/case_studies_provider.dart';
 import 'package:portfolio/features/work/widgets/case_study_cover.dart';
 import 'package:portfolio/shared/layout/app_page.dart';
 import 'package:portfolio/shared/layout/responsive_grid.dart';
+import 'package:portfolio/shared/utils/link_launcher.dart';
 import 'package:portfolio/shared/widgets/tech_badge.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class CaseStudyPage extends ConsumerWidget {
   const CaseStudyPage({super.key, required this.slug});
@@ -74,12 +74,14 @@ class CaseStudyPage extends ConsumerWidget {
                 for (final (i, link) in links.indexed)
                   i == 0
                       ? FilledButton.icon(
-                          onPressed: () => launchUrl(Uri.parse(link.url)),
+                          onPressed: () =>
+                              openLink(context, ref, Uri.parse(link.url)),
                           icon: Icon(link.icon, size: 18),
                           label: Text(link.label),
                         )
                       : OutlinedButton.icon(
-                          onPressed: () => launchUrl(Uri.parse(link.url)),
+                          onPressed: () =>
+                              openLink(context, ref, Uri.parse(link.url)),
                           icon: Icon(link.icon, size: 18),
                           label: Text(link.label),
                         ),

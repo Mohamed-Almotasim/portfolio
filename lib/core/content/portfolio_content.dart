@@ -22,6 +22,7 @@ const profile = Profile(
   location: 'Your City, Country', // TODO(me): real location
   email: 'example@email.com', // TODO(me): real email
   availability: 'Open to freelance projects', // TODO(me): real availability
+  responseTime: 'Usually within one business day', // TODO(me): confirm
   socials: [
     // TODO(me): real GitHub profile URL
     SocialLink(label: 'GitHub', url: 'https://github.com', icon: Icons.code),
@@ -297,4 +298,21 @@ const faqs = [
     answer:
         'A weekly demo of a working build, plus a shared channel for questions in between.',
   ),
+];
+
+/// Choices on the contact form.
+const contactProjectTypes = [
+  'New app',
+  'Existing app',
+  'UI implementation',
+  'Architecture review',
+  'Something else',
+];
+
+// TODO(me): set ranges in your currency, or delete them all to hide the field.
+const contactBudgets = [
+  'Not sure yet',
+  'Small (a few weeks)',
+  'Medium (1–3 months)',
+  'Large (3+ months)',
 ];

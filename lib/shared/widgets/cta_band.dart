@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:portfolio/core/routing/app_routes.dart';
 import 'package:portfolio/core/state/profile_provider.dart';
 import 'package:portfolio/core/theme/app_spacing.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:portfolio/shared/utils/link_launcher.dart';
 
 /// Closing call to action on a brand-gradient band.
 class CtaBand extends ConsumerWidget {
@@ -63,8 +63,11 @@ class CtaBand extends ConsumerWidget {
                 child: const Text('Start a project'),
               ),
               OutlinedButton(
-                onPressed: () =>
-                    launchUrl(Uri(scheme: 'mailto', path: profile.email)),
+                onPressed: () => openLink(
+                  context,
+                  ref,
+                  Uri(scheme: 'mailto', path: profile.email),
+                ),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: scheme.onPrimary,
                   side: BorderSide(

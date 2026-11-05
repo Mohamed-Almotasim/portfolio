@@ -22,6 +22,7 @@ class Profile {
     required this.email,
     required this.availability,
     required this.socials,
+    this.responseTime,
     this.resumeUrl,
   });
 
@@ -35,6 +36,9 @@ class Profile {
   final String email;
   final String availability;
   final List<SocialLink> socials;
+
+  /// e.g. "Usually within one business day". Hidden when null.
+  final String? responseTime;
   final String? resumeUrl;
 
   /// [socials] followed by a mailto link for [email].

@@ -5,8 +5,8 @@ import 'package:portfolio/core/content/profile.dart';
 import 'package:portfolio/core/routing/app_routes.dart';
 import 'package:portfolio/core/state/profile_provider.dart';
 import 'package:portfolio/core/theme/app_spacing.dart';
+import 'package:portfolio/shared/utils/link_launcher.dart';
 import 'package:portfolio/shared/widgets/brand_logo.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class AppFooter extends ConsumerWidget {
   const AppFooter({super.key});
@@ -186,16 +186,16 @@ class _FooterNavLink extends StatelessWidget {
   }
 }
 
-class _SocialLink extends StatefulWidget {
+class _SocialLink extends ConsumerStatefulWidget {
   const _SocialLink({required this.link});
 
   final SocialLink link;
 
   @override
-  State<_SocialLink> createState() => _SocialLinkState();
+  ConsumerState<_SocialLink> createState() => _SocialLinkState();
 }
 
-class _SocialLinkState extends State<_SocialLink> {
+class _SocialLinkState extends ConsumerState<_SocialLink> {
   bool _isHovered = false;
 
   @override
@@ -204,7 +204,7 @@ class _SocialLinkState extends State<_SocialLink> {
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       child: InkWell(
-        onTap: () => launchUrl(Uri.parse(widget.link.url)),
+        onTap: () => openLink(context, ref, Uri.parse(widget.link.url)),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
