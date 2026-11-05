@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:portfolio/core/theme/app_colors.dart';
 
-/// Theme values ColorScheme has no slot for.
-/// Read with `Theme.of(context).extension<AppDecorations>()!` or [of].
+/// Theme values ColorScheme has no slot for (docs/DESIGN.md §2, §5).
+/// Read with [of].
 @immutable
 class AppDecorations extends ThemeExtension<AppDecorations> {
   const AppDecorations({
     required this.cardBorder,
-    required this.subtleGradient,
-    required this.glassSurface,
+    required this.rule,
+    required this.ruleStrong,
+    required this.inkMute,
+    required this.accent,
+    required this.accentText,
+    required this.onAccent,
     required this.codeBackground,
     required this.codeForeground,
     required this.deviceBezel,
@@ -18,14 +22,34 @@ class AppDecorations extends ThemeExtension<AppDecorations> {
     required this.shadowElevated,
   });
 
+  /// Hairline around framed things; same value as [rule].
   final Color cardBorder;
-  final Gradient subtleGradient;
-  final Color glassSurface;
+
+  /// 1px hairline between two real regions.
+  final Color rule;
+
+  /// Full-ink rule: title block edges, register header.
+  final Color ruleStrong;
+
+  /// Secondary metadata only, never running text.
+  final Color inkMute;
+
+  /// The one accent as a fill or a line (3:1 against the ground).
+  final Color accent;
+
+  /// The accent as text (4.5:1 against the ground).
+  final Color accentText;
+
+  /// Text and icons on an [accent] fill.
+  final Color onAccent;
+
   final Color codeBackground;
   final Color codeForeground;
   final Color deviceBezel;
   final Color success;
   final Color warning;
+
+  /// Shadows are only for things that really float: menus, dialogs, tags.
   final List<BoxShadow> shadowSoft;
   final List<BoxShadow> shadowElevated;
 
@@ -33,65 +57,59 @@ class AppDecorations extends ThemeExtension<AppDecorations> {
       Theme.of(context).extension<AppDecorations>()!;
 
   static final light = AppDecorations(
-    cardBorder: AppColors.slate200,
-    subtleGradient: LinearGradient(
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-      colors: [
-        AppColors.indigo600.withValues(alpha: 0.06),
-        AppColors.cyan700.withValues(alpha: 0.04),
-      ],
-    ),
-    glassSurface: AppColors.slate0.withValues(alpha: 0.72),
-    codeBackground: AppColors.slate800,
-    codeForeground: AppColors.slate200,
-    deviceBezel: AppColors.slate800,
+    cardBorder: AppColors.paperRule,
+    rule: AppColors.paperRule,
+    ruleStrong: AppColors.ink,
+    inkMute: AppColors.inkMute,
+    accent: AppColors.orange,
+    accentText: AppColors.orangeText,
+    onAccent: AppColors.ink,
+    codeBackground: AppColors.night,
+    codeForeground: AppColors.nightInk,
+    deviceBezel: AppColors.ink,
     success: AppColors.successLight,
     warning: AppColors.warningLight,
     shadowSoft: [
       BoxShadow(
-        color: AppColors.text.withValues(alpha: 0.06),
-        blurRadius: 12,
-        offset: const Offset(0, 4),
+        color: AppColors.ink.withValues(alpha: 0.10),
+        blurRadius: 8,
+        offset: const Offset(0, 2),
       ),
     ],
     shadowElevated: [
       BoxShadow(
-        color: AppColors.text.withValues(alpha: 0.12),
-        blurRadius: 32,
-        offset: const Offset(0, 16),
+        color: AppColors.ink.withValues(alpha: 0.14),
+        blurRadius: 24,
+        offset: const Offset(0, 8),
       ),
     ],
   );
 
   static final dark = AppDecorations(
-    cardBorder: AppColors.slate800,
-    subtleGradient: LinearGradient(
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-      colors: [
-        AppColors.indigo400.withValues(alpha: 0.10),
-        AppColors.cyan400.withValues(alpha: 0.05),
-      ],
-    ),
-    glassSurface: AppColors.ink.withValues(alpha: 0.72),
-    codeBackground: AppColors.inkDeep,
-    codeForeground: AppColors.slate200,
-    deviceBezel: AppColors.inkDeep,
+    cardBorder: AppColors.nightRule,
+    rule: AppColors.nightRule,
+    ruleStrong: AppColors.nightInk,
+    inkMute: AppColors.nightMute,
+    accent: AppColors.orangeNight,
+    accentText: AppColors.orangeNight,
+    onAccent: AppColors.night,
+    codeBackground: AppColors.nightLowest,
+    codeForeground: AppColors.nightInk,
+    deviceBezel: AppColors.nightLowest,
     success: AppColors.successDark,
     warning: AppColors.warningDark,
     shadowSoft: [
       BoxShadow(
-        color: AppColors.inkDeep.withValues(alpha: 0.5),
-        blurRadius: 12,
-        offset: const Offset(0, 4),
+        color: AppColors.nightLowest.withValues(alpha: 0.6),
+        blurRadius: 8,
+        offset: const Offset(0, 2),
       ),
     ],
     shadowElevated: [
       BoxShadow(
-        color: AppColors.inkDeep.withValues(alpha: 0.7),
-        blurRadius: 32,
-        offset: const Offset(0, 16),
+        color: AppColors.nightLowest.withValues(alpha: 0.7),
+        blurRadius: 24,
+        offset: const Offset(0, 8),
       ),
     ],
   );
@@ -99,8 +117,12 @@ class AppDecorations extends ThemeExtension<AppDecorations> {
   @override
   AppDecorations copyWith({
     Color? cardBorder,
-    Gradient? subtleGradient,
-    Color? glassSurface,
+    Color? rule,
+    Color? ruleStrong,
+    Color? inkMute,
+    Color? accent,
+    Color? accentText,
+    Color? onAccent,
     Color? codeBackground,
     Color? codeForeground,
     Color? deviceBezel,
@@ -111,8 +133,12 @@ class AppDecorations extends ThemeExtension<AppDecorations> {
   }) {
     return AppDecorations(
       cardBorder: cardBorder ?? this.cardBorder,
-      subtleGradient: subtleGradient ?? this.subtleGradient,
-      glassSurface: glassSurface ?? this.glassSurface,
+      rule: rule ?? this.rule,
+      ruleStrong: ruleStrong ?? this.ruleStrong,
+      inkMute: inkMute ?? this.inkMute,
+      accent: accent ?? this.accent,
+      accentText: accentText ?? this.accentText,
+      onAccent: onAccent ?? this.onAccent,
       codeBackground: codeBackground ?? this.codeBackground,
       codeForeground: codeForeground ?? this.codeForeground,
       deviceBezel: deviceBezel ?? this.deviceBezel,
@@ -126,15 +152,20 @@ class AppDecorations extends ThemeExtension<AppDecorations> {
   @override
   AppDecorations lerp(AppDecorations? other, double t) {
     if (other == null) return this;
+    Color c(Color a, Color b) => Color.lerp(a, b, t)!;
     return AppDecorations(
-      cardBorder: Color.lerp(cardBorder, other.cardBorder, t)!,
-      subtleGradient: Gradient.lerp(subtleGradient, other.subtleGradient, t)!,
-      glassSurface: Color.lerp(glassSurface, other.glassSurface, t)!,
-      codeBackground: Color.lerp(codeBackground, other.codeBackground, t)!,
-      codeForeground: Color.lerp(codeForeground, other.codeForeground, t)!,
-      deviceBezel: Color.lerp(deviceBezel, other.deviceBezel, t)!,
-      success: Color.lerp(success, other.success, t)!,
-      warning: Color.lerp(warning, other.warning, t)!,
+      cardBorder: c(cardBorder, other.cardBorder),
+      rule: c(rule, other.rule),
+      ruleStrong: c(ruleStrong, other.ruleStrong),
+      inkMute: c(inkMute, other.inkMute),
+      accent: c(accent, other.accent),
+      accentText: c(accentText, other.accentText),
+      onAccent: c(onAccent, other.onAccent),
+      codeBackground: c(codeBackground, other.codeBackground),
+      codeForeground: c(codeForeground, other.codeForeground),
+      deviceBezel: c(deviceBezel, other.deviceBezel),
+      success: c(success, other.success),
+      warning: c(warning, other.warning),
       shadowSoft: BoxShadow.lerpList(shadowSoft, other.shadowSoft, t)!,
       shadowElevated: BoxShadow.lerpList(
         shadowElevated,

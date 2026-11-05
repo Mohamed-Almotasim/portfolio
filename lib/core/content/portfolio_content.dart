@@ -13,12 +13,13 @@ import 'package:portfolio/core/content/skill.dart';
 const profile = Profile(
   name: 'Your Name', // TODO(me): real name
   title: 'Flutter Developer',
-  tagline:
-      'Flutter developer building polished mobile and web apps.', // TODO(me)
+  // Hero statement: keep it under ~32 characters so it holds two lines.
+  tagline: 'Flutter apps, built to spec.', // TODO(me): confirm wording
+  // TODO(me): confirm who you build for; this is the brief's assumption.
   shortBio:
-      'Passionate *Flutter* developer specializing in creating beautiful, '
-      'performant, and user-friendly *Mobile Apps*. With expertise in modern '
-      'Flutter development practices and a keen eye for *UI Development*.',
+      'I design and build Flutter apps for founders and product teams: iOS, '
+      'Android and the web from one codebase. This site is one of them. '
+      'Switch on Inspect to see how it is put together.',
   location: 'Your City, Country', // TODO(me): real location
   email: 'example@email.com', // TODO(me): real email
   availability: 'Open to freelance projects', // TODO(me): real availability

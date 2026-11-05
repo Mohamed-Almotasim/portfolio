@@ -2,7 +2,7 @@
 
 This file is the source of truth for every UI change. If code and this file disagree, this file wins; change it first and then change the code.
 
-Status: **brief, waiting on choices.** The items marked **[CHOOSE]** have options below. Once you pick, Phase 2 deletes the options you didn't choose and turns your picks into tokens in `lib/core/theme/`.
+Status: **chosen: signal orange and the drafting set.** Tokens are in `lib/core/theme/`. Inspector mode is `shared/layout/inspectable.dart`.
 
 ---
 
@@ -56,48 +56,31 @@ Ratios are WCAG contrast against the ground of the same theme, measured.
 | `rule-strong` | `ink` at 100% | `ink` at 100% | the title block and the table header rule |
 | `error` | `#B42318` | `#FF8A7A` | form errors, always shown with an icon and text |
 
-### Accent **[CHOOSE one]**
+### Accent: signal orange (chosen)
 
-Each accent has three jobs, and each job needs its own value to pass contrast:
-- **fill:** buttons and highlights. Ink text sits on it.
-- **line:** outlines, focus rings and inspector boxes. Needs 3:1 against the ground.
-- **text:** links and active labels. Needs 4.5:1 against the ground.
+The accent has three jobs, and each job needs its own value to pass contrast:
 
-| | A. Signal orange (recommended) | B. Acid chartreuse | C. Signal red |
+| Job | Paper (light) | Night (dark) | Token |
 |---|---|---|---|
-| Light fill | `#EB4700` (ink on it: 4.7:1) | `#CFFF3E` (ink on it: 15.7:1) | `#E8202A` (white on it: 4.5:1) |
-| Light line (needs 3:1) | `#EB4700`, 3.4:1 ✓ | can't: 1.0:1 on paper; uses `#3F5600` instead | `#E8202A`, 4.0:1 ✓ |
-| Light text (needs 4.5:1) | `#B83A00`, 5.1:1 ✓ | `#3F5600`, 7.3:1 ✓ | `#C8102E`, 5.2:1 ✓ |
-| Dark fill / line / text | `#FF6A2B` (6.2:1 on night; night text on it ✓) | `#CFFF3E` (15.2:1) | `#FF5147` (5.5:1) |
-| Character | a surveyor's marker, a safety tag, a measuring tape | a highlighter on a blueprint, very "tool" | a red pencil correction mark, an alarm |
-| Risk | the most common of the three, but it never collides with meaning | on paper it only works as a fill under ink, so the inspector lines turn olive, and the light and dark themes feel like two accents | it collides with error and destructive meaning, so errors have to move to ink plus an icon |
+| **fill:** buttons and highlights, with ink text on top | `#EB4700` (ink on it: 4.7:1) | `#FF6A2B` (night on it: 6.2:1) | `accent` / `onAccent` |
+| **line:** outlines, focus rings, inspector boxes. Needs 3:1. | `#EB4700`, 3.4:1 | `#FF6A2B`, 6.2:1 | `accent` |
+| **text:** links and active labels. Needs 4.5:1. | `#B83A00`, 5.1:1 | `#FF6A2B`, 6.2:1 | `accentText`, and `ColorScheme.primary` |
 
-**Recommendation: A.** It is the only option where one hue does all three jobs in both themes with a shade change only. It reads as "measurement" and leaves red free for errors.
+`ColorScheme.primary` is the text-safe orange, so any legacy use of `primary` as text passes AA. Filled buttons get the brighter fill from the button theme. Red is left free for errors.
 
-## 3. Typography **[CHOOSE one]**
+## 3. Typography: drafting set (chosen)
 
-Three roles:
-- **display:** headlines only, one weight
-- **text:** body and UI
-- **mono:** metadata, section numbers, captions, nav, inspector tags and code
-
-All the faces below are SIL OFL, so they can be bundled. Inter and Space Grotesk are removed.
-
-| | 1. Drafting set (recommended) | 2. Engineered grotesque | 3. Spec + serif |
+| Role | Face | Weights | Loaded by |
 |---|---|---|---|
-| Display | **Archivo Expanded**, SemiBold. Wide and flat-topped, like the lettering in a drawing's title block. | **Schibsted Grotesk**, Bold. A tight newspaper grotesque with real character in the R, G and a. | **Instrument Serif**, Regular. Condensed and high-contrast, an editorial voice set against the technical mono. |
-| Text | **IBM Plex Sans**, 400/600 | **Public Sans**, 400/600 | **IBM Plex Sans**, 400/600 |
-| Mono | **IBM Plex Mono**, 400/500 (shares Plex metrics, so labels and body align) | **JetBrains Mono**, 400 (already bundled) | **JetBrains Mono**, 400 |
-| Feel | the blueprint title block | DevTools crossed with a newspaper | a monograph about engineering |
-| Risk | Archivo's width axis isn't exposed by `google_fonts`, so the Expanded cut is bundled as its own TTF and loaded with `FontLoader` | the most conventional of the three | Instrument Serif is the 2024–25 "tasteful AI landing page" default, and the serif against mono can read as costume |
+| **display:** headlines only | Archivo Expanded | SemiBold | `FontLoader('ArchivoExpanded')` in `preloadFonts`, because `google_fonts` can't select the width |
+| **text:** body and UI | IBM Plex Sans | 400/600 | `google_fonts`, bundled |
+| **mono:** metadata, section numbers, captions, nav, buttons, inspector tags, code | IBM Plex Mono | 400/500 | `google_fonts`, bundled |
 
-**Recommendation: 1.** Plex Sans and Plex Mono read as one family, so the page effectively has two voices (display and Plex), which keeps Taste's two-typeface limit in spirit. The Expanded display cut is the least overused option.
+- All three faces are SIL OFL, with their licences in `assets/google_fonts/`. Inter, Space Grotesk and JetBrains Mono are gone.
+- Plex Sans and Plex Mono read as one family, so the page has two voices.
+- Mono is now part of the main UI, so it loads before the first frame together with the other faces. It is no longer lazy.
 
-**Mono alternatives** if you want to swap only the mono:
-- **Martian Mono:** wide and very technical, but heavy at small sizes.
-- **JetBrains Mono:** keep what's bundled. It's warmer than Plex Mono and has less of a drafting feel.
-
-### Type scale (one scale, both pickers)
+### Type scale
 
 Body sits on a 16px base. Only five sizes do visible work.
 
@@ -144,8 +127,8 @@ Lines mark structure. They are not ornament. Every line separates two real regio
 | Hairline rule | 1px `rule` | register rows, the title-block cells, the top of each numbered section |
 | Strong rule | 1px `rule-strong` | the top and bottom of the title block (navbar and case-study header), the register header |
 | Dimension line | 1px `ink-mute`, dashed 4/3, with 6px end ticks and a centred mono label (e.g. `1280`) | at most one per section, measuring a real box |
-| Ruler ticks | minor 4px every 8, major 8px every 64, 1px `rule`, labels in mono `label` at majors | along the hero's top edge, and in inspector mode along the viewport edge |
-| Crop marks | 12px L-shaped corners in 1px `ink`, offset 6px outside the frame | image and preview frames, and the live-demo frame only |
+| Ruler ticks | minor 4px every 8, major 8px every 64, 1px `rule`, labels in mono `label` at majors | along the hero's top edge only |
+| Crop marks | 10px L-shaped corners in 1px `ink`, offset 4px outside the frame (inside the 16px phone margin) | image and preview frames, and the live-demo frame only |
 | Section number | mono `label` in `ink-mute`, on the heading's baseline, e.g. `01 Selected work` | numbered sections only (see the Taste notes) |
 | Annotation | mono `label` in `ink-mute`, e.g. `padding: 24` or `Column → 3 children` | 0–1 per section in normal mode. Inspector mode adds the rest. |
 
@@ -173,7 +156,7 @@ When developer mode is on, the real site shows its own layout:
 - **Tag:** a small mono tag at the box's top-left, outside the box when there's room, reading `<label> <w>×<h>` with the size rounded to whole logical pixels, e.g. `Card 352×240`. It uses ink on the accent fill (A and B) or white on the accent fill (C), with radius 4. The tag is the one thing that has a shadow.
 - **Interaction:**
   - Desktop: hovering highlights the box and shows its tag. The innermost hovered box wins.
-  - Touch: a tap toggles the highlight and doesn't trigger the child. A second tap passes through.
+  - Touch: a tap highlights the innermost box under it. The tap still reaches the control, so nothing has to be pressed twice.
   - Keyboard: focus inside a box highlights it.
 - **Engine:** `shared/layout/inspectable.dart`, with `Inspectable(label: 'HeroSection', padding: …, child: …)`. It is one custom `RenderProxyBox` that is always in the tree, so turning developer mode on or off never remounts the child or loses its state.
   - When off, `paint` only paints the child: no extra layer, no extra composited layer, and no mouse annotation (`validForMouseTracker` is false).
@@ -218,7 +201,7 @@ When developer mode is on, the real site shows its own layout:
 The Taste skill's house rules ban mono outside code, index numbering, hairline rules, grid lines and crop marks, which are this brief's signature. Impeccable's rule is that *the brief wins*, so they stay, with discipline that keeps them functional rather than costume:
 1. **Mono** is used for things that really are metadata or identifiers: the year, the stack, sizes, widget names, nav and captions. It is never used for running text or headlines.
 2. **Numbers** go only where the order is real: the numbered sections of the home page and the case study, the drawing register and the 4 process steps.
-3. **Lines** must separate two real regions or measure a real box (§5). There are no decorative boxes and no full-page background grid. Ruler ticks appear only along the hero's top edge, and along the viewport edge in inspector mode.
+3. **Lines** must separate two real regions or measure a real box (§5). There are no decorative boxes and no full-page background grid. Ruler ticks appear only along the hero's top edge.
 4. **Crop marks** go only on media frames.
 5. **Annotations:** at most one per section in normal mode.
 

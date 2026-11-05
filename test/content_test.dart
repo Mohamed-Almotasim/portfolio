@@ -19,8 +19,8 @@ void main() {
     }
   });
 
-  test('shortBio highlight markers are balanced', () {
-    expect('*'.allMatches(profile.shortBio).length.isEven, isTrue);
+  test('shortBio is plain text (no emphasis markers)', () {
+    expect(profile.shortBio, isNot(contains('*')));
   });
 
   test('contactLinks ends with a mailto for the profile email', () {

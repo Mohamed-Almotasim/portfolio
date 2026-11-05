@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -7,12 +5,13 @@ import 'package:portfolio/core/routing/app_routes.dart';
 import 'package:portfolio/core/state/developer_mode_provider.dart';
 import 'package:portfolio/core/theme/app_decorations.dart';
 import 'package:portfolio/core/theme/app_spacing.dart';
+import 'package:portfolio/shared/layout/inspectable.dart';
 import 'package:portfolio/shared/widgets/brand_logo.dart';
 import 'package:portfolio/shared/widgets/theme_toggle_button.dart';
 
-/// Sticky top bar. Transparent at the top of a page; frosted glass with a
-/// hairline border once [scrolled]. Collapses to a drawer below the tablet
-/// breakpoint.
+/// The title block: a plain paper strip with a full-ink bottom rule, mono
+/// links, the Inspect toggle and one action. Collapses to a drawer below
+/// the tablet breakpoint. No blur, no glass (docs/DESIGN.md §8).
 class AppNavbar extends StatelessWidget {
   const AppNavbar({
     super.key,
@@ -24,103 +23,90 @@ class AppNavbar extends StatelessWidget {
   static const double height = 64;
 
   final String location;
+
+  /// Kept for AppShell; the bar looks the same at every scroll position.
   final bool scrolled;
   final VoidCallback? onMenuPressed;
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     final deco = AppDecorations.of(context);
-    final isDesktop = AppBreakpoints.isDesktop(context);
-    // The name only fits next to 7 links on wide screens, and not on tiny phones.
     final width = MediaQuery.sizeOf(context).width;
-    // No room for the name on tiny phones either.
-    final showName = isDesktop ? width >= 1200 : width >= 400;
+    final isDesktop = width >= AppBreakpoints.tablet;
+    final margin = AppSpacing.margin(width);
 
-    return ClipRect(
-      child: BackdropFilter(
-        enabled: scrolled,
-        filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          height: height,
-          decoration: BoxDecoration(
-            color: scrolled
-                ? deco.glassSurface
-                : Theme.of(context).scaffoldBackgroundColor,
-            border: Border(
-              bottom: BorderSide(
-                color: scrolled
-                    ? scheme.outlineVariant
-                    : scheme.outlineVariant.withValues(alpha: 0),
-              ),
+    return Inspectable(
+      label: 'AppNavbar',
+      child: Container(
+        height: height,
+        decoration: BoxDecoration(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          border: Border(bottom: BorderSide(color: deco.ruleStrong)),
+        ),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: AppSpacing.maxContentWidth + margin * 2,
             ),
-          ),
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(
-                maxWidth: AppSpacing.maxContentWidth,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s24),
-                child: Row(
-                  children: [
-                    Flexible(
-                      flex: isDesktop ? 0 : 1,
-                      child: Semantics(
-                        button: true,
-                        label: 'Home',
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(AppRadius.sm),
-                          onTap: () => context.go(AppRoutes.home),
-                          child: BrandLogo(showName: showName),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: margin),
+              child: Row(
+                children: [
+                  Flexible(
+                    flex: isDesktop ? 0 : 1,
+                    child: Semantics(
+                      button: true,
+                      label: 'Home',
+                      excludeSemantics: true,
+                      child: InkWell(
+                        onTap: () => context.go(AppRoutes.home),
+                        child: BrandLogo(showName: width >= 360),
+                      ),
+                    ),
+                  ),
+                  if (isDesktop) ...[
+                    const SizedBox(width: AppSpacing.s24),
+                    Expanded(
+                      // scaleDown only matters at 1024–1100 with 7 links.
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerRight,
+                        child: Row(
+                          children: [
+                            for (final d in navDestinations)
+                              _NavLink(
+                                label: d.label,
+                                isActive: location == d.path,
+                                onPressed: () => context.go(d.path),
+                              ),
+                            const SizedBox(width: AppSpacing.s16),
+                            const ThemeToggleButton(),
+                            const InspectToggle(),
+                            const SizedBox(width: AppSpacing.s12),
+                            FilledButton(
+                              onPressed: () => context.go(AppRoutes.contact),
+                              style: FilledButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: AppSpacing.s16,
+                                ),
+                                minimumSize: const Size(44, 40),
+                              ),
+                              child: const Text('Start a project'),
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                    const SizedBox(width: AppSpacing.s16),
-                    if (isDesktop)
-                      Expanded(
-                        // scaleDown only kicks in for frames before web fonts load.
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          alignment: Alignment.centerRight,
-                          child: Row(
-                            children: [
-                              for (final d in navDestinations)
-                                _NavLink(
-                                  label: d.label,
-                                  isActive: location == d.path,
-                                  onPressed: () => context.go(d.path),
-                                ),
-                              const SizedBox(width: AppSpacing.s16),
-                              const ThemeToggleButton(),
-                              const _DevModeButton(),
-                              const SizedBox(width: AppSpacing.s8),
-                              FilledButton(
-                                onPressed: () => context.go(AppRoutes.contact),
-                                style: FilledButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: AppSpacing.s16,
-                                    vertical: AppSpacing.s12,
-                                  ),
-                                ),
-                                child: const Text('Hire me'),
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
-                    else ...[
-                      const Spacer(),
-                      const ThemeToggleButton(),
-                      IconButton(
-                        tooltip: 'Open menu',
-                        icon: const Icon(Icons.menu),
-                        onPressed: onMenuPressed,
-                      ),
-                    ],
+                  ] else ...[
+                    const Spacer(),
+                    const ThemeToggleButton(),
+                    IconButton(
+                      tooltip: 'Open menu',
+                      icon: const Icon(Icons.menu),
+                      onPressed: onMenuPressed,
+                    ),
                   ],
-                ),
+                ],
               ),
             ),
           ),
@@ -130,25 +116,46 @@ class AppNavbar extends StatelessWidget {
   }
 }
 
-class _DevModeButton extends ConsumerWidget {
-  const _DevModeButton();
+/// Turns Inspector mode (developer mode) on and off. Labelled, so its state
+/// reads without an icon legend.
+class InspectToggle extends ConsumerWidget {
+  const InspectToggle({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final on = ref.watch(developerModeProvider);
+    final deco = AppDecorations.of(context);
     final scheme = Theme.of(context).colorScheme;
-    return IconButton(
-      tooltip: on
-          ? 'Developer mode on: hide source code'
-          : 'Developer mode: show the code behind each demo',
-      isSelected: on,
-      onPressed: () => ref.read(developerModeProvider.notifier).toggle(),
-      icon: const Icon(Icons.code),
-      style: IconButton.styleFrom(
-        foregroundColor: on ? scheme.primary : scheme.onSurface,
-        backgroundColor: on
-            ? scheme.primaryContainer
-            : scheme.primaryContainer.withValues(alpha: 0),
+    return Semantics(
+      toggled: on,
+      child: TextButton(
+        onPressed: () => ref.read(developerModeProvider.notifier).toggle(),
+        style: TextButton.styleFrom(
+          foregroundColor: on ? deco.accentText : scheme.onSurface,
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s12),
+        ),
+        child: Tooltip(
+          message: on
+              ? 'Inspector mode on: hide layout and code'
+              : 'Inspector mode: show the layout and code behind the site',
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // A 10px box: outlined off, filled on.
+              AnimatedContainer(
+                duration: AppMotion.of(context, AppMotion.snap),
+                width: 10,
+                height: 10,
+                decoration: BoxDecoration(
+                  color: on ? deco.accent : null,
+                  border: Border.all(color: on ? deco.accent : deco.inkMute),
+                ),
+              ),
+              const SizedBox(width: AppSpacing.s8),
+              const Text('Inspect'),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -175,39 +182,39 @@ class _NavLinkState extends State<_NavLink> {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    final highlighted = widget.isActive || _hovered;
+    final deco = AppDecorations.of(context);
+    final text = Theme.of(context).textTheme;
+    final active = widget.isActive;
     return MouseRegion(
       onEnter: (_) => setState(() => _hovered = true),
       onExit: (_) => setState(() => _hovered = false),
       child: TextButton(
         onPressed: widget.onPressed,
         style: TextButton.styleFrom(
-          foregroundColor: highlighted
-              ? scheme.onSurface
-              : scheme.onSurfaceVariant,
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.s12,
-            vertical: AppSpacing.s8,
-          ),
+          foregroundColor: active ? deco.accentText : scheme.onSurface,
+          textStyle: text.labelMedium,
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s12),
           minimumSize: const Size(44, 44),
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(widget.label),
-            const SizedBox(height: 4),
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.easeOut,
-              height: 2,
-              width: widget.isActive ? 20 : (_hovered ? 10 : 0),
-              decoration: BoxDecoration(
-                color: scheme.primary,
-                borderRadius: BorderRadius.circular(AppRadius.pill),
+        // Underline the width of the label: 2px accent active, 1px ink hover.
+        child: AnimatedContainer(
+          duration: AppMotion.of(context, AppMotion.snap),
+          curve: AppMotion.curve,
+          padding: const EdgeInsets.only(top: 6, bottom: 4),
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                width: 2,
+                color: active
+                    ? deco.accent
+                    : _hovered
+                    ? scheme.onSurface
+                    : deco.accent.withValues(alpha: 0),
               ),
             ),
-          ],
+          ),
+          child: Text(widget.label),
         ),
       ),
     );

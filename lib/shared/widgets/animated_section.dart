@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:portfolio/core/theme/app_spacing.dart';
 
 /// Fades and slides [child] in the first time it scrolls into view.
 /// Shows immediately when the platform asks for reduced motion.
@@ -22,12 +23,12 @@ class AnimatedSection extends StatefulWidget {
 class _AnimatedSectionState extends State<AnimatedSection>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(
-    duration: const Duration(milliseconds: 600),
+    duration: AppMotion.settle,
     vsync: this,
   );
   late final Animation<double> _curve = CurvedAnimation(
     parent: _controller,
-    curve: Curves.easeOutCubic,
+    curve: AppMotion.curve,
   );
   ScrollPosition? _position;
   bool _revealed = false;
@@ -79,13 +80,15 @@ class _AnimatedSectionState extends State<AnimatedSection>
 
   @override
   Widget build(BuildContext context) {
+    // DESIGN.md §6 `settle`: fade plus at most an 8px rise, snapping in.
     return FadeTransition(
       opacity: _curve,
-      child: SlideTransition(
-        position: Tween(
-          begin: const Offset(0, 0.06),
-          end: Offset.zero,
-        ).animate(_curve),
+      child: AnimatedBuilder(
+        animation: _curve,
+        builder: (_, child) => Transform.translate(
+          offset: Offset(0, 8 * (1 - _curve.value)),
+          child: child,
+        ),
         child: widget.child,
       ),
     );

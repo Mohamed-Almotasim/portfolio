@@ -45,7 +45,7 @@ void main() {
               height: size,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: AppColors.indigo600,
+                color: AppColors.orange,
                 borderRadius: maskable
                     ? null
                     : BorderRadius.circular(size * 0.22),
@@ -55,7 +55,7 @@ void main() {
                 style: AppTypography.textTheme(AppColors.dark, compact: false)
                     .displayLarge
                     ?.copyWith(
-                      color: AppColors.slate0,
+                      color: AppColors.ink,
                       fontSize: size * (maskable ? 0.34 : 0.42),
                       letterSpacing: 0,
                     ),

@@ -41,11 +41,9 @@ void main() {
     );
     expect(find.text('Show code'), findsNothing);
 
-    await tester.tap(
-      find.byTooltip('Developer mode: show the code behind each demo'),
-    );
+    await tester.tap(find.byType(InspectToggle));
     await settle(tester);
-    expect(find.textContaining('Developer mode is on'), findsOneWidget);
+    expect(find.textContaining('Inspector mode is on'), findsOneWidget);
 
     await tester.tap(find.text('Show code').first);
     // The snippet is read from the bundled source file (real I/O).

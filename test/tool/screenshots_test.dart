@@ -4,6 +4,7 @@
 import 'dart:io';
 import 'dart:ui' as ui;
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -35,7 +36,6 @@ void main() {
   final out = Platform.environment['SHOT_DIR'];
   if (out == null) return; // only runs when asked for screenshots
   setUpAll(() async {
-    loadCodeFont();
     await preloadFonts();
     final dir =
         '${Platform.environment['FLUTTER_ROOT']}/bin/cache/artifacts/material_fonts';
@@ -82,6 +82,17 @@ void main() {
           await tester.pump();
           final show = find.text('Show code');
           if (show.evaluate().isNotEmpty) await tester.tap(show.first);
+          // SHOT_HOVER=x,y parks a mouse there, e.g. to show an inspector tag.
+          final hover = Platform.environment['SHOT_HOVER']?.split(',');
+          if (hover != null) {
+            final mouse = await tester.createGesture(
+              kind: PointerDeviceKind.mouse,
+            );
+            addTearDown(mouse.removePointer);
+            await mouse.moveTo(
+              Offset(double.parse(hover[0]), double.parse(hover[1])),
+            );
+          }
         }
         for (var i = 0; i < 20; i++) {
           await tester.runAsync(

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portfolio/core/state/profile_provider.dart';
+import 'package:portfolio/core/theme/app_decorations.dart';
 import 'package:portfolio/core/theme/app_spacing.dart';
 
-/// Monogram (initials from Profile.name) plus, optionally, the full name.
+/// Title-block wordmark: initials in a 1px ink cell, then the name in mono.
 class BrandLogo extends ConsumerWidget {
   const BrandLogo({super.key, this.showName = true});
 
@@ -19,26 +20,19 @@ class BrandLogo extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final name = ref.watch(profileProvider).name;
-    final scheme = Theme.of(context).colorScheme;
     final text = Theme.of(context).textTheme;
+    final deco = AppDecorations.of(context);
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          width: 36,
-          height: 36,
+          width: 32,
+          height: 32,
           alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: scheme.primary,
-            borderRadius: BorderRadius.circular(AppRadius.sm + 2),
-          ),
+          decoration: BoxDecoration(border: Border.all(color: deco.ruleStrong)),
           child: Text(
             initials(name),
-            style: text.titleSmall?.copyWith(
-              color: scheme.onPrimary,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.5,
-            ),
+            style: text.headlineSmall?.copyWith(fontSize: 13, letterSpacing: 0),
           ),
         ),
         if (showName) ...[
@@ -47,7 +41,7 @@ class BrandLogo extends ConsumerWidget {
             child: Text(
               name,
               overflow: TextOverflow.ellipsis,
-              style: text.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+              style: text.labelLarge,
             ),
           ),
         ],

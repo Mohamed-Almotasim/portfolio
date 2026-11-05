@@ -11,8 +11,8 @@
   <!-- TODO(me): put your real name in the title and the og/twitter tags. -->
   <title>Your Name — Flutter Developer</title>
   <meta name="description" content="Flutter developer building polished mobile and web apps. Case studies, live demos, and the code behind them.">
-  <meta name="theme-color" content="#0B0F17" media="(prefers-color-scheme: dark)">
-  <meta name="theme-color" content="#F8FAFC" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0E1A22" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#F4F1EA" media="(prefers-color-scheme: light)">
   <!-- TODO(me): <link rel="canonical" href="https://your-domain.dev/"> -->
 
   <!-- Open Graph / Twitter. TODO(me): replace og:image with a 1200×630 screenshot. -->
@@ -36,21 +36,22 @@
 
   <style>
     /* Branded splash shown until Flutter paints its first frame. */
-    html, body { margin: 0; height: 100%; background: #0B0F17; }
+    html, body { margin: 0; height: 100%; background: #F4F1EA; }
     #splash {
       position: fixed; inset: 0; display: grid; place-items: center;
-      background: #0B0F17; transition: opacity 240ms ease-out;
+      background: #F4F1EA; transition: opacity 200ms linear;
     }
     #splash .mark {
-      width: 56px; height: 56px; border-radius: 14px; background: #4F46E5;
-      display: grid; place-items: center; color: #fff;
+      width: 56px; height: 56px; border-radius: 0; background: #EB4700;
+      display: grid; place-items: center; color: #16150F;
       font: 700 22px/1 system-ui, -apple-system, "Segoe UI", sans-serif;
       letter-spacing: 0.02em;
-      animation: pulse 1.4s ease-in-out infinite;
+      animation: pulse 1.2s steps(2, jump-none) infinite;
     }
     #splash.done { opacity: 0; pointer-events: none; }
-    @keyframes pulse { 50% { transform: scale(0.92); opacity: 0.7; } }
+    @keyframes pulse { 50% { opacity: 0.55; } }
     @media (prefers-reduced-motion: reduce) { #splash .mark { animation: none; } }
+    @media (prefers-color-scheme: dark) { html, body, #splash { background: #0E1A22; } #splash .mark { background: #FF6A2B; color: #0E1A22; } }
   </style>
 </head>
 <body>
@@ -60,7 +61,7 @@
       var splash = document.getElementById('splash');
       if (!splash) return;
       splash.classList.add('done');
-      setTimeout(function () { splash.remove(); }, 300);
+      setTimeout(function () { splash.remove(); }, 220);
     });
   </script>
   <script src="flutter_bootstrap.js" async></script>

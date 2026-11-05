@@ -30,7 +30,7 @@ class Profile {
   final String title;
   final String tagline;
 
-  /// Words wrapped in `*asterisks*` are rendered in the primary color.
+  /// Plain text, shown under the hero statement. No emphasis markers.
   final String shortBio;
   final String location;
   final String email;

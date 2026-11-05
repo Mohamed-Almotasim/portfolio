@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:portfolio/core/content/case_study.dart';
-import 'package:portfolio/core/theme/app_decorations.dart';
 import 'package:portfolio/core/theme/app_spacing.dart';
 
 /// Screenshot if the case study has one, otherwise a branded placeholder.
@@ -44,10 +43,7 @@ class _Placeholder extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final initials = project.title.split(' ').take(2).map((w) => w[0]).join();
     return DecoratedBox(
-      decoration: BoxDecoration(
-        color: scheme.surfaceContainer,
-        gradient: AppDecorations.of(context).subtleGradient,
-      ),
+      decoration: BoxDecoration(color: scheme.surfaceContainer),
       child: Stack(
         children: [
           Center(

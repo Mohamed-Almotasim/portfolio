@@ -61,4 +61,4 @@ Refactor phase rules:
 
 ## Theme
 
-`core/theme/`: indigo primary / cyan accent / slate neutrals, hand-tuned light and dark `ColorScheme`s, Space Grotesk (display) + Inter (body) + JetBrains Mono (code). Theme mode comes from `themeModeProvider` (default `ThemeMode.system`, visitor choice kept in localStorage). Use `AppSpacing`, `AppRadius`, `AppBreakpoints` and `AppDecorations.of(context)`; never `Colors.*` in UI.
+`core/theme/` implements docs/DESIGN.md ("The Inspector"): paper / night-blueprint neutrals, one signal-orange accent (`AppDecorations.accent`, `accentText`), Archivo Expanded (display) + IBM Plex Sans (text) + IBM Plex Mono (labels, nav, code). `Inspectable` (shared/layout) draws Inspector mode from the developer-mode provider. Theme mode comes from `themeModeProvider` (default `ThemeMode.system`, visitor choice kept in localStorage). Use `AppSpacing`, `AppRadius`, `AppBreakpoints`, `AppMotion` and `AppDecorations.of(context)`; never `Colors.*` in UI.

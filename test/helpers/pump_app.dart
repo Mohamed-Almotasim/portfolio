@@ -23,9 +23,8 @@ const allRoutes = [
 ];
 
 /// Call from `setUpAll` so layout is measured with the real bundled fonts
-/// (Inter / Space Grotesk / JetBrains Mono), not the test framework's square placeholder glyphs.
+/// (Archivo Expanded / IBM Plex Sans / IBM Plex Mono), not the test framework's square placeholder glyphs.
 Future<void> loadAppFonts() {
-  loadCodeFont();
   return preloadFonts();
 }
 

@@ -6,7 +6,6 @@ import 'package:portfolio/core/routing/app_routes.dart';
 import 'package:portfolio/core/state/developer_mode_provider.dart';
 import 'package:portfolio/core/state/theme_mode_provider.dart';
 import 'package:portfolio/core/theme/app_spacing.dart';
-import 'package:portfolio/core/theme/app_typography.dart';
 import 'package:portfolio/shared/widgets/app_navbar.dart';
 import 'package:portfolio/shared/widgets/brand_logo.dart';
 
@@ -56,8 +55,8 @@ class _AppShellState extends ConsumerState<AppShell> {
       MaterialBanner(
         leading: const Icon(Icons.code),
         content: const Text(
-          'Developer mode is on. Showcase components now show the real source '
-          'they run, and app demos list their layout and widgets.',
+          'Inspector mode is on. Sections show their layout: hover or tap one '
+          'for its widget and size. Demos show the real source they run.',
         ),
         actions: [
           TextButton(
@@ -72,7 +71,6 @@ class _AppShellState extends ConsumerState<AppShell> {
   @override
   Widget build(BuildContext context) {
     ref.listen(developerModeProvider, (_, enabled) {
-      if (enabled) loadCodeFont();
       _maybeShowDevBanner(enabled);
     });
     return Scaffold(
@@ -167,7 +165,7 @@ class _AppDrawer extends ConsumerWidget {
         SwitchListTile(
           contentPadding: const EdgeInsets.symmetric(horizontal: 28),
           secondary: const Icon(Icons.code),
-          title: const Text('Developer mode'),
+          title: const Text('Inspect'),
           value: ref.watch(developerModeProvider),
           onChanged: (v) => ref.read(developerModeProvider.notifier).set(v),
         ),

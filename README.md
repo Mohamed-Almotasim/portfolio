@@ -24,7 +24,7 @@ A production-grade Flutter **web** portfolio: case studies, live app demos runni
 | UI | Flutter 3 (web first), Material 3, custom design system |
 | State | Riverpod 3 (`Notifier`s with intent methods) |
 | Routing | go_router 18 with a `ShellRoute`, path URLs, custom page transitions |
-| Typography | Space Grotesk + Inter + JetBrains Mono via `google_fonts`, **bundled** (no CDN at runtime) |
+| Typography | Archivo Expanded + IBM Plex Sans + IBM Plex Mono, **bundled** (no CDN at runtime); see docs/DESIGN.md |
 | Links | `url_launcher` behind one helper that handles failures |
 | Tests | `flutter_test`: 150+ unit and widget tests |
 

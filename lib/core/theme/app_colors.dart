@@ -1,107 +1,110 @@
 import 'package:flutter/material.dart';
 
-/// The palette. Widgets never read these directly: they go through
-/// `Theme.of(context).colorScheme` or the [AppDecorations] extension.
+/// The Inspector palette (docs/DESIGN.md §2). Widgets never read these
+/// directly: they go through `Theme.of(context).colorScheme` or
+/// [AppDecorations]. Contrast ratios in comments are WCAG, against the ground.
 abstract final class AppColors {
-  // Brand: indigo primary, cyan accent.
-  static const indigo50 = Color(0xFFEEF0FF);
-  static const indigo200 = Color(0xFFC7CBFE);
-  static const indigo400 = Color(0xFF8B92FA);
-  static const indigo600 = Color(0xFF4F46E5);
-  static const indigo800 = Color(0xFF312E81);
-  static const indigo950 = Color(0xFF1A1745);
-  static const cyan100 = Color(0xFFCFFAFE);
-  static const cyan400 = Color(0xFF22D3EE);
-  static const cyan700 = Color(0xFF0E7490);
-  static const cyan900 = Color(0xFF164E63);
-  static const cyan950 = Color(0xFF083344);
+  // Paper (light).
+  static const paper = Color(0xFFF4F1EA);
+  static const paperRaised = Color(0xFFFAF8F3);
+  static const paper2 = Color(0xFFECE8DE);
+  static const paper3 = Color(0xFFE5E0D4);
+  static const paper4 = Color(0xFFDDD7C9);
+  static const ink = Color(0xFF16150F); // 16.2:1
+  static const inkMute = Color(0xFF5C5A52); // 6.1:1
+  static const paperRule = Color(0xFFD5D2CB); // ink at 14%
+  static const paperOutline = Color(0xFF85837D); // 3.4:1, input borders
 
-  // Neutrals: cool slate, so surfaces feel "engineered" rather than grey.
-  static const slate0 = Color(0xFFFFFFFF);
-  static const slate50 = Color(0xFFF8FAFC);
-  static const slate100 = Color(0xFFF1F5F9);
-  static const slate150 = Color(0xFFE9EEF5);
-  static const slate200 = Color(0xFFE2E8F0);
-  static const slate300 = Color(0xFFCBD5E1);
-  static const slate400 = Color(0xFF94A3B8);
-  static const slate600 = Color(0xFF475569);
-  static const slate700 = Color(0xFF334155);
-  static const slate800 = Color(0xFF1E293B);
-  static const slate850 = Color(0xFF222A3B);
-  static const slate900 = Color(0xFF1A2130);
-  static const slate925 = Color(0xFF131926);
-  static const slate950 = Color(0xFF0F141D);
-  static const ink = Color(0xFF0B0F17);
-  static const inkDeep = Color(0xFF070A10);
-  static const text = Color(0xFF0F172A);
+  // Night blueprint (dark).
+  static const night = Color(0xFF0E1A22);
+  static const nightLowest = Color(0xFF0A141A);
+  static const night2 = Color(0xFF14232D);
+  static const night3 = Color(0xFF1B2D39);
+  static const night4 = Color(0xFF233745);
+  static const nightInk = Color(0xFFE6E2D6); // 13.6:1
+  static const nightMute = Color(0xFF93A0A6); // 6.6:1
+  static const nightRule = Color(0xFF313A3F);
+  static const nightOutline = Color(0xFF7E8280); // 4.5:1
 
-  // Status, tuned per brightness for contrast.
-  static const successLight = Color(0xFF047857);
-  static const successDark = Color(0xFF34D399);
-  static const warningLight = Color(0xFFB45309);
-  static const warningDark = Color(0xFFFBBF24);
-  static const errorLight = Color(0xFFDC2626);
-  static const errorDark = Color(0xFFF87171);
+  // Signal orange: fill/line on paper, text on paper, everything on night.
+  static const orange = Color(0xFFEB4700); // 3.4:1 line; ink on it 4.7:1
+  static const orangeText = Color(0xFFB83A00); // 5.1:1
+  static const orangeNight = Color(0xFFFF6A2B); // 6.2:1; night on it 6.2:1
+  static const orangeTint = Color(0xFFF3DDCE);
+  static const orangeTintNight = Color(0xFF352723);
+
+  // Status, tuned per ground for 4.5:1.
+  static const successLight = Color(0xFF1E6B35);
+  static const successDark = Color(0xFF7FD08F);
+  static const warningLight = Color(0xFF8A5A00);
+  static const warningDark = Color(0xFFE0B04A);
+  static const errorLight = Color(0xFFB42318);
+  static const errorDark = Color(0xFFFF8A7A);
+
+  // Code blocks stay night in both themes (CodeSyntax is tuned for night).
+  static const codeBlue = Color(0xFF8FB8DE);
 
   static const light = ColorScheme(
     brightness: Brightness.light,
-    primary: indigo600,
-    onPrimary: slate0,
-    primaryContainer: indigo50,
-    onPrimaryContainer: indigo950,
-    secondary: cyan700,
-    onSecondary: slate0,
-    secondaryContainer: cyan100,
-    onSecondaryContainer: cyan950,
+    // Text-safe orange, so every `primary` used as text passes AA. Filled
+    // buttons use the brighter fill via the button theme.
+    primary: orangeText,
+    onPrimary: paperRaised,
+    primaryContainer: orangeTint,
+    onPrimaryContainer: ink,
+    secondary: inkMute,
+    onSecondary: paperRaised,
+    secondaryContainer: paper3,
+    onSecondaryContainer: ink,
     tertiary: warningLight,
-    onTertiary: slate0,
+    onTertiary: paperRaised,
     error: errorLight,
-    onError: slate0,
-    surface: slate0,
-    onSurface: text,
-    onSurfaceVariant: slate600,
-    surfaceContainerLowest: slate0,
-    surfaceContainerLow: slate50,
-    surfaceContainer: slate100,
-    surfaceContainerHigh: slate150,
-    surfaceContainerHighest: slate200,
-    outline: slate300,
-    outlineVariant: slate200,
-    shadow: text,
-    scrim: text,
-    inverseSurface: slate800,
-    onInverseSurface: slate100,
-    inversePrimary: indigo200,
+    onError: paperRaised,
+    surface: paper,
+    onSurface: ink,
+    onSurfaceVariant: inkMute,
+    surfaceContainerLowest: paperRaised,
+    surfaceContainerLow: paper2,
+    surfaceContainer: paper2,
+    surfaceContainerHigh: paper3,
+    surfaceContainerHighest: paper4,
+    outline: paperOutline,
+    outlineVariant: paperRule,
+    shadow: ink,
+    scrim: ink,
+    inverseSurface: night,
+    onInverseSurface: nightInk,
+    inversePrimary: orangeNight,
   );
 
   static const dark = ColorScheme(
     brightness: Brightness.dark,
-    primary: indigo400,
-    onPrimary: indigo950,
-    primaryContainer: indigo800,
-    onPrimaryContainer: indigo50,
-    secondary: cyan400,
-    onSecondary: cyan950,
-    secondaryContainer: cyan900,
-    onSecondaryContainer: cyan100,
+    primary: orangeNight,
+    onPrimary: night,
+    primaryContainer: orangeTintNight,
+    onPrimaryContainer: nightInk,
+    secondary: nightMute,
+    onSecondary: night,
+    secondaryContainer: night3,
+    onSecondaryContainer: nightInk,
     tertiary: warningDark,
-    onTertiary: inkDeep,
+    onTertiary: night,
     error: errorDark,
-    onError: Color(0xFF450A0A),
-    surface: ink,
-    onSurface: slate200,
-    onSurfaceVariant: slate400,
-    surfaceContainerLowest: inkDeep,
-    surfaceContainerLow: slate950,
-    surfaceContainer: slate925,
-    surfaceContainerHigh: slate900,
-    surfaceContainerHighest: slate850,
-    outline: slate700,
-    outlineVariant: slate800,
-    shadow: inkDeep,
-    scrim: inkDeep,
-    inverseSurface: slate200,
-    onInverseSurface: slate800,
-    inversePrimary: indigo600,
+    onError: night,
+    surface: night,
+    onSurface: nightInk,
+    onSurfaceVariant: nightMute,
+    surfaceContainerLowest: nightLowest,
+    surfaceContainerLow: night2,
+    surfaceContainer: night2,
+    surfaceContainerHigh: night3,
+    surfaceContainerHighest: night4,
+    outline: nightOutline,
+    outlineVariant: nightRule,
+    shadow: nightLowest,
+    scrim: nightLowest,
+    inverseSurface: paper,
+    onInverseSurface: ink,
+    inversePrimary: orangeText,
   );
 }

@@ -44,7 +44,12 @@ class _AppPageState extends State<AppPage> {
                 maxWidth: AppSpacing.maxContentWidth,
               ),
               child: Padding(
-                padding: const EdgeInsets.all(AppSpacing.s24),
+                padding: EdgeInsets.symmetric(
+                  horizontal: AppSpacing.margin(
+                    MediaQuery.sizeOf(context).width,
+                  ),
+                  vertical: AppSpacing.s24,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

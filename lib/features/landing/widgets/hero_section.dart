@@ -5,150 +5,126 @@ import 'package:portfolio/core/routing/app_routes.dart';
 import 'package:portfolio/core/state/profile_provider.dart';
 import 'package:portfolio/core/theme/app_decorations.dart';
 import 'package:portfolio/core/theme/app_spacing.dart';
-import 'package:portfolio/features/landing/widgets/hero_backdrop.dart';
-import 'package:portfolio/features/landing/widgets/hero_visual.dart';
+import 'package:portfolio/core/theme/app_typography.dart';
+import 'package:portfolio/features/landing/widgets/live_specimen.dart';
+import 'package:portfolio/shared/layout/inspectable.dart';
+import 'package:portfolio/shared/widgets/spec_marks.dart';
 
-const _months = [
-  'January', 'February', 'March', 'April', 'May', 'June', //
-  'July', 'August', 'September', 'October', 'November', 'December',
-];
-
+/// Title block of the drawing set: ruler, one statement across the full
+/// width, then the supporting sentence and two actions beside the live
+/// specimen (docs/DESIGN.md §1).
 class HeroSection extends ConsumerWidget {
   const HeroSection({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final profile = ref.watch(profileProvider);
-    final scheme = Theme.of(context).colorScheme;
     final text = Theme.of(context).textTheme;
     final deco = AppDecorations.of(context);
-    final month = _months[DateTime.now().month - 1];
 
-    final content = Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.s12,
-            vertical: 6,
-          ),
-          decoration: BoxDecoration(
-            color: scheme.surface.withValues(alpha: 0.7),
-            borderRadius: BorderRadius.circular(AppRadius.pill),
-            border: Border.all(color: deco.cardBorder),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 8,
-                height: 8,
-                decoration: BoxDecoration(
-                  color: deco.success,
-                  shape: BoxShape.circle,
-                ),
-              ),
-              const SizedBox(width: AppSpacing.s8),
-              Flexible(
-                child: Text(
-                  '${profile.availability} — $month',
-                  style: text.labelMedium,
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: AppSpacing.s24),
-        Text(profile.tagline, style: text.displayMedium),
-        const SizedBox(height: AppSpacing.s16),
-        ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 560),
-          child: Text.rich(
-            TextSpan(
-              style: text.bodyLarge?.copyWith(color: scheme.onSurfaceVariant),
-              // Odd segments sat between *asterisks* and get highlighted.
-              children: [
-                TextSpan(
-                  text: "I'm ${profile.name}. ",
-                  style: TextStyle(
-                    color: scheme.onSurface,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                for (final (i, part) in profile.shortBio.split('*').indexed)
-                  TextSpan(
-                    text: part,
-                    style: i.isOdd
-                        ? TextStyle(
-                            color: scheme.onSurface,
-                            fontWeight: FontWeight.w600,
-                          )
-                        : null,
-                  ),
-              ],
+    // Fluid display size; the measure (~9em, about 14 characters of this
+    // wide face) keeps a short statement on two balanced lines.
+    Widget statement(double width) {
+      final size = (width / 7.6).clamp(36.0, 88.0);
+      return ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: size * 9.2),
+        child: Semantics(
+          header: true,
+          child: Text(
+            profile.tagline,
+            style: text.displayLarge?.copyWith(
+              fontSize: size,
+              letterSpacing: -0.03 * size,
             ),
           ),
+        ),
+      );
+    }
+
+    final pitch = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 560),
+          child: Text(profile.shortBio, style: AppTypography.lead(context)),
         ),
         const SizedBox(height: AppSpacing.s32),
         Wrap(
           spacing: AppSpacing.s12,
           runSpacing: AppSpacing.s12,
           children: [
-            FilledButton.icon(
+            FilledButton(
               onPressed: () => context.go(AppRoutes.contact),
-              icon: const Icon(Icons.arrow_forward, size: 18),
-              iconAlignment: IconAlignment.end,
-              label: const Text('Start a project'),
+              child: const Text('Start a project'),
             ),
             OutlinedButton(
               onPressed: () => context.go(AppRoutes.work),
-              child: const Text('See my work'),
+              child: const Text('See the work'),
             ),
           ],
+        ),
+        const SizedBox(height: AppSpacing.s32),
+        Container(
+          padding: const EdgeInsets.only(top: AppSpacing.s12),
+          decoration: BoxDecoration(
+            border: Border(top: BorderSide(color: deco.rule)),
+          ),
+          // Wraps between items, never inside one.
+          child: Wrap(
+            spacing: AppSpacing.s24,
+            runSpacing: AppSpacing.s4,
+            children: [
+              for (final item in [
+                profile.title,
+                profile.location,
+                profile.availability,
+              ])
+                Text(
+                  item,
+                  style: text.labelMedium?.copyWith(color: deco.inkMute),
+                ),
+            ],
+          ),
         ),
       ],
     );
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(AppRadius.xl),
-      child: Stack(
-        children: [
-          const Positioned.fill(child: HeroBackdrop()),
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.s24,
-              vertical: AppSpacing.s48,
-            ),
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                if (constraints.maxWidth >= 900) {
-                  return Row(
-                    children: [
-                      Expanded(child: content),
-                      const SizedBox(width: AppSpacing.s32),
-                      const HeroVisual(),
-                    ],
-                  );
-                }
-                return Column(
+    return Inspectable(
+      label: 'HeroSection',
+      child: LayoutBuilder(
+        builder: (context, c) {
+          final wide = c.maxWidth >= 900;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Ruler(),
+              SizedBox(height: wide ? AppSpacing.s64 : AppSpacing.s32),
+              Inspectable(label: 'Text · h1', child: statement(c.maxWidth)),
+              SizedBox(height: wide ? AppSpacing.s64 : AppSpacing.s32),
+              if (wide)
+                Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    content,
-                    const SizedBox(height: AppSpacing.s48),
-                    Center(
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          maxWidth: HeroVisual.size.width,
-                        ),
-                        child: const FittedBox(child: HeroVisual()),
+                    Expanded(flex: 5, child: pitch),
+                    const SizedBox(width: AppSpacing.s48),
+                    // Room above and below for the dimension marks.
+                    const Expanded(
+                      flex: 6,
+                      child: Padding(
+                        padding: EdgeInsets.only(top: AppSpacing.s8),
+                        child: LiveSpecimen(),
                       ),
                     ),
                   ],
-                );
-              },
-            ),
-          ),
-        ],
+                )
+              else ...[
+                pitch,
+                const SizedBox(height: AppSpacing.s64),
+                const LiveSpecimen(),
+              ],
+            ],
+          );
+        },
       ),
     );
   }
