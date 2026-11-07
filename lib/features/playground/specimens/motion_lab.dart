@@ -483,17 +483,12 @@ class _Origami extends StatelessWidget {
                         2,
                   ),
                 child: Container(
-                  color: i == 0 ? deco.accent : scheme.surface,
+                  color: scheme.surface,
                   alignment: Alignment.center,
                   foregroundDecoration: BoxDecoration(
                     border: Border.all(color: deco.ruleStrong),
                   ),
-                  child: Text(
-                    (i + 1).toString().padLeft(2, '0'),
-                    style: mono?.copyWith(
-                      color: i == 0 ? deco.onAccent : scheme.onSurface,
-                    ),
-                  ),
+                  child: Text((i + 1).toString().padLeft(2, '0'), style: mono),
                 ),
               ),
             ),

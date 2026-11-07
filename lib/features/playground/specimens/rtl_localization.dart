@@ -269,7 +269,7 @@ class _Cart extends StatelessWidget {
             style: text.titleMedium,
           ),
           const SizedBox(height: AppSpacing.s12),
-          FilledButton(
+          OutlinedButton(
             onPressed: () {},
             child: Row(
               mainAxisSize: MainAxisSize.min,

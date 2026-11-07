@@ -31,7 +31,7 @@ class PlaygroundPage extends StatelessWidget {
           ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 640),
             child: Text(
-              'Six experiments, each proving one thing. Turn the knobs, '
+              'Experiments, each proving one thing. Turn the knobs, '
               'break things and watch the app cope.',
               style: AppTypography.lead(context),
             ),

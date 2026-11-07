@@ -29,7 +29,7 @@ Dependencies point inward: `features` may use `shared` and `core`; `shared` may 
 | Folder | Contents |
 |---|---|
 | `layout/` | `AppShell` (Scaffold, drawer, sticky navbar; built once by the `ShellRoute`), `AppPage` (per-page scroll, max width, title, `SelectionArea`, footer, back-to-top), `ResponsiveGrid`, `DeferredPage`. |
-| `demo/` | `DemoComponent` (live preview + real source in developer mode) and `source_snippet.dart` (extracts `// #region snippet` blocks from bundled source files). |
+| `demo/` | `SpecimenFrame` (crop-mark well, controls with reset, mono readouts) and its `Spec*` controls; `source_snippet.dart` (inspector source excerpts). |
 | `widgets/` | Navbar, footer, brand logo, theme toggle, hover card, code viewer + `dart_highlighter`, device frame, FAQ accordion, CTA band, `AnimatedSection` (scroll reveal), `LazyInView`. |
 | `utils/` | `link_launcher.dart`: `linkLauncherProvider` (overridable in tests) and `openLink`, which opens web links in a new tab and reports failures. |
 
@@ -40,8 +40,7 @@ Dependencies point inward: `features` may use `shared` and `core`; `shared` may 
 | `landing/` | `/` | Hero (mesh backdrop, layered visual), proof strip, sections. |
 | `work/` | `/work`, `/work/:slug` | Filterable case studies (`workTechFilterProvider`), detail page, Hero cover. |
 | `services/` | `/services` | Offerings, process, engagement models, FAQ. |
-| `playground/` | `/playground[?tab=patterns]` | Tabs over `ui_showcase/` (components) and `widget_gallery/` (patterns). `/ui-showcase` and `/widget-gallery` redirect here. Deferred-loaded. |
-| `app_simulator/` | `/app-demos` | `DemoAppRegistry`; demos in `DeviceFrame`; heavy animations follow the `*_controller / *_model / *_widget` triplet. Deferred-loaded. |
+| `playground/` | `/playground`, `/playground/:slug` | The Lab: a register of six specimens (one codebase, role-based UI, data at scale, offline sync, RTL, motion lab), each in one `SpecimenFrame`. The old `/ui-showcase`, `/widget-gallery` and `/app-demos` redirect here. Deferred-loaded. |
 | `architecture/` | `/architecture` | Diagrams, flows, details, notes on this codebase. |
 | `contact/` | `/contact` | Validated form → JSON POST to `contactFormEndpoint` (Formspree) when set, else a prefilled `mailto:` (`contact_mailto.dart`). |
 | `not_found/` | any unknown path | 404 inside the shell. |

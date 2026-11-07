@@ -93,12 +93,6 @@ class SpecimenPage extends StatelessWidget {
             child: const Text('← Playground'),
           ),
           const SizedBox(height: AppSpacing.s24),
-          Text(
-            '$number / ${specimens.length.toString().padLeft(2, '0')}   '
-            '${info.techniques}',
-            style: mute,
-          ),
-          const SizedBox(height: AppSpacing.s12),
           Semantics(
             header: true,
             child: Text(info.name, style: text.displayMedium),
@@ -108,6 +102,13 @@ class SpecimenPage extends StatelessWidget {
             constraints: const BoxConstraints(maxWidth: 720),
             child: Text(info.claim, style: AppTypography.lead(context)),
           ),
+          const SizedBox(height: AppSpacing.s16),
+          // Metadata after the title, never an eyebrow above it.
+          Text(
+            '$number / ${specimens.length.toString().padLeft(2, '0')}   '
+            '${info.techniques}',
+            style: mute,
+          ),
           const SizedBox(height: AppSpacing.s48),
           specimenBuilders[info.slug]!(),
           const SizedBox(height: AppSpacing.s64),
@@ -115,7 +116,7 @@ class SpecimenPage extends StatelessWidget {
             builder: (context, c) => Inspectable(
               label: 'TryAndWhy',
               note: 'Two short blocks: what to do, and why it is hard.',
-              source: 'lib/features/playground/specimen_page.dart:115',
+              source: 'lib/features/playground/specimen_page.dart:116',
               child: c.maxWidth < 720
                   ? Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,

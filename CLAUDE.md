@@ -19,8 +19,8 @@ Stack: Flutter web, Riverpod 3 (Notifiers), go_router 18 (ShellRoute, path URLs)
 ## Architecture
 
 - **`core/`**: `content/` (const models + all copy in `portfolio_content.dart`; widgets read it only through providers), `routing/` (`app_routes.dart` paths + `navDestinations`, `app_router.dart` with `createRouter`/`routerProvider`/`pageTitle`), `state/` (theme mode, developer mode, profile Notifiers/providers), `theme/` (design system: colors, typography, spacing/breakpoints, `AppDecorations` extension, code syntax, component themes).
-- **`shared/`**: `layout/` (`AppShell` built once by the ShellRoute, `AppPage` per-page scroll wrapper, `ResponsiveGrid`, `DeferredPage`), `demo/` (`DemoComponent`, `source_snippet.dart`), `widgets/`, `utils/link_launcher.dart` (`openLink` + overridable `linkLauncherProvider`).
-- **`features/`**: one folder per area (see table). Feature-local state is a `Notifier` next to the page. Simulator widgets (`features/app_simulator/widgets/<name>/`) follow the `*_controller` / `*_model` / `*_widget` triplet.
+- **`shared/`**: `layout/` (`AppShell` built once by the ShellRoute, `AppPage` per-page scroll wrapper, `DeferredPage`), `demo/` (`SpecimenFrame` + `SpecSlider`/`SpecChoice`/`SpecSwitch`, `source_snippet.dart`), `widgets/`, `utils/link_launcher.dart` (`openLink` + overridable `linkLauncherProvider`).
+- **`features/`**: one folder per area (see table). Feature-local state is a `Notifier` next to the page.
 
 ### Routes
 
@@ -28,17 +28,16 @@ Stack: Flutter web, Riverpod 3 (Notifiers), go_router 18 (ShellRoute, path URLs)
 |---|---|---|
 | `/` | `LandingPage` | `landing/` |
 | `/work`, `/work/:slug` | `WorkPage`, `CaseStudyPage` (404 for unknown slug) | `work/` |
-| `/playground[?tab=patterns]` | `PlaygroundPage`, tabs over `ComponentsTab` (`ui_showcase/`) and `PatternsTab` (`widget_gallery/`); deferred | `playground/` |
-| `/ui-showcase`, `/widget-gallery` | redirects into `/playground` | |
-| `/app-demos` | `AppSimulatorPage`, demos from `DemoAppRegistry`; deferred | `app_simulator/` |
+| `/playground` | `PlaygroundPage`, the specimen register (data in `specimen_info.dart`); deferred | `playground/` |
+| `/playground/:slug` | `SpecimenPage`: header, `SpecimenFrame`, try this / why it's hard, prev/next; deferred | `playground/` |
+| `/ui-showcase`, `/widget-gallery`, `/app-demos` | redirects to `/playground` | |
 | `/architecture` | `ArchitecturePage` | `architecture/` |
 | `/services` | `ServicesPage` | `services/` |
 | `/contact` | `ContactPage` (Formspree POST, mailto fallback) | `contact/` |
 
 ### Conventions that bite if ignored
 
-- New showcase demo: wrap in `DemoComponent(sourcePath: 'lib/...')`, mark the code to show with `// #region snippet` / `// #endregion`, list the file under `assets:` in `pubspec.yaml` and in `showcaseSnippetSources` (a test enforces markers).
-- New app demo: add a `DemoApp` (with `tryHint`) to `DemoAppRegistry` and bump `liveDemoCount` (a test enforces it).
+- New specimen: add a `SpecimenInfo` to `specimens` (`specimen_info.dart`) and its widget to `specimenBuilders` (`specimen_page.dart`), built on `SpecimenFrame` (controls, readouts, `onReset`). Annotate internals with `Inspectable(source: 'lib/...:line')`, list the file under `assets:` in `pubspec.yaml` and in `inspectorSourceFiles` (a test checks the line).
 - External links go through `openLink`, never `launchUrl` directly.
 - Don't use `pumpAndSettle` in widget tests: the landing page loops animations. Use `pumpApp` / `settle` from `test/helpers/pump_app.dart`, and `setUpAll(loadAppFonts)` for any test that measures layout.
 - Don't make `/work/:slug`-style routes children of their list route (offstage parent breaks `SelectionArea`).
