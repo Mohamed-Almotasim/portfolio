@@ -1,56 +1,344 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:portfolio/core/content/case_study.dart';
+import 'package:portfolio/core/routing/app_routes.dart';
+import 'package:portfolio/core/theme/app_decorations.dart';
 import 'package:portfolio/core/theme/app_spacing.dart';
+import 'package:portfolio/core/theme/app_typography.dart';
 import 'package:portfolio/features/work/case_studies_provider.dart';
-import 'package:portfolio/features/work/widgets/case_study_card.dart';
+import 'package:portfolio/features/work/widgets/case_study_cover.dart';
 import 'package:portfolio/shared/layout/app_page.dart';
-import 'package:portfolio/shared/layout/responsive_grid.dart';
+import 'package:portfolio/shared/layout/inspectable.dart';
 
-class WorkPage extends ConsumerWidget {
+/// The drawing register: every project as one scannable row. Hovering or
+/// focusing a row shows its preview beside the table on wide screens.
+class WorkPage extends ConsumerStatefulWidget {
   const WorkPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<WorkPage> createState() => _WorkPageState();
+}
+
+class _WorkPageState extends ConsumerState<WorkPage> {
+  CaseStudy? _previewed;
+
+  @override
+  Widget build(BuildContext context) {
     final all = ref.watch(caseStudiesProvider);
-    final selected = ref.watch(workTechFilterProvider);
-    final shown = filterByTech(all, selected);
+    final type = ref.watch(workTypeFilterProvider);
+    final shown = filterByType(all, type);
     final text = Theme.of(context).textTheme;
-    final scheme = Theme.of(context).colorScheme;
+    final preview = _previewed ?? (shown.isEmpty ? null : shown.first);
 
     return AppPage(
-      title: 'Work',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const SizedBox(height: AppSpacing.s48),
+          Semantics(
+            header: true,
+            child: Text('Work', style: text.displayLarge),
+          ),
+          const SizedBox(height: AppSpacing.s16),
           ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 640),
             child: Text(
-              'Case studies: the problem, how it was solved and what changed. '
-              'Filter by technology to see where each tool earned its place.',
-              style: text.bodyLarge?.copyWith(color: scheme.onSurfaceVariant),
+              'Every project in one register. Open a row for the problem, '
+              'the approach and the result.',
+              style: AppTypography.lead(context),
             ),
           ),
+          const SizedBox(height: AppSpacing.s48),
+          _TypeFilter(types: allTypes(all), selected: type),
           const SizedBox(height: AppSpacing.s24),
-          Wrap(
-            spacing: AppSpacing.s8,
-            runSpacing: AppSpacing.s8,
-            children: [
-              for (final tech in [null, ...allTech(all)])
-                ChoiceChip(
-                  label: Text(tech ?? 'All'),
-                  selected: selected == tech,
-                  onSelected: (_) =>
-                      ref.read(workTechFilterProvider.notifier).setTech(tech),
-                ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.s24),
-          ResponsiveGrid(
-            // Small ratio = tiny minimum; cards grow to their content.
-            childAspectRatio: 4,
-            children: [for (final c in shown) CaseStudyCard(project: c)],
+          LayoutBuilder(
+            builder: (context, c) {
+              final table = _Register(
+                studies: shown,
+                all: all,
+                compact: c.maxWidth < 720,
+                onPreview: (s) => setState(() => _previewed = s),
+              );
+              if (c.maxWidth < 1024 || preview == null) return table;
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(flex: 8, child: table),
+                  const SizedBox(width: AppSpacing.s48),
+                  Expanded(flex: 4, child: _Preview(study: preview)),
+                ],
+              );
+            },
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _TypeFilter extends ConsumerWidget {
+  const _TypeFilter({required this.types, required this.selected});
+
+  final List<String> types;
+  final String? selected;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final notifier = ref.read(workTypeFilterProvider.notifier);
+    return Inspectable(
+      label: 'TypeFilter',
+      note:
+          'Chips write workTypeFilterProvider, so the register and the '
+          'preview read one state. "All" is the null type.',
+      source: 'lib/features/work/work_page.dart:89',
+      tokens: const ['AppSpacing.s8', 'AppRadius.sm', 'labelMedium'],
+      child: Wrap(
+        spacing: AppSpacing.s8,
+        runSpacing: AppSpacing.s8,
+        children: [
+          for (final t in [null, ...types])
+            ChoiceChip(
+              label: Text(t ?? 'All'),
+              selected: selected == t,
+              onSelected: (_) => notifier.setType(t),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Register extends StatelessWidget {
+  const _Register({
+    required this.studies,
+    required this.all,
+    required this.compact,
+    required this.onPreview,
+  });
+
+  final List<CaseStudy> studies;
+  final List<CaseStudy> all;
+  final bool compact;
+  final ValueChanged<CaseStudy> onPreview;
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
+    final deco = AppDecorations.of(context);
+    final head = text.labelSmall?.copyWith(color: deco.inkMute);
+
+    return Inspectable(
+      label: 'Register',
+      note:
+          'Every project in one table: a strong rule under the header, '
+          'hairlines between rows. Under 720 px the columns fold into two.',
+      source: 'lib/features/work/work_page.dart:131',
+      tokens: const [
+        'AppDecorations.ruleStrong',
+        'AppDecorations.rule',
+        'labelSmall',
+      ],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.s8),
+            decoration: BoxDecoration(
+              border: Border(bottom: BorderSide(color: deco.ruleStrong)),
+            ),
+            child: ExcludeSemantics(
+              child: compact
+                  ? Text('No. · Title · Type · Year', style: head)
+                  : _Cells(
+                      no: Text('No.', style: head),
+                      title: Text('Title', style: head),
+                      type: Text('Type', style: head),
+                      year: Text('Year', style: head),
+                      stack: Text('Stack', style: head),
+                    ),
+            ),
+          ),
+          for (final s in studies)
+            RegisterRow(
+              number: all.indexOf(s) + 1,
+              study: s,
+              compact: compact,
+              onPreview: () => onPreview(s),
+            ),
+          if (studies.isEmpty)
+            Padding(
+              padding: const EdgeInsets.all(AppSpacing.s24),
+              child: Text('Nothing of this type yet.', style: text.bodyLarge),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Cells extends StatelessWidget {
+  const _Cells({
+    required this.no,
+    required this.title,
+    required this.type,
+    required this.year,
+    required this.stack,
+  });
+
+  final Widget no, title, type, year, stack;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.baseline,
+      textBaseline: TextBaseline.alphabetic,
+      children: [
+        SizedBox(width: 56, child: no),
+        Expanded(flex: 5, child: title),
+        Expanded(flex: 3, child: type),
+        SizedBox(width: 64, child: year),
+        Expanded(flex: 4, child: stack),
+      ],
+    );
+  }
+}
+
+/// One project. The whole row is the link; hover and focus step its tone
+/// and show its preview.
+class RegisterRow extends StatefulWidget {
+  const RegisterRow({
+    super.key,
+    required this.number,
+    required this.study,
+    required this.compact,
+    required this.onPreview,
+  });
+
+  final int number;
+  final CaseStudy study;
+  final bool compact;
+  final VoidCallback onPreview;
+
+  @override
+  State<RegisterRow> createState() => _RegisterRowState();
+}
+
+class _RegisterRowState extends State<RegisterRow> {
+  bool _lit = false;
+
+  void _light(bool on) {
+    setState(() => _lit = on);
+    if (on) widget.onPreview();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final s = widget.study;
+    final text = Theme.of(context).textTheme;
+    final deco = AppDecorations.of(context);
+    final scheme = Theme.of(context).colorScheme;
+    final mono = text.labelMedium;
+    final no = Text(
+      widget.number.toString().padLeft(2, '0'),
+      style: mono?.copyWith(color: _lit ? deco.accentText : deco.inkMute),
+    );
+
+    return Inspectable(
+      label: 'RegisterRow ${s.slug}',
+      note:
+          'The whole row is one link. Hover and focus step its tone and '
+          'drive the preview; semantics read it as "title, type, year".',
+      source: 'lib/features/work/work_page.dart:247',
+      tokens: const [
+        'surfaceContainerLow',
+        'AppMotion.snap',
+        'AppSpacing.s16',
+        'titleMedium',
+      ],
+      child: Semantics(
+        link: true,
+        label: '${s.title}, ${s.type}, ${s.year}',
+        excludeSemantics: true,
+        child: InkWell(
+          onTap: () => context.go(AppRoutes.caseStudy(s.slug)),
+          onHover: _light,
+          onFocusChange: _light,
+          child: AnimatedContainer(
+            duration: AppMotion.of(context, AppMotion.snap),
+            padding: const EdgeInsets.symmetric(
+              vertical: AppSpacing.s16,
+              horizontal: AppSpacing.s4,
+            ),
+            decoration: BoxDecoration(
+              color: _lit ? scheme.surfaceContainerLow : null,
+              border: Border(bottom: BorderSide(color: deco.rule)),
+            ),
+            child: widget.compact
+                ? Row(
+                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                    textBaseline: TextBaseline.alphabetic,
+                    children: [
+                      SizedBox(width: 40, child: no),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(s.title, style: text.titleMedium),
+                            const SizedBox(height: AppSpacing.s4),
+                            Text(
+                              '${s.type} · ${s.year}',
+                              style: mono?.copyWith(color: deco.inkMute),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  )
+                : _Cells(
+                    no: no,
+                    title: Text(s.title, style: text.titleMedium),
+                    type: Text(s.type, style: mono),
+                    year: Text('${s.year}', style: mono),
+                    stack: Text(
+                      s.techStack.join(' / '),
+                      style: mono?.copyWith(color: deco.inkMute),
+                    ),
+                  ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _Preview extends StatelessWidget {
+  const _Preview({required this.study});
+
+  final CaseStudy study;
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
+    return Inspectable(
+      label: 'Preview',
+      note:
+          'Only at 1024 px and up. Cross-fades when another row is hovered '
+          'or focused, so the table never moves.',
+      source: 'lib/features/work/work_page.dart:323',
+      tokens: const ['AppMotion.snap', 'AppSpacing.s16', 'bodyMedium'],
+      child: AnimatedSwitcher(
+        duration: AppMotion.of(context, AppMotion.snap),
+        child: Column(
+          key: ValueKey(study.slug),
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: AppSpacing.s8),
+            CaseStudyCover(project: study, aspectRatio: 4 / 3),
+            const SizedBox(height: AppSpacing.s16),
+            Text(study.outcome, style: text.bodyMedium),
+          ],
+        ),
       ),
     );
   }

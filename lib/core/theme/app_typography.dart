@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:portfolio/core/theme/app_decorations.dart';
 
 /// Drafting set (docs/DESIGN.md §3): Archivo Expanded for display, IBM Plex
 /// Sans for text, IBM Plex Mono for labels, metadata, nav and code.
@@ -66,9 +67,12 @@ abstract final class AppTypography {
   /// `lead` token: the one supporting sentence under a headline.
   static TextStyle lead(BuildContext context) {
     final compact = MediaQuery.sizeOf(context).width < 600;
-    return Theme.of(
-      context,
-    ).textTheme.bodyLarge!.copyWith(fontSize: compact ? 19 : 22, height: 1.45);
+    final theme = Theme.of(context);
+    final scale = theme.extension<AppDecorations>()?.typeScale ?? 1;
+    return theme.textTheme.bodyLarge!.copyWith(
+      fontSize: (compact ? 19 : 22) * scale,
+      height: 1.45,
+    );
   }
 
   static TextStyle code(Color color) => GoogleFonts.ibmPlexMono(

@@ -62,148 +62,156 @@ class _PricingCardDemoState extends ConsumerState<PricingCardDemo>
       demoWidget: MouseRegion(
         onEnter: (_) => _onHover(true),
         onExit: (_) => _onHover(false),
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final cardWidthFactor = constraints.maxWidth > 420 ? 0.8 : 1.0;
+        // Touch has no hover: a tap toggles the same expanded state.
+        child: GestureDetector(
+          onTap: () => _onHover(!_isHovered),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final cardWidthFactor = constraints.maxWidth > 420 ? 0.8 : 1.0;
 
-            return AnimatedBuilder(
-              animation: _scaleAnimation,
-              builder: (context, child) {
-                return Transform.scale(
-                  scale: _scaleAnimation.value,
-                  child: FractionallySizedBox(
-                    widthFactor: cardWidthFactor,
-                    child: Container(
-                      padding: const EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.surface,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: _isHovered
-                              ? Theme.of(context).colorScheme.primary
-                              : Theme.of(context).colorScheme.outlineVariant,
-                          width: _isHovered ? 2 : 1,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
+              return AnimatedBuilder(
+                animation: _scaleAnimation,
+                builder: (context, child) {
+                  return Transform.scale(
+                    scale: _scaleAnimation.value,
+                    child: FractionallySizedBox(
+                      widthFactor: cardWidthFactor,
+                      child: Container(
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.surface,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
                             color: _isHovered
-                                ? Theme.of(
-                                    context,
-                                  ).colorScheme.primary.withValues(alpha: 0.2)
-                                : Colors.black.withValues(alpha: 0.1),
-                            blurRadius: _isHovered ? 20 : 10,
-                            offset: Offset(0, _isHovered ? 8 : 4),
+                                ? Theme.of(context).colorScheme.primary
+                                : Theme.of(context).colorScheme.outlineVariant,
+                            width: _isHovered ? 2 : 1,
                           ),
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
+                          boxShadow: [
+                            BoxShadow(
+                              color: _isHovered
+                                  ? Theme.of(
+                                      context,
+                                    ).colorScheme.primary.withValues(alpha: 0.2)
+                                  : Colors.black.withValues(alpha: 0.1),
+                              blurRadius: _isHovered ? 20 : 10,
+                              offset: Offset(0, _isHovered ? 8 : 4),
                             ),
-                            decoration: BoxDecoration(
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.primary.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Text(
-                              'Pro Plan',
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 12,
+                          ],
+                        ),
+                        child: Column(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
                               ),
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.baseline,
-                            textBaseline: TextBaseline.alphabetic,
-                            children: [
-                              Flexible(
-                                child: Text(
-                                  '\$29',
-                                  overflow: TextOverflow.ellipsis,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headlineLarge
-                                      ?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.primary,
-                                      ),
+                              decoration: BoxDecoration(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.primary.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                'Pro Plan',
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 12,
                                 ),
                               ),
-                              const SizedBox(width: 4),
-                              Flexible(
-                                child: Text(
-                                  '/ month',
-                                  style: Theme.of(context).textTheme.bodyMedium
-                                      ?.copyWith(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurface
-                                            .withValues(alpha: 0.6),
-                                      ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 20),
-                          const Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _FeatureItem(text: 'Unlimited Projects'),
-                              _FeatureItem(text: 'Priority Support'),
-                              _FeatureItem(text: 'API Access'),
-                            ],
-                          ),
-                          const SizedBox(height: 24),
-                          AnimatedBuilder(
-                            animation: _buttonScaleAnimation,
-                            builder: (context, child) {
-                              return Transform.scale(
-                                scale: _buttonScaleAnimation.value,
-                                child: SizedBox(
-                                  width: double.infinity,
-                                  child: ElevatedButton(
-                                    onPressed: () {},
-                                    style: ElevatedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 24,
-                                        vertical: 12,
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      backgroundColor: _isHovered
-                                          ? Theme.of(
-                                              context,
-                                            ).colorScheme.primary
-                                          : Theme.of(context)
-                                                .colorScheme
-                                                .primary
-                                                .withValues(alpha: 0.8),
-                                    ),
-                                    child: const Text('Start Free Trial'),
+                            ),
+                            const SizedBox(height: 16),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.baseline,
+                              textBaseline: TextBaseline.alphabetic,
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    '\$29',
+                                    overflow: TextOverflow.ellipsis,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineLarge
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.primary,
+                                        ),
                                   ),
                                 ),
-                              );
-                            },
-                          ),
-                        ],
+                                const SizedBox(width: 4),
+                                Flexible(
+                                  child: Text(
+                                    '/ month',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface
+                                              .withValues(alpha: 0.6),
+                                        ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 20),
+                            const Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _FeatureItem(text: 'Unlimited Projects'),
+                                _FeatureItem(text: 'Priority Support'),
+                                _FeatureItem(text: 'API Access'),
+                              ],
+                            ),
+                            const SizedBox(height: 24),
+                            AnimatedBuilder(
+                              animation: _buttonScaleAnimation,
+                              builder: (context, child) {
+                                return Transform.scale(
+                                  scale: _buttonScaleAnimation.value,
+                                  child: SizedBox(
+                                    width: double.infinity,
+                                    child: ElevatedButton(
+                                      onPressed: () {},
+                                      style: ElevatedButton.styleFrom(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 24,
+                                          vertical: 12,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                        ),
+                                        backgroundColor: _isHovered
+                                            ? Theme.of(
+                                                context,
+                                              ).colorScheme.primary
+                                            : Theme.of(context)
+                                                  .colorScheme
+                                                  .primary
+                                                  .withValues(alpha: 0.8),
+                                      ),
+                                      child: const Text('Start Free Trial'),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                );
-              },
-            );
-          },
+                  );
+                },
+              );
+            },
+          ),
         ),
       ),
       sourcePath: 'lib/features/ui_showcase/demos/pricing_card_demo.dart',

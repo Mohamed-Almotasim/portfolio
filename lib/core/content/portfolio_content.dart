@@ -11,31 +11,44 @@ import 'package:portfolio/core/content/skill.dart';
 // All site copy lives here. Widgets read it through Riverpod providers.
 
 const profile = Profile(
-  name: 'Your Name', // TODO(me): real name
+  name: 'Mohamed Almotasim Salih',
   title: 'Flutter Developer',
   // Hero statement: keep it under ~32 characters so it holds two lines.
-  tagline: 'Flutter apps, built to spec.', // TODO(me): confirm wording
-  // TODO(me): confirm who you build for; this is the brief's assumption.
+  tagline: 'Flutter apps, taken to release.',
   shortBio:
-      'I design and build Flutter apps for founders and product teams: iOS, '
-      'Android and the web from one codebase. This site is one of them. '
-      'Switch on Inspect to see how it is put together.',
-  location: 'Your City, Country', // TODO(me): real location
-  email: 'example@email.com', // TODO(me): real email
-  availability: 'Open to freelance projects', // TODO(me): real availability
+      'Freelance Flutter developer since 2020. I build data-heavy, role-based '
+      'apps and take over unfinished codebases to get them released. '
+      'Switch on Inspect to see how this site is put together.',
+  location: 'Khartoum, Sudan',
+  email: 'moalmotasim98@yahoo.com',
+  availability: 'Open to freelance projects',
   responseTime: 'Usually within one business day', // TODO(me): confirm
   socials: [
-    // TODO(me): real GitHub profile URL
-    SocialLink(label: 'GitHub', url: 'https://github.com', icon: Icons.code),
-    // TODO(me): real LinkedIn profile URL
+    SocialLink(
+      label: 'GitHub',
+      url: 'https://github.com/Mohamed-Almotasim',
+      icon: Icons.code,
+    ),
     SocialLink(
       label: 'LinkedIn',
-      url: 'https://linkedin.com',
+      url: 'https://www.linkedin.com/in/mohamed-almotasim-meshal-3a712b28',
       icon: Icons.business_center,
+    ),
+    SocialLink(
+      label: 'Fiverr',
+      url:
+          'https://www.fiverr.com/mohamedalmotasi/create-a-simple-flutter-app-for-you',
+      icon: Icons.storefront,
     ),
   ],
   // TODO(me): resumeUrl: 'https://…/resume.pdf',
 );
+
+/// Where the inspector's "View source" links point: `<repo>/blob/<branch>/`
+/// plus the file path and `#L<line>`.
+// TODO(me): confirm the public repository URL and branch.
+const sourceRepoUrl = 'https://github.com/Mohamed-Almotasim/portfolio';
+const sourceBranch = 'main';
 
 const skills = [
   Skill(
@@ -51,22 +64,28 @@ const skills = [
     color: Colors.cyan,
   ),
   Skill(
-    name: 'Firebase',
-    category: SkillCategory.backend,
-    icon: Icons.cloud,
-    color: Colors.orange,
-  ),
-  Skill(
     name: 'REST APIs',
     category: SkillCategory.backend,
     icon: Icons.api,
     color: Colors.green,
   ),
   Skill(
+    name: 'Firebase',
+    category: SkillCategory.backend,
+    icon: Icons.cloud,
+    color: Colors.orange,
+  ),
+  Skill(
     name: 'Riverpod',
     category: SkillCategory.stateManagement,
     icon: Icons.data_object,
     color: Colors.purple,
+  ),
+  Skill(
+    name: 'BLoC',
+    category: SkillCategory.stateManagement,
+    icon: Icons.account_tree,
+    color: Colors.indigo,
   ),
   Skill(
     name: 'GoRouter',
@@ -76,141 +95,114 @@ const skills = [
   ),
 ];
 
-// TODO(me): replace these placeholder case studies with real projects
-// (role, year, links and images included).
+// TODO(me): add the Attendance App (GPS + ML) once its details are final,
+// and real screenshots for each gallery.
 const caseStudies = [
   CaseStudy(
-    slug: 'student-management-system',
-    title: 'Student Management System',
-    tagline:
-        'A cross-platform student portal built for dependable academic operations.',
-    problem:
-        'Teachers needed a way to capture grades and attendance without relying on a stable internet connection.',
-    solution:
-        'Built a Flutter app with Firebase sync so staff could work offline first and sync updates once connected.',
-    result:
-        'Real-time sync, offline support, and a cleaner workflow for school staff.',
-    techStack: ['Flutter', 'Firebase', 'Riverpod'],
-    role: 'Flutter Developer',
-    year: 2024,
-    links: [
-      CaseStudyLink(
-        label: 'Live Demo',
-        url: 'https://demo.example.com/student-management',
-        icon: Icons.launch,
-      ),
-      CaseStudyLink(
-        label: 'GitHub',
-        url: 'https://github.com/example/student-management-system',
-        icon: Icons.code,
-      ),
+    slug: 'al-risala-academy',
+    title: 'Al-Risala Academy',
+    type: 'Education platform',
+    outcome: 'One app for ~3,200 students, teachers and admins.',
+    gallery: [
+      CaseStudyFigure(caption: 'Role-based home screens'),
+      CaseStudyFigure(caption: 'Data table with smart search'),
     ],
+    tagline:
+        'The mobile app for a private school platform, built solo in about a year.',
+    problem:
+        'A private school needed one mobile app for students, teachers and '
+        'admins, covering classes, tests, grading, study materials, '
+        'permissions, payments and scholarships.',
+    solution:
+        'Integrated ~150 REST endpoints behind a reusable API service layer '
+        'with server-side authentication and encrypted data exchange. Built a '
+        'reusable table component with pagination, caching and smart search '
+        'for dozens of data-heavy screens.',
+    result:
+        'Serves ~3,200 users across three roles and is featured on the '
+        "school's own website. Caching and search cut unnecessary API calls.",
+    techStack: ['Flutter', 'Riverpod', 'REST APIs'],
+    role: 'Sole Flutter Developer',
+    year: 2024,
+    links: [],
     featured: true,
   ),
   CaseStudy(
-    slug: 'portfolio-web-app',
-    title: 'Portfolio Web App',
-    tagline:
-        'A polished developer portfolio designed to present product thinking and frontend craft.',
-    problem:
-        'A generic portfolio did not communicate engineering depth, interaction quality, or architecture decisions.',
-    solution:
-        'Built a responsive Flutter web app with structured sections, reusable UI patterns, and route-based navigation.',
-    result:
-        'Fast navigation, scalable UI sections, and a more credible presentation of work.',
-    techStack: ['Flutter Web', 'GoRouter', 'Material 3'],
-    role: 'Flutter Developer',
-    year: 2024,
-    links: [
-      CaseStudyLink(
-        label: 'Live Demo',
-        url: 'https://demo.example.com/portfolio-web-app',
-        icon: Icons.launch,
-      ),
-      CaseStudyLink(
-        label: 'GitHub',
-        url: 'https://github.com/example/portfolio-web-app',
-        icon: Icons.code,
-      ),
+    slug: 'ma7aal',
+    title: 'Ma7aal',
+    type: 'E-commerce app',
+    outcome: 'An unfinished app, completed and prepared for release.',
+    gallery: [
+      CaseStudyFigure(caption: 'Arabic RTL storefront'),
+      CaseStudyFigure(caption: 'Splash screen and icons'),
     ],
+    tagline: 'Joining an existing e-commerce app in its final stage.',
+    problem:
+        'The app was close to launch, with its APIs unconnected, features '
+        'unfinished and no Arabic support.',
+    solution:
+        'Learned the unfamiliar codebase, connected the APIs, finished the '
+        'remaining features and enabled localization with Arabic RTL.',
+    result:
+        'Icons, splash screen, UI polish and release preparation completed, '
+        'leaving the app ready to ship.',
+    techStack: ['Flutter', 'REST APIs', 'Arabic RTL'],
+    role: 'Flutter Developer',
+    year: 2023,
+    links: [],
     featured: true,
   ),
   CaseStudy(
-    slug: 'inventory-operations-dashboard',
-    title: 'Inventory Operations Dashboard',
-    tagline:
-        'A dashboard for tracking stock levels, purchase flow, and warehouse visibility.',
-    problem:
-        'Operations teams were managing stock updates in spreadsheets, which caused delays and duplicate entries.',
-    solution:
-        'Delivered a Flutter dashboard with role-based views, reusable state handling, and focused reporting widgets.',
-    result:
-        'Improved reporting speed, clearer stock visibility, and cleaner internal architecture.',
-    techStack: ['Flutter', 'Dart', 'Riverpod', 'REST API'],
-    role: 'Flutter Developer',
-    year: 2024,
-    links: [
-      CaseStudyLink(
-        label: 'Live Demo',
-        url: 'https://demo.example.com/inventory-dashboard',
-        icon: Icons.launch,
-      ),
-      CaseStudyLink(
-        label: 'GitHub',
-        url: 'https://github.com/example/inventory-operations-dashboard',
-        icon: Icons.code,
-      ),
+    slug: 'al-husnaa',
+    title: 'Al-Husnaa',
+    type: 'E-commerce app',
+    outcome: 'A mobile design turned into accurate, reusable Flutter UI.',
+    gallery: [
+      CaseStudyFigure(caption: 'Design next to the build'),
+      CaseStudyFigure(caption: 'Reusable widgets'),
     ],
+    tagline: 'UI implementation for a team working in BLoC.',
+    problem:
+        'The team had a finished mobile design and a BLoC architecture, and '
+        'needed the UI built to match both.',
+    solution:
+        'Built the UI from the design with responsive layouts and reusable '
+        "widgets, structured to plug into the team's BLoC architecture.",
+    result:
+        'Screens that match the design closely and slot into the existing '
+        'state management without rework.',
+    techStack: ['Flutter', 'BLoC'],
+    role: 'Flutter UI Developer',
+    year: 2022,
+    links: [],
     featured: true,
-  ),
-  CaseStudy(
-    slug: 'telehealth-booking-platform',
-    title: 'Telehealth Booking Platform',
-    tagline:
-        'A scheduling experience that reduces friction for remote consultations.',
-    problem:
-        'Patients needed a simple booking flow while clinics needed a maintainable system for appointment handling.',
-    solution:
-        'Created a Flutter booking interface backed by modular scheduling logic and provider-friendly time slot management.',
-    result:
-        'Smoother booking journeys, scalable backend workflows, and easier feature expansion.',
-    techStack: ['Flutter', 'Riverpod', 'Firebase', 'Cloud Functions'],
-    role: 'Flutter Developer',
-    year: 2024,
-    links: [
-      CaseStudyLink(
-        label: 'Live Demo',
-        url: 'https://demo.example.com/telehealth-booking',
-        icon: Icons.launch,
-      ),
-      CaseStudyLink(
-        label: 'GitHub',
-        url: 'https://github.com/example/telehealth-booking-platform',
-        icon: Icons.code,
-      ),
-    ],
   ),
 ];
 
-// TODO(me): replace with the services you actually offer.
 const serviceOfferings = [
   ServiceOffering(
     title: 'Flutter App Development',
-    description: 'Cross-platform mobile and web apps from idea to release.',
-    deliverables: ['Production app', 'Source code', 'Release support'],
+    description:
+        'Custom apps, from single-purpose tools to multi-role, data-heavy '
+        'systems.',
+    deliverables: ['Production app', 'Source code', 'Google Play release'],
     icon: Icons.phone_android,
   ),
   ServiceOffering(
-    title: 'UI Implementation',
-    description: 'Pixel-accurate, responsive Flutter UIs from your designs.',
-    deliverables: ['Reusable widgets', 'Responsive layouts', 'Animations'],
-    icon: Icons.design_services,
+    title: 'Finish an Existing App',
+    description:
+        'I take over unfinished Flutter projects, learn the codebase and get '
+        'them released.',
+    deliverables: ['Completed features', 'API integration', 'Release prep'],
+    icon: Icons.build_circle_outlined,
   ),
   ServiceOffering(
-    title: 'Architecture Review',
-    description: 'Audit and restructure existing Flutter codebases.',
-    deliverables: ['Written report', 'Refactor plan', 'Pairing sessions'],
-    icon: Icons.account_tree,
+    title: 'UI Implementation',
+    description:
+        'Accurate, responsive Flutter UI from your designs, Arabic RTL '
+        'included.',
+    deliverables: ['Reusable widgets', 'Responsive layouts', 'RTL support'],
+    icon: Icons.design_services,
   ),
 ];
 
@@ -218,10 +210,9 @@ const serviceOfferings = [
 // nothing is shown until you fill in a real number. Case-study and demo
 // counts are added automatically from the content above.
 const proofStats = [
-  ProofStat(label: 'Years building with Flutter'), // TODO(me): e.g. value: '4+'
+  ProofStat(label: 'Years building with Flutter', value: '6+'),
+  ProofStat(label: 'Five-star Fiverr reviews', value: '9'),
   ProofStat(label: 'Apps shipped to production'), // TODO(me): e.g. value: '12'
-  // TODO(me): confirm the platforms you actually ship to.
-  ProofStat(label: 'Platforms from one codebase', value: 'iOS · Android · Web'),
 ];
 
 const processSteps = [
@@ -282,12 +273,22 @@ const faqs = [
   FaqItem(
     question: 'Which platforms can you deliver?',
     answer:
-        'One Flutter codebase for iOS, Android and the web. Desktop is possible when a project needs it.',
+        'Android is my focus, with releases to Google Play. Flutter web works '
+        'from the same codebase; my iOS experience is limited.',
   ),
   FaqItem(
     question: 'Can you work with my existing app?',
     answer:
-        'Yes. I start with a short architecture review, then fix or extend the codebase without a rewrite unless one is clearly cheaper.',
+        'Yes, that is a large part of my work. I learn the codebase, finish '
+        'what is missing and prepare it for release, without a rewrite '
+        'unless one is clearly cheaper.',
+  ),
+  FaqItem(
+    question: 'What happens after handover?',
+    answer:
+        'I keep supporting the app after delivery. Fast delivery, clear '
+        'communication and that ongoing support are what client reviews '
+        'mention most.',
   ),
   FaqItem(
     question: 'Who owns the code?',
@@ -304,9 +305,8 @@ const faqs = [
 /// Choices on the contact form.
 const contactProjectTypes = [
   'New app',
-  'Existing app',
+  'Finish an existing app',
   'UI implementation',
-  'Architecture review',
   'Something else',
 ];
 
@@ -322,3 +322,47 @@ const contactBudgets = [
 /// contact form opens a prefilled email instead.
 // TODO(me): create a form at formspree.io and paste its endpoint here.
 const String? contactFormEndpoint = null;
+
+/// About › How this site is built: the layers, top (what you see) to bottom.
+const siteLayers = [
+  (
+    'features/',
+    'One folder per page: Work, Playground, About, Contact. Each owns its '
+        'widgets and any page-local state.',
+  ),
+  (
+    'shared/',
+    'Layout and widgets every page uses: the shell, the page frame, the '
+        'specimen frame, Inspectable and the spec-sheet marks.',
+  ),
+  (
+    'core/',
+    'Theme tokens, routing, app-wide state and all copy as const models, '
+        'read by widgets only through Riverpod providers.',
+  ),
+];
+
+/// About › How this site is built: decisions worth knowing.
+const siteNotes = [
+  (
+    'Inspector mode is real',
+    'Inspect draws outlines, padding and sizes from the live render tree, in '
+        'release builds. When it is off, it costs one render object and no '
+        'layer.',
+  ),
+  (
+    'Code you see is code that runs',
+    'Specimen source is read from the bundled source files between '
+        '"#region snippet" markers; a test fails if a marker goes missing.',
+  ),
+  (
+    'One shell, many pages',
+    'GoRouter with a ShellRoute keeps the navbar alive across pages, with '
+        'path URLs, redirects for old links and a 404 inside the shell.',
+  ),
+  (
+    'Fonts before the first frame',
+    'The three faces are bundled, never fetched. The HTML splash stays up '
+        'until they load, so nothing reflows on arrival.',
+  ),
+];

@@ -3,34 +3,63 @@ import 'package:portfolio/core/theme/app_colors.dart';
 import 'package:portfolio/core/theme/app_decorations.dart';
 import 'package:portfolio/core/theme/app_spacing.dart';
 import 'package:portfolio/core/theme/app_typography.dart';
+import 'package:portfolio/core/theme/theme_tokens.dart';
 
 abstract final class AppTheme {
   // Built once per (brightness, compact): app.dart asks again on every resize.
   static final _cache = <(Brightness, bool), ThemeData>{};
 
-  /// [compact] shrinks display/headline sizes for mobile widths.
-  static ThemeData light({bool compact = false}) =>
-      _cache[(Brightness.light, compact)] ??= _build(
-        AppColors.light,
-        AppDecorations.light,
-        compact,
-      );
+  /// [compact] shrinks display/headline sizes for mobile widths. [tokens]
+  /// are the inspector's live overrides; those themes aren't cached.
+  static ThemeData light({
+    bool compact = false,
+    ThemeTokens tokens = const ThemeTokens(),
+  }) => tokens.isDefault
+      ? _cache[(Brightness.light, compact)] ??= _build(
+          AppColors.light,
+          AppDecorations.light,
+          compact,
+          tokens,
+        )
+      : _build(AppColors.light, AppDecorations.light, compact, tokens);
 
-  static ThemeData dark({bool compact = false}) =>
-      _cache[(Brightness.dark, compact)] ??= _build(
-        AppColors.dark,
-        AppDecorations.dark,
-        compact,
-      );
+  static ThemeData dark({
+    bool compact = false,
+    ThemeTokens tokens = const ThemeTokens(),
+  }) => tokens.isDefault
+      ? _cache[(Brightness.dark, compact)] ??= _build(
+          AppColors.dark,
+          AppDecorations.dark,
+          compact,
+          tokens,
+        )
+      : _build(AppColors.dark, AppDecorations.dark, compact, tokens);
 
-  static ThemeData _build(ColorScheme s, AppDecorations d, bool compact) {
-    final text = AppTypography.textTheme(s, compact: compact);
-    final radius = BorderRadius.circular(AppRadius.sm);
+  static ThemeData _build(
+    ColorScheme scheme,
+    AppDecorations deco,
+    bool compact,
+    ThemeTokens t,
+  ) {
+    final a = t.accent.colors(scheme.brightness);
+    final s = scheme.copyWith(primary: a.text);
+    final d = deco.copyWith(
+      accent: a.fill,
+      accentText: a.text,
+      onAccent: a.on,
+      space: t.space,
+      typeScale: t.typeScale,
+    );
+    final base = AppTypography.textTheme(s, compact: compact);
+    final text = t.typeScale == 1
+        ? base
+        : base.apply(fontSizeFactor: t.typeScale);
+    final radius = BorderRadius.circular(t.radius);
     const buttonPadding = EdgeInsets.symmetric(
       horizontal: AppSpacing.s24,
       vertical: AppSpacing.s16,
     );
-    const minButton = Size(44, 48);
+    const minButton = Size(48, 48);
     final buttonShape = RoundedRectangleBorder(borderRadius: radius);
     OutlineInputBorder inputBorder(Color color, [double width = 1]) =>
         OutlineInputBorder(
@@ -116,7 +145,7 @@ abstract final class AppTheme {
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: d.accentText,
-          minimumSize: const Size(44, 44),
+          minimumSize: const Size(48, 48),
           shape: buttonShape,
           textStyle: text.labelLarge,
         ).copyWith(side: side(null), overlayColor: overlay(s.onSurface)),
@@ -124,7 +153,7 @@ abstract final class AppTheme {
       iconButtonTheme: IconButtonThemeData(
         style: IconButton.styleFrom(
           foregroundColor: s.onSurface,
-          minimumSize: const Size(44, 44),
+          minimumSize: const Size(48, 48),
           shape: buttonShape,
         ).copyWith(side: side(null), overlayColor: overlay(s.onSurface)),
       ),

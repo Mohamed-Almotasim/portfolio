@@ -163,6 +163,13 @@ When developer mode is on, the real site shows its own layout:
   - It does not rebuild on toggle. It reads the provider with `ref.listen` and flips a field on the render object, which calls `markNeedsPaint`.
   - It works in release builds and never uses `debugPaintSizeEnabled`.
 - **What gets wrapped:** sections, cards, frames and the hero's live element, about 6–12 per page. Never text runs or icons.
+- **Metadata:** every box carries an explicit `label`, and key boxes add a one-line `note` (why it's built this way), a `source` (`lib/…:line` of the `Inspectable(` call, checked by a test) and the `tokens` it uses. Nothing is read from `runtimeType`, which release web builds minify. The path is built from the enclosing Inspectables.
+- **Panel** (`shared/layout/inspector_panel.dart`): hovering shows only the tag; a click or tap without a drag selects the innermost box and opens one panel, docked right at ≥1024 (380 wide, below the navbar, a strong left rule, no shadow) and a bottom sheet below that (the one place it floats, so it gets `shadowElevated`). Esc, the close button or a click outside any box closes it. The panel is `ground-2`, with mono tabs marked like the active nav link:
+  - **Layout:** path, note, incoming constraints → size (live from the render box), padding, margin inside the parent box, tokens, "View source" (GitHub link from `sourceRepoUrl` in `portfolio_content.dart`) and the real code at that line.
+  - **Tokens:** accent (the three options from the brief), section rhythm, control radius (0/2/4) and type scale, applied through `themeTokensProvider`. Never saved; switching Inspect off resets them.
+  - **Perf:** rebuilt boxes flash while the tab is open, rebuild counts per label, and a frame-time graph from `SchedulerBinding` timings with a 16.7 ms line.
+  - **A11y:** tap targets under 44 px outlined in `error` on the page (semantics are switched on only while this tab is open), the semantics labels inside the box, and contrast ratios of its text against the ground.
+- **Zero cost when off:** AppShell only builds the panel layer while Inspect is on; keyboard, pointer, timing and semantics hooks exist only while the panel (or its tab) is open.
 - The existing per-demo "Show code" source viewer stays as it is and is restyled with the mono face.
 
 ## 8. Components (rules shared across pages)

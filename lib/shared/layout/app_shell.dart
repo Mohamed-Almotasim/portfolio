@@ -6,6 +6,7 @@ import 'package:portfolio/core/routing/app_routes.dart';
 import 'package:portfolio/core/state/developer_mode_provider.dart';
 import 'package:portfolio/core/state/theme_mode_provider.dart';
 import 'package:portfolio/core/theme/app_spacing.dart';
+import 'package:portfolio/shared/layout/inspector_panel.dart';
 import 'package:portfolio/shared/widgets/app_navbar.dart';
 import 'package:portfolio/shared/widgets/brand_logo.dart';
 
@@ -55,10 +56,17 @@ class _AppShellState extends ConsumerState<AppShell> {
       MaterialBanner(
         leading: const Icon(Icons.code),
         content: const Text(
-          'Inspector mode is on. Sections show their layout: hover or tap one '
-          'for its widget and size. Demos show the real source they run.',
+          'Inspector mode is on. Hover a section for its widget and size; '
+          'click one to open the inspector. Demos show the real source.',
         ),
         actions: [
+          TextButton(
+            onPressed: () {
+              messenger.hideCurrentMaterialBanner();
+              context.go(AppRoutes.aboutBuilt);
+            },
+            child: const Text('How this site is built'),
+          ),
           TextButton(
             onPressed: messenger.hideCurrentMaterialBanner,
             child: const Text('Got it'),
@@ -73,6 +81,7 @@ class _AppShellState extends ConsumerState<AppShell> {
     ref.listen(developerModeProvider, (_, enabled) {
       _maybeShowDevBanner(enabled);
     });
+    final inspecting = ref.watch(developerModeProvider);
     return Scaffold(
       key: _scaffoldKey,
       drawer: AppBreakpoints.isDesktop(context)
@@ -120,6 +129,8 @@ class _AppShellState extends ConsumerState<AppShell> {
                   ),
                 ),
               ),
+              // Last child, so adding it never remounts the page.
+              if (inspecting) const Positioned.fill(child: InspectorLayer()),
             ],
           ),
         ),
@@ -144,9 +155,23 @@ class _AppDrawer extends ConsumerWidget {
         context.go(navDestinations[i].path);
       },
       children: [
-        const Padding(
-          padding: EdgeInsets.fromLTRB(28, 24, 16, 16),
-          child: BrandLogo(),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
+          child: Semantics(
+            button: true,
+            label: 'Home',
+            excludeSemantics: true,
+            child: InkWell(
+              onTap: () {
+                Navigator.pop(context);
+                context.go(AppRoutes.home);
+              },
+              child: const Padding(
+                padding: EdgeInsets.all(12),
+                child: BrandLogo(),
+              ),
+            ),
+          ),
         ),
         for (final d in navDestinations)
           NavigationDrawerDestination(icon: Icon(d.icon), label: Text(d.label)),

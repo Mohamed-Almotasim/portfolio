@@ -29,6 +29,11 @@ class _LiveSpecimenState extends ConsumerState<LiveSpecimen> {
 
     return Inspectable(
       label: 'LiveSpecimen',
+      note:
+          'A real button measured live: the slider sets its padding and '
+          'the dimension marks follow the actual box.',
+      source: 'lib/features/landing/widgets/live_specimen.dart:30',
+      tokens: const ['AppSpacing.s24', 'AppDecorations.inkMute', 'labelSmall'],
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

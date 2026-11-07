@@ -8,7 +8,7 @@ const showcaseSnippetSources = [
   'lib/features/ui_showcase/demos/theme_switcher_demo.dart',
   'lib/features/ui_showcase/demos/pricing_card_demo.dart',
   'lib/features/ui_showcase/demos/smart_search_demo.dart',
-  'lib/shared/widgets/faq_accordion.dart',
+  'lib/features/playground/specimens/one_codebase.dart',
 ];
 
 const _start = '// #region snippet';
@@ -49,3 +49,21 @@ String _dedent(List<String> lines) {
 
 Future<String> loadSnippet(String sourcePath) async =>
     extractSnippet(await rootBundle.loadString(sourcePath));
+
+/// Files the inspector annotates with `source:`; bundled (pubspec.yaml) so
+/// its Layout tab can show the real code at that line.
+const inspectorSourceFiles = [
+  'lib/features/landing/widgets/hero_section.dart',
+  'lib/features/landing/widgets/selected_work.dart',
+  'lib/features/landing/widgets/live_specimen.dart',
+  'lib/features/landing/landing_page.dart',
+  'lib/features/work/work_page.dart',
+  'lib/shared/widgets/app_navbar.dart',
+];
+
+/// [count] lines of [source] starting at 1-based [line], dedented.
+String extractLines(String source, int line, {int count = 14}) =>
+    _dedent(source.split('\n').skip(line - 1).take(count).toList());
+
+Future<String> loadLines(String sourcePath, int line) async =>
+    extractLines(await rootBundle.loadString(sourcePath), line);

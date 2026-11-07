@@ -6,15 +6,12 @@ import 'package:portfolio/core/content/portfolio_content.dart' as content;
 import 'package:portfolio/core/content/profile.dart';
 import 'package:portfolio/core/routing/app_routes.dart';
 import 'package:portfolio/core/state/profile_provider.dart';
-import 'package:portfolio/features/app_simulator/app_simulator_page.dart'
-    deferred as app_demos;
-import 'package:portfolio/features/architecture/architecture_page.dart';
+import 'package:portfolio/features/about/about_page.dart';
 import 'package:portfolio/features/contact/contact_page.dart';
 import 'package:portfolio/features/landing/landing_page.dart';
 import 'package:portfolio/features/not_found/not_found_page.dart';
 import 'package:portfolio/features/playground/playground_page.dart'
     deferred as playground;
-import 'package:portfolio/features/services/services_page.dart';
 import 'package:portfolio/features/work/case_studies_provider.dart';
 import 'package:portfolio/features/work/case_study_page.dart';
 import 'package:portfolio/features/work/work_page.dart';
@@ -106,29 +103,25 @@ GoRouter createRouter({
             AppRoutes.playground,
             (s) => DeferredPage(
               load: playground.loadLibrary,
-              builder: (_) => playground.PlaygroundPage(
-                showPatterns: s.uri.queryParameters['tab'] == 'patterns',
-              ),
+              builder: (_) => playground.PlaygroundPage(),
             ),
-          ),
-          GoRoute(
-            path: AppRoutes.uiShowcase,
-            redirect: (_, _) => AppRoutes.playground,
-          ),
-          GoRoute(
-            path: AppRoutes.widgetGallery,
-            redirect: (_, _) => AppRoutes.playgroundPatterns,
           ),
           route(
-            AppRoutes.appDemos,
-            (_) => DeferredPage(
-              load: app_demos.loadLibrary,
-              builder: (_) => app_demos.AppSimulatorPage(),
+            AppRoutes.about,
+            (s) => AboutPage(
+              showBuilt: s.uri.queryParameters['section'] == 'built',
             ),
           ),
-          route(AppRoutes.architecture, (_) => const ArchitecturePage()),
-          route(AppRoutes.services, (_) => const ServicesPage()),
           route(AppRoutes.contact, (_) => const ContactPage()),
+          // Old URLs.
+          for (final (from, to) in [
+            (AppRoutes.uiShowcase, AppRoutes.playground),
+            (AppRoutes.widgetGallery, AppRoutes.playground),
+            (AppRoutes.appDemos, AppRoutes.playground),
+            (AppRoutes.architecture, AppRoutes.aboutBuilt),
+            (AppRoutes.services, AppRoutes.contact),
+          ])
+            GoRoute(path: from, redirect: (_, _) => to),
         ],
       ),
     ],

@@ -11,7 +11,7 @@ import 'package:portfolio/core/theme/app_typography.dart';
 const allRoutes = [
   '/',
   '/work',
-  '/work/student-management-system',
+  '/work/al-risala-academy',
   '/playground',
   '/playground?tab=patterns',
   '/ui-showcase',

@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import 'package:portfolio/features/app_simulator/widgets/magnetic_card_grid/magnetic_controller.dart';
@@ -164,115 +165,121 @@ class _MagneticCardTileState extends State<_MagneticCardTile> {
                 _previousState = targetState;
               },
               builder: (context, animatedState, child) {
-                return MouseRegion(
-                  key: _cardKey,
-                  onEnter: (_) =>
-                      widget.controller.setHovered(widget.index, true),
-                  onExit: (_) =>
-                      widget.controller.setHovered(widget.index, false),
-                  onHover: (event) => widget.controller.updateLocalPointer(
-                    widget.index,
-                    event.localPosition,
-                  ),
-                  child: GestureDetector(
-                    onTapDown: (_) =>
-                        widget.controller.setPressed(widget.index, true),
-                    onTapUp: (_) =>
-                        widget.controller.setPressed(widget.index, false),
-                    onTapCancel: () =>
-                        widget.controller.setPressed(widget.index, false),
-                    child: Transform.translate(
-                      offset: animatedState.translation,
-                      child: Transform(
-                        alignment: Alignment.center,
-                        transform: Matrix4.identity()
-                          ..setEntry(3, 2, 0.001)
-                          ..scaleByDouble(
-                            animatedState.scale,
-                            animatedState.scale,
-                            animatedState.scale,
-                            1,
-                          )
-                          ..rotateX(animatedState.rotationX)
-                          ..rotateY(animatedState.rotationY),
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                widget.data.color.withValues(alpha: 0.92),
-                                widget.data.color.withValues(alpha: 0.72),
+                return Listener(
+                  onPointerDown: _touch,
+                  onPointerMove: _touch,
+                  onPointerUp: _release,
+                  onPointerCancel: _release,
+                  child: MouseRegion(
+                    key: _cardKey,
+                    onEnter: (_) =>
+                        widget.controller.setHovered(widget.index, true),
+                    onExit: (_) =>
+                        widget.controller.setHovered(widget.index, false),
+                    onHover: (event) => widget.controller.updateLocalPointer(
+                      widget.index,
+                      event.localPosition,
+                    ),
+                    child: GestureDetector(
+                      onTapDown: (_) =>
+                          widget.controller.setPressed(widget.index, true),
+                      onTapUp: (_) =>
+                          widget.controller.setPressed(widget.index, false),
+                      onTapCancel: () =>
+                          widget.controller.setPressed(widget.index, false),
+                      child: Transform.translate(
+                        offset: animatedState.translation,
+                        child: Transform(
+                          alignment: Alignment.center,
+                          transform: Matrix4.identity()
+                            ..setEntry(3, 2, 0.001)
+                            ..scaleByDouble(
+                              animatedState.scale,
+                              animatedState.scale,
+                              animatedState.scale,
+                              1,
+                            )
+                            ..rotateX(animatedState.rotationX)
+                            ..rotateY(animatedState.rotationY),
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  widget.data.color.withValues(alpha: 0.92),
+                                  widget.data.color.withValues(alpha: 0.72),
+                                ],
+                              ),
+                              borderRadius: BorderRadius.circular(28),
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.18),
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(
+                                    alpha: animatedState.shadowOpacity,
+                                  ),
+                                  blurRadius: animatedState.shadowBlur,
+                                  offset: animatedState.shadowOffset,
+                                ),
+                                BoxShadow(
+                                  color: widget.data.color.withValues(
+                                    alpha: animatedState.glowOpacity,
+                                  ),
+                                  blurRadius: 26,
+                                  spreadRadius: 1,
+                                ),
                               ],
                             ),
-                            borderRadius: BorderRadius.circular(28),
-                            border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.18),
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(
-                                  alpha: animatedState.shadowOpacity,
-                                ),
-                                blurRadius: animatedState.shadowBlur,
-                                offset: animatedState.shadowOffset,
-                              ),
-                              BoxShadow(
-                                color: widget.data.color.withValues(
-                                  alpha: animatedState.glowOpacity,
-                                ),
-                                blurRadius: 26,
-                                spreadRadius: 1,
-                              ),
-                            ],
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(22),
-                            child: Transform.translate(
-                              offset: animatedState.parallaxOffset,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Container(
-                                    width: 42,
-                                    height: 42,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withValues(
-                                        alpha: 0.16,
+                            child: Padding(
+                              padding: const EdgeInsets.all(22),
+                              child: Transform.translate(
+                                offset: animatedState.parallaxOffset,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Container(
+                                      width: 42,
+                                      height: 42,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withValues(
+                                          alpha: 0.16,
+                                        ),
+                                        borderRadius: BorderRadius.circular(14),
                                       ),
-                                      borderRadius: BorderRadius.circular(14),
+                                      child: const Icon(
+                                        Icons.auto_awesome,
+                                        color: Colors.white,
+                                      ),
                                     ),
-                                    child: const Icon(
-                                      Icons.auto_awesome,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  const Spacer(),
-                                  Text(
-                                    widget.data.title,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleLarge
-                                        ?.copyWith(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    widget.data.subtitle,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium
-                                        ?.copyWith(
-                                          color: Colors.white.withValues(
-                                            alpha: 0.88,
+                                    const Spacer(),
+                                    Text(
+                                      widget.data.title,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleLarge
+                                          ?.copyWith(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w700,
                                           ),
-                                          height: 1.35,
-                                        ),
-                                  ),
-                                ],
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      widget.data.subtitle,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.copyWith(
+                                            color: Colors.white.withValues(
+                                              alpha: 0.88,
+                                            ),
+                                            height: 1.35,
+                                          ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
@@ -287,6 +294,23 @@ class _MagneticCardTileState extends State<_MagneticCardTile> {
         ),
       ),
     );
+  }
+
+  // Touch has no hover: a finger on a card drives the same pull and tilt.
+  // A Listener stays out of the gesture arena, so scrolling still works.
+  void _touch(PointerEvent e) {
+    if (e.kind == PointerDeviceKind.mouse) return;
+    widget.controller
+      ..setHovered(widget.index, true)
+      ..updateLocalPointer(widget.index, e.localPosition)
+      ..updateCursor(e.position);
+  }
+
+  void _release(PointerEvent e) {
+    if (e.kind == PointerDeviceKind.mouse) return;
+    widget.controller
+      ..setHovered(widget.index, false)
+      ..updateCursor(null);
   }
 }
 

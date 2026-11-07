@@ -6,8 +6,7 @@ import 'package:portfolio/core/routing/app_routes.dart';
 import 'package:portfolio/core/state/developer_mode_provider.dart';
 import 'package:portfolio/core/state/theme_mode_provider.dart';
 import 'package:portfolio/features/landing/proof_stats_provider.dart';
-import 'package:portfolio/features/widget_gallery/ui_pattern.dart';
-import 'package:portfolio/features/widget_gallery/widget_gallery_search_provider.dart';
+import 'package:portfolio/features/work/case_studies_provider.dart';
 
 ProviderContainer _container() {
   final c = ProviderContainer();
@@ -48,23 +47,13 @@ void main() {
     });
   });
 
-  group('UI pattern filters', () {
-    test('query and category notifiers hold their values', () {
+  group('work type filter', () {
+    test('holds the chosen type and clears back to all', () {
       final c = _container();
-      c.read(uiPatternsSearchProvider.notifier).setQuery('auth');
-      c
-          .read(uiPatternsCategoryProvider.notifier)
-          .setCategory(UiPatternCategory.form);
-      expect(c.read(uiPatternsSearchProvider), 'auth');
-      expect(c.read(uiPatternsCategoryProvider), UiPatternCategory.form);
-    });
-
-    test('matches searches name, description and category, any case', () {
-      final auth = uiPatterns.firstWhere((p) => p.name.contains('Auth'));
-      expect(auth.matches('LOGIN'), isTrue); // description
-      expect(auth.matches('form'), isTrue); // category label
-      expect(auth.matches('zzz'), isFalse);
-      expect(auth.matches(''), isTrue);
+      final n = c.read(workTypeFilterProvider.notifier)..setType('Web app');
+      expect(c.read(workTypeFilterProvider), 'Web app');
+      n.setType(null);
+      expect(c.read(workTypeFilterProvider), isNull);
     });
   });
 

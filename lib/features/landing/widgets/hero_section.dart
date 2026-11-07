@@ -25,7 +25,7 @@ class HeroSection extends ConsumerWidget {
     // Fluid display size; the measure (~9em, about 14 characters of this
     // wide face) keeps a short statement on two balanced lines.
     Widget statement(double width) {
-      final size = (width / 7.6).clamp(36.0, 88.0);
+      final size = (width / 7.6).clamp(36.0, 88.0) * deco.typeScale;
       return ConstrainedBox(
         constraints: BoxConstraints(maxWidth: size * 9.2),
         child: Semantics(
@@ -91,6 +91,11 @@ class HeroSection extends ConsumerWidget {
 
     return Inspectable(
       label: 'HeroSection',
+      note:
+          'Ruler, one full-width statement, then pitch and specimen split '
+          '5/6. Under 900 px they stack, so neither column gets squeezed.',
+      source: 'lib/features/landing/widgets/hero_section.dart:92',
+      tokens: const ['AppSpacing.s64', 'AppSpacing.s48', 'AppSpacing.s32'],
       child: LayoutBuilder(
         builder: (context, c) {
           final wide = c.maxWidth >= 900;
@@ -99,7 +104,16 @@ class HeroSection extends ConsumerWidget {
             children: [
               const Ruler(),
               SizedBox(height: wide ? AppSpacing.s64 : AppSpacing.s32),
-              Inspectable(label: 'Text · h1', child: statement(c.maxWidth)),
+              Inspectable(
+                label: 'Text · h1',
+                note:
+                    'Size is width / 7.6, clamped 36–88, with a 9.2em '
+                    'measure: the tagline holds two balanced lines at any '
+                    'width.',
+                source: 'lib/features/landing/widgets/hero_section.dart:107',
+                tokens: const ['displayLarge', 'AppDecorations.typeScale'],
+                child: statement(c.maxWidth),
+              ),
               SizedBox(height: wide ? AppSpacing.s64 : AppSpacing.s32),
               if (wide)
                 Row(

@@ -31,4 +31,11 @@ flutter:
     # Demo sources: developer mode shows the real code (source_snippet.dart).
     - lib/features/ui_showcase/demos/
     - lib/features/ui_showcase/widgets/analytics_dashboard_demo.dart
-    - lib/shared/widgets/faq_accordion.dart
+    - lib/features/playground/specimens/
+    # Inspector "View source" excerpts (inspectorSourceFiles).
+    - lib/features/landing/widgets/hero_section.dart
+    - lib/features/landing/widgets/selected_work.dart
+    - lib/features/landing/widgets/live_specimen.dart
+    - lib/features/landing/landing_page.dart
+    - lib/features/work/work_page.dart
+    - lib/shared/widgets/app_navbar.dart

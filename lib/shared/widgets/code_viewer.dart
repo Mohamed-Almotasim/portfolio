@@ -9,10 +9,18 @@ import 'package:portfolio/shared/widgets/dart_highlighter.dart';
 /// Read-only code block: filename header, copy button, line numbers and
 /// Dart syntax highlighting.
 class CodeViewer extends StatefulWidget {
-  const CodeViewer({super.key, required this.code, this.filename});
+  const CodeViewer({
+    super.key,
+    required this.code,
+    this.filename,
+    this.firstLine = 1,
+  });
 
   final String code;
   final String? filename;
+
+  /// Number shown on the first line, for excerpts from the middle of a file.
+  final int firstLine;
 
   @override
   State<CodeViewer> createState() => _CodeViewerState();
@@ -86,7 +94,10 @@ class _CodeViewerState extends State<CodeViewer> {
                   children: [
                     ExcludeSemantics(
                       child: Text(
-                        [for (var i = 1; i <= lineCount; i++) '$i'].join('\n'),
+                        [
+                          for (var i = 0; i < lineCount; i++)
+                            '${widget.firstLine + i}',
+                        ].join('\n'),
                         textAlign: TextAlign.right,
                         style: style.copyWith(color: syntax.lineNumber),
                       ),

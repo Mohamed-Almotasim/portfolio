@@ -33,10 +33,21 @@ class AppNavbar extends StatelessWidget {
     final deco = AppDecorations.of(context);
     final width = MediaQuery.sizeOf(context).width;
     final isDesktop = width >= AppBreakpoints.tablet;
+    final isCompact = width < AppBreakpoints.mobile;
     final margin = AppSpacing.margin(width);
 
     return Inspectable(
       label: 'AppNavbar',
+      note:
+          'The title block: a plain strip with one strong bottom rule. It '
+          'overlays every page, which pads itself by AppNavbar.height.',
+      source: 'lib/shared/widgets/app_navbar.dart:38',
+      tokens: const [
+        'AppNavbar.height',
+        'AppSpacing.margin',
+        'AppDecorations.ruleStrong',
+        'labelMedium',
+      ],
       child: Container(
         height: height,
         decoration: BoxDecoration(
@@ -52,15 +63,29 @@ class AppNavbar extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: margin),
               child: Row(
                 children: [
+                  // Not flexible: the name must never be ellipsized. Compact
+                  // drops the name instead; the overflow sweep guards the rest.
                   Flexible(
-                    flex: isDesktop ? 0 : 1,
+                    flex: 0,
                     child: Semantics(
                       button: true,
                       label: 'Home',
                       excludeSemantics: true,
                       child: InkWell(
                         onTap: () => context.go(AppRoutes.home),
-                        child: BrandLogo(showName: width >= 360),
+                        // 48px hit area even when only the monogram shows.
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(
+                            minWidth: 48,
+                            minHeight: 48,
+                          ),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            widthFactor: 1,
+                            heightFactor: 1,
+                            child: BrandLogo(showName: !isCompact),
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -89,7 +114,7 @@ class AppNavbar extends StatelessWidget {
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: AppSpacing.s16,
                                 ),
-                                minimumSize: const Size(44, 40),
+                                minimumSize: const Size(48, 48),
                               ),
                               child: const Text('Start a project'),
                             ),
@@ -99,7 +124,20 @@ class AppNavbar extends StatelessWidget {
                     ),
                   ] else ...[
                     const Spacer(),
-                    const ThemeToggleButton(),
+                    // Compact: theme and Inspect live in the drawer only.
+                    if (isCompact)
+                      FilledButton(
+                        onPressed: () => context.go(AppRoutes.contact),
+                        style: FilledButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.s16,
+                          ),
+                        ),
+                        child: const Text('Hire me', maxLines: 1),
+                      )
+                    else
+                      const ThemeToggleButton(),
+                    const SizedBox(width: AppSpacing.s4),
                     IconButton(
                       tooltip: 'Open menu',
                       icon: const Icon(Icons.menu),
@@ -194,7 +232,7 @@ class _NavLinkState extends State<_NavLink> {
           foregroundColor: active ? deco.accentText : scheme.onSurface,
           textStyle: text.labelMedium,
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s12),
-          minimumSize: const Size(44, 44),
+          minimumSize: const Size(48, 48),
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),
         // Underline the width of the label: 2px accent active, 1px ink hover.

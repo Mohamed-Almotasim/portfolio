@@ -4,14 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
+import 'package:portfolio/core/content/engagement_model.dart';
+import 'package:portfolio/core/content/faq_item.dart';
 import 'package:portfolio/core/content/portfolio_content.dart' as content;
 import 'package:portfolio/core/content/profile.dart';
 import 'package:portfolio/core/state/profile_provider.dart';
 import 'package:portfolio/core/theme/app_decorations.dart';
 import 'package:portfolio/core/theme/app_spacing.dart';
+import 'package:portfolio/core/theme/app_typography.dart';
 import 'package:portfolio/features/contact/contact_mailto.dart';
 import 'package:portfolio/shared/layout/app_page.dart';
+import 'package:portfolio/shared/layout/inspectable.dart';
 import 'package:portfolio/shared/utils/link_launcher.dart';
+import 'package:portfolio/shared/widgets/app_section.dart';
+import 'package:portfolio/shared/widgets/faq_accordion.dart';
 
 final contactProjectTypesProvider = Provider<List<String>>(
   (ref) => content.contactProjectTypes,
@@ -57,32 +63,121 @@ class ContactPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final profile = ref.watch(profileProvider);
+    final text = Theme.of(context).textTheme;
     return AppPage(
-      title: 'Contact',
-      child: LayoutBuilder(
-        builder: (context, c) {
-          final pitch = _Pitch(profile: profile);
-          const form = _ContactForm();
-          if (c.maxWidth < 860) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                pitch,
-                const SizedBox(height: AppSpacing.s48),
-                form,
-              ],
-            );
-          }
-          return Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(flex: 4, child: pitch),
-              const SizedBox(width: AppSpacing.s64),
-              const Expanded(flex: 5, child: form),
-            ],
-          );
-        },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: AppSpacing.s48),
+          Semantics(
+            header: true,
+            child: Text('Contact', style: text.displayLarge),
+          ),
+          const SizedBox(height: AppSpacing.s16),
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 640),
+            child: Text(
+              "Tell me what you're building and where you're stuck. I'll "
+              "reply with how I'd approach it and what it would take.",
+              style: AppTypography.lead(context),
+            ),
+          ),
+          const SizedBox(height: AppSpacing.s64),
+          LayoutBuilder(
+            builder: (context, c) {
+              final pitch = _Pitch(profile: profile);
+              const form = Inspectable(
+                label: 'ContactForm',
+                child: _ContactForm(),
+              );
+              if (c.maxWidth < 860) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    form,
+                    const SizedBox(height: AppSpacing.s64),
+                    pitch,
+                  ],
+                );
+              }
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Expanded(flex: 7, child: form),
+                  const SizedBox(width: AppSpacing.s64),
+                  Expanded(flex: 4, child: pitch),
+                ],
+              );
+            },
+          ),
+          const AppSection(
+            number: '01',
+            title: 'Ways to work together',
+            child: _Engagements(),
+          ),
+          AppSection(
+            number: '02',
+            title: 'Questions',
+            child: FaqAccordion(items: ref.watch(faqsProvider)),
+          ),
+        ],
       ),
+    );
+  }
+}
+
+final engagementModelsProvider = Provider<List<EngagementModel>>(
+  (ref) => content.engagementModels,
+);
+final faqsProvider = Provider<List<FaqItem>>((ref) => content.faqs);
+
+/// Engagement models as ruled rows; a price shows only when one is set.
+class _Engagements extends ConsumerWidget {
+  const _Engagements();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final models = ref.watch(engagementModelsProvider);
+    final text = Theme.of(context).textTheme;
+    final deco = AppDecorations.of(context);
+    final mute = text.labelMedium?.copyWith(color: deco.inkMute);
+    return Column(
+      children: [
+        for (final (i, m) in models.indexed)
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.s24),
+            decoration: BoxDecoration(
+              border: Border(
+                top: i == 0 ? BorderSide.none : BorderSide(color: deco.rule),
+              ),
+            ),
+            child: Wrap(
+              spacing: AppSpacing.s48,
+              runSpacing: AppSpacing.s12,
+              children: [
+                SizedBox(
+                  width: 420,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(m.title, style: text.titleLarge),
+                      const SizedBox(height: AppSpacing.s8),
+                      Text(m.description, style: text.bodyLarge),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  width: 300,
+                  child: Text(
+                    'Best for: ${m.bestFor}'
+                    '${m.price == null ? '' : '\nFrom ${m.price}'}',
+                    style: mute?.copyWith(height: 1.8),
+                  ),
+                ),
+              ],
+            ),
+          ),
+      ],
     );
   }
 }
@@ -95,67 +190,64 @@ class _Pitch extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final text = Theme.of(context).textTheme;
-    final scheme = Theme.of(context).colorScheme;
     final deco = AppDecorations.of(context);
-    Widget fact(IconData icon, String value, {Color? color}) => Padding(
-      padding: const EdgeInsets.only(bottom: AppSpacing.s12),
-      child: Row(
+    Widget fact(String label, String value) => Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.s16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 18, color: color ?? scheme.onSurfaceVariant),
-          const SizedBox(width: AppSpacing.s12),
-          Expanded(child: Text(value, style: text.bodyMedium)),
+          Text(label, style: text.labelSmall?.copyWith(color: deco.inkMute)),
+          const SizedBox(height: AppSpacing.s4),
+          Text(value, style: text.labelLarge),
         ],
       ),
     );
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text("Let's talk about your app", style: text.headlineMedium),
-        const SizedBox(height: AppSpacing.s12),
-        Text(
-          "Tell me what you're building and where you're stuck. I'll reply "
-          "with how I'd approach it and what it would take.",
-          style: text.bodyLarge?.copyWith(color: scheme.onSurfaceVariant),
+    return Inspectable(
+      label: 'ContactFacts',
+      child: Container(
+        padding: const EdgeInsets.only(top: AppSpacing.s16),
+        decoration: BoxDecoration(
+          border: Border(top: BorderSide(color: deco.ruleStrong)),
         ),
-        const SizedBox(height: AppSpacing.s32),
-        fact(Icons.circle, profile.availability, color: deco.success),
-        if (profile.responseTime != null)
-          fact(Icons.schedule, profile.responseTime!),
-        fact(Icons.place_outlined, profile.location),
-        const SizedBox(height: AppSpacing.s24),
-        Container(
-          padding: const EdgeInsets.only(left: AppSpacing.s16),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(AppRadius.md),
-            border: Border.all(color: deco.cardBorder),
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: SelectableText(profile.email, style: text.titleMedium),
-              ),
-              IconButton(
-                tooltip: 'Copy email address',
-                icon: const Icon(Icons.copy, size: 18),
-                onPressed: () => _copyEmail(context, profile.email),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: AppSpacing.s24),
-        Wrap(
-          spacing: AppSpacing.s8,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            for (final s in profile.socials)
-              IconButton.outlined(
-                tooltip: s.label,
-                icon: Icon(s.icon, semanticLabel: s.label),
-                onPressed: () => openLink(context, ref, Uri.parse(s.url)),
-              ),
+            Text(
+              'Or write directly',
+              style: text.labelSmall?.copyWith(color: deco.inkMute),
+            ),
+            Row(
+              children: [
+                Flexible(
+                  child: SelectableText(profile.email, style: text.titleMedium),
+                ),
+                IconButton(
+                  tooltip: 'Copy email address',
+                  icon: const Icon(Icons.copy, size: 18),
+                  onPressed: () => _copyEmail(context, profile.email),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.s16),
+            fact('Availability', profile.availability),
+            if (profile.responseTime != null)
+              fact('Replies', profile.responseTime!),
+            fact('Based in', profile.location),
+            Wrap(
+              spacing: AppSpacing.s8,
+              children: [
+                for (final s in profile.socials)
+                  TextButton(
+                    onPressed: () => openLink(context, ref, Uri.parse(s.url)),
+                    style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                    child: Text('${s.label} →'),
+                  ),
+              ],
+            ),
           ],
         ),
-      ],
+      ),
     );
   }
 }

@@ -17,21 +17,26 @@ CaseStudy? caseStudyBySlug(List<CaseStudy> all, String slug) =>
 CaseStudy nextCaseStudy(List<CaseStudy> all, CaseStudy current) =>
     all[(all.indexOf(current) + 1) % all.length];
 
+/// The one before [current], wrapping to the last.
+CaseStudy previousCaseStudy(List<CaseStudy> all, CaseStudy current) =>
+    all[(all.indexOf(current) - 1 + all.length) % all.length];
+
 /// `null` keeps everything.
-List<CaseStudy> filterByTech(List<CaseStudy> all, String? tech) =>
-    tech == null ? all : all.where((c) => c.techStack.contains(tech)).toList();
+List<CaseStudy> filterByType(List<CaseStudy> all, String? type) =>
+    type == null ? all : all.where((c) => c.type == type).toList();
 
-List<String> allTech(List<CaseStudy> all) =>
-    {for (final c in all) ...c.techStack}.toList()..sort();
+/// Each type once, in first-seen order.
+List<String> allTypes(List<CaseStudy> all) =>
+    {for (final c in all) c.type}.toList();
 
-class WorkTechFilterNotifier extends Notifier<String?> {
+class WorkTypeFilterNotifier extends Notifier<String?> {
   @override
   String? build() => null;
 
-  void setTech(String? tech) => state = tech;
+  void setType(String? type) => state = type;
 }
 
-final workTechFilterProvider =
-    NotifierProvider<WorkTechFilterNotifier, String?>(
-      WorkTechFilterNotifier.new,
+final workTypeFilterProvider =
+    NotifierProvider<WorkTypeFilterNotifier, String?>(
+      WorkTypeFilterNotifier.new,
     );

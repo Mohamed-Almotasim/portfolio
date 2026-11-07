@@ -49,155 +49,169 @@ class _GlassTiltCardState extends State<GlassTiltCard> {
             onEnter: (_) => _controller.setHovered(true),
             onExit: (_) => _controller.setHovered(false),
             onHover: (event) => _controller.updatePointer(event.localPosition),
-            child: GestureDetector(
-              onTapDown: (_) => _controller.setPressed(true),
-              onTapUp: (_) => _controller.setPressed(false),
-              onTapCancel: () => _controller.setPressed(false),
-              child: AnimatedBuilder(
-                animation: _controller,
-                builder: (context, child) {
-                  final targetState = _controller.stateFor(cardSize);
+            // Touch has no hover: a finger on the card tilts it the same way.
+            // A Listener stays out of the gesture arena, so scrolling still works.
+            child: Listener(
+              onPointerDown: (e) => _touch(e, true),
+              onPointerMove: (e) => _touch(e, true),
+              onPointerUp: (e) => _touch(e, false),
+              onPointerCancel: (e) => _touch(e, false),
+              child: GestureDetector(
+                onTapDown: (_) => _controller.setPressed(true),
+                onTapUp: (_) => _controller.setPressed(false),
+                onTapCancel: () => _controller.setPressed(false),
+                child: AnimatedBuilder(
+                  animation: _controller,
+                  builder: (context, child) {
+                    final targetState = _controller.stateFor(cardSize);
 
-                  return TweenAnimationBuilder<GlassTiltVisualState>(
-                    tween: GlassTiltVisualStateTween(
-                      begin: _previousState,
-                      end: targetState,
-                    ),
-                    duration: const Duration(milliseconds: 220),
-                    curve: Curves.easeOut,
-                    onEnd: () {
-                      _previousState = targetState;
-                    },
-                    builder: (context, animatedState, child) {
-                      return AspectRatio(
-                        aspectRatio: widget.aspectRatio,
-                        child: Transform(
-                          alignment: Alignment.center,
-                          transform: Matrix4.identity()
-                            ..setEntry(3, 2, 0.0011)
-                            ..scaleByDouble(
-                              animatedState.scale,
-                              animatedState.scale,
-                              animatedState.scale,
-                              1,
-                            )
-                            ..rotateX(animatedState.rotationX)
-                            ..rotateY(animatedState.rotationY),
-                          child: Stack(
-                            children: [
-                              Positioned.fill(
-                                child: DecoratedBox(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(30),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withValues(
-                                          alpha: animatedState.shadowOpacity,
-                                        ),
-                                        blurRadius: animatedState.shadowBlur,
-                                        offset: animatedState.shadowOffset,
-                                      ),
-                                      BoxShadow(
-                                        color: Colors.white.withValues(
-                                          alpha:
-                                              animatedState.borderGlowOpacity,
-                                        ),
-                                        blurRadius: 30,
-                                        spreadRadius: 0.8,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(30),
-                                child: BackdropFilter(
-                                  filter: ImageFilter.blur(
-                                    sigmaX: 18,
-                                    sigmaY: 18,
-                                  ),
+                    return TweenAnimationBuilder<GlassTiltVisualState>(
+                      tween: GlassTiltVisualStateTween(
+                        begin: _previousState,
+                        end: targetState,
+                      ),
+                      duration: const Duration(milliseconds: 220),
+                      curve: Curves.easeOut,
+                      onEnd: () {
+                        _previousState = targetState;
+                      },
+                      builder: (context, animatedState, child) {
+                        return AspectRatio(
+                          aspectRatio: widget.aspectRatio,
+                          child: Transform(
+                            alignment: Alignment.center,
+                            transform: Matrix4.identity()
+                              ..setEntry(3, 2, 0.0011)
+                              ..scaleByDouble(
+                                animatedState.scale,
+                                animatedState.scale,
+                                animatedState.scale,
+                                1,
+                              )
+                              ..rotateX(animatedState.rotationX)
+                              ..rotateY(animatedState.rotationY),
+                            child: Stack(
+                              children: [
+                                Positioned.fill(
                                   child: DecoratedBox(
                                     decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        begin: Alignment.topLeft,
-                                        end: Alignment.bottomRight,
-                                        colors: [
-                                          const Color(
-                                            0xFFFFFFFF,
-                                          ).withValues(alpha: 0.22),
-                                          const Color(
-                                            0xFFF8FAFC,
-                                          ).withValues(alpha: 0.08),
-                                          const Color(
-                                            0xFFFFFFFF,
-                                          ).withValues(alpha: 0.04),
-                                        ],
-                                      ),
                                       borderRadius: BorderRadius.circular(30),
-                                      border: Border.all(
-                                        color: Colors.white.withValues(
-                                          alpha: 0.24,
-                                        ),
-                                      ),
-                                    ),
-                                    child: Stack(
-                                      fit: StackFit.expand,
-                                      children: [
-                                        Positioned.fill(
-                                          child: DecoratedBox(
-                                            decoration: BoxDecoration(
-                                              gradient: RadialGradient(
-                                                center: const Alignment(
-                                                  -0.75,
-                                                  -0.9,
-                                                ),
-                                                radius: 1.2,
-                                                colors: [
-                                                  Colors.white.withValues(
-                                                    alpha: 0.18,
-                                                  ),
-                                                  Colors.transparent,
-                                                ],
-                                              ),
-                                            ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withValues(
+                                            alpha: animatedState.shadowOpacity,
                                           ),
+                                          blurRadius: animatedState.shadowBlur,
+                                          offset: animatedState.shadowOffset,
                                         ),
-                                        Positioned.fill(
-                                          child: IgnorePointer(
-                                            child: _GlassGlareOverlay(
-                                              alignment:
-                                                  animatedState.glareAlignment,
-                                            ),
+                                        BoxShadow(
+                                          color: Colors.white.withValues(
+                                            alpha:
+                                                animatedState.borderGlowOpacity,
                                           ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.all(28),
-                                          child: Transform.translate(
-                                            offset:
-                                                animatedState.parallaxOffset,
-                                            child: _GlassCardContent(
-                                              data: widget.data,
-                                            ),
-                                          ),
+                                          blurRadius: 30,
+                                          spreadRadius: 0.8,
                                         ),
                                       ],
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(30),
+                                  child: BackdropFilter(
+                                    filter: ImageFilter.blur(
+                                      sigmaX: 18,
+                                      sigmaY: 18,
+                                    ),
+                                    child: DecoratedBox(
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                          colors: [
+                                            const Color(
+                                              0xFFFFFFFF,
+                                            ).withValues(alpha: 0.22),
+                                            const Color(
+                                              0xFFF8FAFC,
+                                            ).withValues(alpha: 0.08),
+                                            const Color(
+                                              0xFFFFFFFF,
+                                            ).withValues(alpha: 0.04),
+                                          ],
+                                        ),
+                                        borderRadius: BorderRadius.circular(30),
+                                        border: Border.all(
+                                          color: Colors.white.withValues(
+                                            alpha: 0.24,
+                                          ),
+                                        ),
+                                      ),
+                                      child: Stack(
+                                        fit: StackFit.expand,
+                                        children: [
+                                          Positioned.fill(
+                                            child: DecoratedBox(
+                                              decoration: BoxDecoration(
+                                                gradient: RadialGradient(
+                                                  center: const Alignment(
+                                                    -0.75,
+                                                    -0.9,
+                                                  ),
+                                                  radius: 1.2,
+                                                  colors: [
+                                                    Colors.white.withValues(
+                                                      alpha: 0.18,
+                                                    ),
+                                                    Colors.transparent,
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          Positioned.fill(
+                                            child: IgnorePointer(
+                                              child: _GlassGlareOverlay(
+                                                alignment: animatedState
+                                                    .glareAlignment,
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(28),
+                                            child: Transform.translate(
+                                              offset:
+                                                  animatedState.parallaxOffset,
+                                              child: _GlassCardContent(
+                                                data: widget.data,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                  );
-                },
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
             ),
           ),
         );
       },
     );
+  }
+
+  void _touch(PointerEvent e, bool down) {
+    if (e.kind == PointerDeviceKind.mouse) return;
+    _controller.setHovered(down);
+    if (down) _controller.updatePointer(e.localPosition);
   }
 }
 

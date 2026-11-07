@@ -30,9 +30,16 @@ class BrandLogo extends ConsumerWidget {
           height: 32,
           alignment: Alignment.center,
           decoration: BoxDecoration(border: Border.all(color: deco.ruleStrong)),
-          child: Text(
-            initials(name),
-            style: text.headlineSmall?.copyWith(fontSize: 13, letterSpacing: 0),
+          // The cell is fixed, so large text scales the initials down to fit.
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              initials(name),
+              style: text.headlineSmall?.copyWith(
+                fontSize: 13,
+                letterSpacing: 0,
+              ),
+            ),
           ),
         ),
         if (showName) ...[

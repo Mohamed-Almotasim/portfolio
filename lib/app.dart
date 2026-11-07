@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portfolio/core/routing/app_router.dart';
 import 'package:portfolio/core/state/theme_mode_provider.dart';
+import 'package:portfolio/core/state/theme_tokens_provider.dart';
 import 'package:portfolio/core/theme/app_spacing.dart';
 import 'package:portfolio/core/theme/app_theme.dart';
 
@@ -11,11 +12,12 @@ class PortfolioApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final compact = AppBreakpoints.isMobile(context);
+    final tokens = ref.watch(themeTokensProvider);
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'Portfolio',
-      theme: AppTheme.light(compact: compact),
-      darkTheme: AppTheme.dark(compact: compact),
+      theme: AppTheme.light(compact: compact, tokens: tokens),
+      darkTheme: AppTheme.dark(compact: compact, tokens: tokens),
       themeMode: ref.watch(themeModeProvider),
       routerConfig: ref.watch(routerProvider),
     );

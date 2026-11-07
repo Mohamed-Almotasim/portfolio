@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:portfolio/core/routing/app_routes.dart';
+import 'package:portfolio/core/theme/app_decorations.dart';
 import 'package:portfolio/core/theme/app_spacing.dart';
+import 'package:portfolio/core/theme/app_typography.dart';
 import 'package:portfolio/shared/layout/app_page.dart';
+import 'package:portfolio/shared/layout/inspectable.dart';
+import 'package:portfolio/shared/widgets/spec_marks.dart';
 
+/// A missing sheet in the drawing set: the path that was asked for, and the
+/// sheets that do exist.
 class NotFoundPage extends StatelessWidget {
   const NotFoundPage({super.key, required this.path});
 
@@ -11,34 +17,53 @@ class NotFoundPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final text = Theme.of(context).textTheme;
+    final deco = AppDecorations.of(context);
     return AppPage(
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: AppSpacing.s64),
-          child: Column(
-            children: [
-              Text(
-                '404',
-                style: theme.textTheme.displayLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: theme.colorScheme.primary,
-                ),
+      child: Inspectable(
+        label: 'NotFound',
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Ruler(),
+            const SizedBox(height: AppSpacing.s64),
+            Semantics(
+              header: true,
+              child: Text('404', style: text.displayLarge),
+            ),
+            const SizedBox(height: AppSpacing.s16),
+            Text(
+              'There is no sheet at this address.',
+              style: AppTypography.lead(context),
+            ),
+            const SizedBox(height: AppSpacing.s8),
+            SelectableText(
+              path,
+              style: text.labelMedium?.copyWith(color: deco.inkMute),
+            ),
+            const SizedBox(height: AppSpacing.s32),
+            FilledButton(
+              onPressed: () => context.go(AppRoutes.home),
+              child: const Text('Back home'),
+            ),
+            const SizedBox(height: AppSpacing.s64),
+            Container(
+              padding: const EdgeInsets.only(top: AppSpacing.s12),
+              decoration: BoxDecoration(
+                border: Border(top: BorderSide(color: deco.ruleStrong)),
               ),
-              const SizedBox(height: AppSpacing.s12),
-              Text(
-                'No page at $path',
-                style: theme.textTheme.titleMedium,
-                textAlign: TextAlign.center,
+              child: Wrap(
+                spacing: AppSpacing.s8,
+                children: [
+                  for (final d in navDestinations)
+                    TextButton(
+                      onPressed: () => context.go(d.path),
+                      child: Text('${d.label} →'),
+                    ),
+                ],
               ),
-              const SizedBox(height: AppSpacing.s24),
-              ElevatedButton.icon(
-                onPressed: () => context.go(AppRoutes.home),
-                icon: const Icon(Icons.home_outlined),
-                label: const Text('Back home'),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

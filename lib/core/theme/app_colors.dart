@@ -33,6 +33,13 @@ abstract final class AppColors {
   static const orangeTint = Color(0xFFF3DDCE);
   static const orangeTintNight = Color(0xFF352723);
 
+  // The two accents the brief didn't choose; only the inspector previews them.
+  static const chartreuse = Color(0xFFCFFF3E); // 15.2:1 on night
+  static const olive = Color(0xFF3F5600); // 7.3:1 on paper
+  static const red = Color(0xFFE8202A); // 4.0:1 line on paper
+  static const redText = Color(0xFFC8102E); // 5.2:1
+  static const redNight = Color(0xFFFF5147); // 5.5:1
+
   // Status, tuned per ground for 4.5:1.
   static const successLight = Color(0xFF1E6B35);
   static const successDark = Color(0xFF7FD08F);

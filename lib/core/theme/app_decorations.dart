@@ -1,3 +1,5 @@
+import 'dart:ui' show lerpDouble;
+
 import 'package:flutter/material.dart';
 import 'package:portfolio/core/theme/app_colors.dart';
 
@@ -20,6 +22,8 @@ class AppDecorations extends ThemeExtension<AppDecorations> {
     required this.warning,
     required this.shadowSoft,
     required this.shadowElevated,
+    this.space = 1,
+    this.typeScale = 1,
   });
 
   /// Hairline around framed things; same value as [rule].
@@ -52,6 +56,11 @@ class AppDecorations extends ThemeExtension<AppDecorations> {
   /// Shadows are only for things that really float: menus, dialogs, tags.
   final List<BoxShadow> shadowSoft;
   final List<BoxShadow> shadowElevated;
+
+  /// Inspector token overrides (1 = as designed): section rhythm, and type
+  /// sizes set outside the TextTheme, like the hero statement.
+  final double space;
+  final double typeScale;
 
   static AppDecorations of(BuildContext context) =>
       Theme.of(context).extension<AppDecorations>()!;
@@ -130,6 +139,8 @@ class AppDecorations extends ThemeExtension<AppDecorations> {
     Color? warning,
     List<BoxShadow>? shadowSoft,
     List<BoxShadow>? shadowElevated,
+    double? space,
+    double? typeScale,
   }) {
     return AppDecorations(
       cardBorder: cardBorder ?? this.cardBorder,
@@ -146,6 +157,8 @@ class AppDecorations extends ThemeExtension<AppDecorations> {
       warning: warning ?? this.warning,
       shadowSoft: shadowSoft ?? this.shadowSoft,
       shadowElevated: shadowElevated ?? this.shadowElevated,
+      space: space ?? this.space,
+      typeScale: typeScale ?? this.typeScale,
     );
   }
 
@@ -172,6 +185,8 @@ class AppDecorations extends ThemeExtension<AppDecorations> {
         other.shadowElevated,
         t,
       )!,
+      space: lerpDouble(space, other.space, t)!,
+      typeScale: lerpDouble(typeScale, other.typeScale, t)!,
     );
   }
 }

@@ -1,5 +1,6 @@
 // Renders routes to PNG in dark and light, for docs and visual checks. Opt-in:
 //   SHOT_DIR=out SHOT_PATHS="/,/work" SHOT_W=1280 SHOT_H=900 [SHOT_DEV=1] \
+//     [SHOT_HOVER=x,y] [SHOT_SELECT=x,y] \
 //     flutter test test/tool/screenshots_test.dart
 import 'dart:io';
 import 'dart:ui' as ui;
@@ -91,6 +92,14 @@ void main() {
             addTearDown(mouse.removePointer);
             await mouse.moveTo(
               Offset(double.parse(hover[0]), double.parse(hover[1])),
+            );
+          }
+          // SHOT_SELECT=x,y clicks there, opening the inspector panel.
+          final select = Platform.environment['SHOT_SELECT']?.split(',');
+          if (select != null) {
+            await tester.pump(const Duration(seconds: 1));
+            await tester.tapAt(
+              Offset(double.parse(select[0]), double.parse(select[1])),
             );
           }
         }
