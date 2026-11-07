@@ -5,6 +5,7 @@ abstract final class AppRoutes {
   static const work = '/work';
   static String caseStudy(String slug) => '/work/$slug';
   static const playground = '/playground';
+  static String specimen(String slug) => '/playground/$slug';
   static const about = '/about';
 
   /// About, scrolled to "How this site is built".

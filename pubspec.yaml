@@ -28,10 +28,6 @@ flutter:
   assets:
     - assets/images/
     - assets/google_fonts/
-    # Demo sources: developer mode shows the real code (source_snippet.dart).
-    - lib/features/ui_showcase/demos/
-    - lib/features/ui_showcase/widgets/analytics_dashboard_demo.dart
-    - lib/features/playground/specimens/
     # Inspector "View source" excerpts (inspectorSourceFiles).
     - lib/features/landing/widgets/hero_section.dart
     - lib/features/landing/widgets/selected_work.dart
@@ -39,3 +35,11 @@ flutter:
     - lib/features/landing/landing_page.dart
     - lib/features/work/work_page.dart
     - lib/shared/widgets/app_navbar.dart
+    - lib/features/playground/playground_page.dart
+    - lib/features/playground/specimen_page.dart
+    - lib/features/playground/specimens/one_codebase.dart
+    - lib/features/playground/specimens/role_based_ui.dart
+    - lib/features/playground/specimens/data_at_scale.dart
+    - lib/features/playground/specimens/offline_sync.dart
+    - lib/features/playground/specimens/rtl_localization.dart
+    - lib/features/playground/specimens/motion_lab.dart

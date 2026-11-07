@@ -226,6 +226,23 @@ abstract final class AppTheme {
               : s.surfaceContainerHigh,
         ),
       ),
+      segmentedButtonTheme: SegmentedButtonThemeData(
+        style: ButtonStyle(
+          shape: WidgetStatePropertyAll(
+            RoundedRectangleBorder(borderRadius: radius),
+          ),
+          side: WidgetStatePropertyAll(BorderSide(color: d.ruleStrong)),
+          minimumSize: const WidgetStatePropertyAll(minButton),
+          textStyle: WidgetStatePropertyAll(text.labelMedium),
+          backgroundColor: WidgetStateProperty.resolveWith(
+            (st) => st.contains(WidgetState.selected) ? s.onSurface : null,
+          ),
+          foregroundColor: WidgetStateProperty.resolveWith(
+            (st) => st.contains(WidgetState.selected) ? s.surface : s.onSurface,
+          ),
+          overlayColor: overlay(s.onSurface),
+        ),
+      ),
       sliderTheme: SliderThemeData(
         activeTrackColor: d.accent,
         inactiveTrackColor: d.rule,

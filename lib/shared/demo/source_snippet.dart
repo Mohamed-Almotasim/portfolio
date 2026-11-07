@@ -1,41 +1,5 @@
 import 'package:flutter/services.dart';
 
-/// Demo source files bundled as assets (see pubspec.yaml) so developer mode
-/// shows the code that actually runs, not a hand-copied approximation.
-const showcaseSnippetSources = [
-  'lib/features/ui_showcase/demos/dashboard_card_demo.dart',
-  'lib/features/ui_showcase/widgets/analytics_dashboard_demo.dart',
-  'lib/features/ui_showcase/demos/theme_switcher_demo.dart',
-  'lib/features/ui_showcase/demos/pricing_card_demo.dart',
-  'lib/features/ui_showcase/demos/smart_search_demo.dart',
-  'lib/features/playground/specimens/one_codebase.dart',
-];
-
-const _start = '// #region snippet';
-const _end = '// #endregion';
-
-/// The code between `// #region snippet` and `// #endregion` markers,
-/// dedented; several regions are joined with a `// …` line.
-String extractSnippet(String source) {
-  final regions = <List<String>>[];
-  List<String>? current;
-  for (final line in source.split('\n')) {
-    final trimmed = line.trim();
-    if (trimmed == _start) {
-      current = [];
-    } else if (trimmed == _end && current != null) {
-      regions.add(current);
-      current = null;
-    } else {
-      current?.add(line.trimRight());
-    }
-  }
-  if (regions.isEmpty) {
-    throw const FormatException('No "// #region snippet" found');
-  }
-  return regions.map(_dedent).join('\n\n// …\n\n');
-}
-
 String _dedent(List<String> lines) {
   final indent = lines
       .where((l) => l.trim().isNotEmpty)
@@ -47,9 +11,6 @@ String _dedent(List<String> lines) {
       .trim();
 }
 
-Future<String> loadSnippet(String sourcePath) async =>
-    extractSnippet(await rootBundle.loadString(sourcePath));
-
 /// Files the inspector annotates with `source:`; bundled (pubspec.yaml) so
 /// its Layout tab can show the real code at that line.
 const inspectorSourceFiles = [
@@ -59,6 +20,14 @@ const inspectorSourceFiles = [
   'lib/features/landing/landing_page.dart',
   'lib/features/work/work_page.dart',
   'lib/shared/widgets/app_navbar.dart',
+  'lib/features/playground/playground_page.dart',
+  'lib/features/playground/specimen_page.dart',
+  'lib/features/playground/specimens/one_codebase.dart',
+  'lib/features/playground/specimens/role_based_ui.dart',
+  'lib/features/playground/specimens/data_at_scale.dart',
+  'lib/features/playground/specimens/offline_sync.dart',
+  'lib/features/playground/specimens/rtl_localization.dart',
+  'lib/features/playground/specimens/motion_lab.dart',
 ];
 
 /// [count] lines of [source] starting at 1-based [line], dedented.

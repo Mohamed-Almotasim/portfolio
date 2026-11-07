@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:portfolio/core/routing/app_routes.dart';
 import 'package:portfolio/shared/widgets/app_navbar.dart';
-import 'package:portfolio/shared/widgets/code_viewer.dart';
 import 'package:portfolio/shared/widgets/theme_toggle_button.dart';
 
 import 'helpers/pump_app.dart';
@@ -29,30 +27,5 @@ void main() {
     await tester.tap(find.byType(ThemeToggleButton));
     await settle(tester);
     expect(_brightness(tester), Brightness.dark);
-  });
-
-  testWidgets('developer mode reveals the real source of a demo', (
-    tester,
-  ) async {
-    await pumpApp(
-      tester,
-      path: AppRoutes.playground,
-      size: const Size(1280, 2400),
-    );
-    expect(find.text('Show code'), findsNothing);
-
-    await tester.tap(find.byType(InspectToggle));
-    await settle(tester);
-    expect(find.textContaining('Inspector mode is on'), findsOneWidget);
-
-    await tester.tap(find.text('Show code').first);
-    // The snippet is read from the bundled source file (real I/O).
-    await tester.runAsync(
-      () => Future<void>.delayed(const Duration(milliseconds: 200)),
-    );
-    await settle(tester);
-
-    expect(find.byType(CodeViewer), findsOneWidget);
-    expect(find.textContaining('_isHovered', findRichText: true), findsWidgets);
   });
 }

@@ -12,6 +12,9 @@ import 'package:portfolio/features/landing/landing_page.dart';
 import 'package:portfolio/features/not_found/not_found_page.dart';
 import 'package:portfolio/features/playground/playground_page.dart'
     deferred as playground;
+import 'package:portfolio/features/playground/specimen_info.dart';
+import 'package:portfolio/features/playground/specimen_page.dart'
+    deferred as specimen;
 import 'package:portfolio/features/work/case_studies_provider.dart';
 import 'package:portfolio/features/work/case_study_page.dart';
 import 'package:portfolio/features/work/work_page.dart';
@@ -25,6 +28,10 @@ String pageTitle(String path, Profile profile, List<CaseStudy> caseStudies) {
     final slug = path.substring(AppRoutes.work.length + 1);
     final study = caseStudies.where((c) => c.slug == slug).firstOrNull;
     return '${study?.title ?? 'Not found'} — ${profile.name}';
+  }
+  if (path.startsWith('${AppRoutes.playground}/')) {
+    final slug = path.substring(AppRoutes.playground.length + 1);
+    return '${specimenBySlug(slug)?.name ?? 'Not found'} — ${profile.name}';
   }
   final label = navDestinations
       .where((d) => d.path == path)
@@ -104,6 +111,15 @@ GoRouter createRouter({
             (s) => DeferredPage(
               load: playground.loadLibrary,
               builder: (_) => playground.PlaygroundPage(),
+            ),
+          ),
+          // A sibling of /playground, for the same reason as /work/:slug.
+          route(
+            AppRoutes.specimen(':slug'),
+            (s) => DeferredPage(
+              load: specimen.loadLibrary,
+              builder: (_) =>
+                  specimen.SpecimenPage(slug: s.pathParameters['slug']!),
             ),
           ),
           route(
