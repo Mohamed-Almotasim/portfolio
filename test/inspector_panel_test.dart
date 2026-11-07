@@ -11,9 +11,11 @@ import 'package:portfolio/core/theme/app_decorations.dart';
 import 'package:portfolio/core/theme/app_theme.dart';
 import 'package:portfolio/core/theme/theme_tokens.dart';
 import 'package:portfolio/features/landing/landing_page.dart';
+import 'package:portfolio/features/work/work_page.dart';
 import 'package:portfolio/shared/demo/source_snippet.dart';
 import 'package:portfolio/shared/layout/inspectable.dart';
 import 'package:portfolio/shared/layout/inspector_panel.dart';
+import 'package:portfolio/shared/widgets/app_navbar.dart';
 
 import 'helpers/pump_app.dart';
 
@@ -165,5 +167,24 @@ void main() {
       }
     }
     expect(found, greaterThanOrEqualTo(10));
+  });
+
+  testWidgets('on desktop the open panel narrows the page instead of '
+      'covering it', (tester) async {
+    await pumpApp(tester, path: '/work', size: const Size(1440, 900));
+    await tester.tap(find.byType(InspectToggle));
+    await settle(tester);
+    final before = tester.getSize(find.byType(RegisterRow).first).width;
+
+    await tester.tap(find.text('No.'));
+    await settle(tester);
+    expect(find.byType(InspectorPanel), findsOneWidget);
+    const panel = 1440.0 - 380; // docked right, 380 wide
+    final row = tester.getTopRight(find.byType(RegisterRow).first).dx;
+    expect(row, lessThanOrEqualTo(panel), reason: 'row ends before the panel');
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await settle(tester);
+    expect(tester.getSize(find.byType(RegisterRow).first).width, before);
   });
 }

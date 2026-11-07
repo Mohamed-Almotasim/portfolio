@@ -176,22 +176,10 @@ class InspectToggle extends ConsumerWidget {
           message: on
               ? 'Inspector mode on: hide layout and code'
               : 'Inspector mode: show the layout and code behind the site',
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // A 10px box: outlined off, filled on.
-              AnimatedContainer(
-                duration: AppMotion.of(context, AppMotion.snap),
-                width: 10,
-                height: 10,
-                decoration: BoxDecoration(
-                  color: on ? deco.accent : null,
-                  border: Border.all(color: on ? deco.accent : deco.inkMute),
-                ),
-              ),
-              const SizedBox(width: AppSpacing.s8),
-              const Text('Inspect'),
-            ],
+          // Mono, with the state spelled out: no icon legend needed.
+          child: Text(
+            'Inspect: ${on ? 'on' : 'off'}',
+            style: Theme.of(context).textTheme.labelMedium,
           ),
         ),
       ),

@@ -71,13 +71,13 @@ void main() {
     );
 
     Future<void> fillValid(WidgetTester tester) async {
-      await tester.enterText(find.widgetWithText(TextFormField, 'Name'), 'Ada');
+      await tester.enterText(find.byKey(const Key('field-Name')), 'Ada');
       await tester.enterText(
-        find.widgetWithText(TextFormField, 'Email'),
+        find.byKey(const Key('field-Email')),
         'ada@example.com',
       );
       await tester.enterText(
-        find.widgetWithText(TextFormField, 'Message'),
+        find.byKey(const Key('field-Message')),
         'I need an app.',
       );
     }
@@ -105,7 +105,7 @@ void main() {
     testWidgets('rejects an invalid email', (tester) async {
       await pumpContact(tester);
       await tester.enterText(
-        find.widgetWithText(TextFormField, 'Email'),
+        find.byKey(const Key('field-Email')),
         'not-an-email',
       );
       await tester.tap(find.text('Send message'));

@@ -170,10 +170,16 @@ abstract final class AppTheme {
       ),
       chipTheme: ChipThemeData(
         backgroundColor: s.surface,
-        selectedColor: s.onSurface,
+        // Selected: dark ink on a light fill with a strong edge (AA both themes).
+        selectedColor: s.surfaceContainerHigh,
         labelStyle: text.labelMedium,
-        secondaryLabelStyle: text.labelMedium?.copyWith(color: s.surface),
-        side: BorderSide(color: s.outline),
+        secondaryLabelStyle: text.labelMedium?.copyWith(color: s.onSurface),
+        side: WidgetStateBorderSide.resolveWith(
+          (st) => BorderSide(
+            color: st.contains(WidgetState.selected) ? d.ruleStrong : s.outline,
+            width: st.contains(WidgetState.selected) ? 2 : 1,
+          ),
+        ),
         shape: RoundedRectangleBorder(borderRadius: radius),
         showCheckmark: false,
       ),

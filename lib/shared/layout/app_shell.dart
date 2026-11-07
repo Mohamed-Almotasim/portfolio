@@ -6,6 +6,7 @@ import 'package:portfolio/core/routing/app_routes.dart';
 import 'package:portfolio/core/state/developer_mode_provider.dart';
 import 'package:portfolio/core/state/theme_mode_provider.dart';
 import 'package:portfolio/core/theme/app_spacing.dart';
+import 'package:portfolio/shared/layout/inspectable.dart';
 import 'package:portfolio/shared/layout/inspector_panel.dart';
 import 'package:portfolio/shared/widgets/app_navbar.dart';
 import 'package:portfolio/shared/widgets/brand_logo.dart';
@@ -25,6 +26,37 @@ class AppShell extends ConsumerStatefulWidget {
 class _AppShellState extends ConsumerState<AppShell> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool _scrolled = false;
+  // The selected box while the inspector panel is open.
+  RenderInspectable? _selected;
+
+  @override
+  void initState() {
+    super.initState();
+    RenderInspectable.selection.addListener(_onSelection);
+  }
+
+  @override
+  void dispose() {
+    RenderInspectable.selection.removeListener(_onSelection);
+    super.dispose();
+  }
+
+  // The panel opens beside the page (see build), then the page scrolls so
+  // the selection is still in view. Only when the box changes: the same
+  // notification also fires on every layout of the selected box.
+  void _onSelection() {
+    final box = RenderInspectable.selection.box;
+    if (identical(box, _selected)) return;
+    setState(() => _selected = box);
+    if (box == null) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !box.attached || !identical(box, _selected)) return;
+      box.showOnScreen(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOutCubic,
+      );
+    });
+  }
 
   @override
   void didUpdateWidget(AppShell oldWidget) {
@@ -76,6 +108,25 @@ class _AppShellState extends ConsumerState<AppShell> {
     );
   }
 
+  /// The page, narrowed (and told so) while the inspector panel is open.
+  /// The wrappers are always there, so opening the panel never remounts it.
+  Widget _pageBeside(BuildContext context) {
+    final mq = MediaQuery.of(context);
+    final inset = _selected == null ? EdgeInsets.zero : inspectorInset(mq.size);
+    return Padding(
+      padding: inset,
+      child: MediaQuery(
+        data: mq.copyWith(
+          size: Size(
+            mq.size.width - inset.horizontal,
+            mq.size.height - inset.vertical,
+          ),
+        ),
+        child: widget.child,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     ref.listen(developerModeProvider, (_, enabled) {
@@ -105,7 +156,7 @@ class _AppShellState extends ConsumerState<AppShell> {
                     sortKey: const OrdinalSortKey(2),
                     child: NotificationListener<ScrollNotification>(
                       onNotification: _onScroll,
-                      child: widget.child,
+                      child: _pageBeside(context),
                     ),
                   ),
                 ),

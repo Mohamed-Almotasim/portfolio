@@ -241,7 +241,7 @@ class _Pitch extends ConsumerWidget {
                   TextButton(
                     onPressed: () => openLink(context, ref, Uri.parse(s.url)),
                     style: TextButton.styleFrom(padding: EdgeInsets.zero),
-                    child: Text('${s.label} →'),
+                    child: Text('${s.label} ↗'),
                   ),
               ],
             ),
@@ -361,26 +361,32 @@ class _ContactFormState extends ConsumerState<_ContactForm> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextFormField(
-              controller: _name,
-              decoration: const InputDecoration(labelText: 'Name'),
-              autofillHints: const [AutofillHints.name],
-              textInputAction: TextInputAction.next,
-              textCapitalization: TextCapitalization.words,
-              validator: (v) => _required(v, 'Please enter your name'),
+            _Labeled(
+              label: 'Name',
+              child: TextFormField(
+                key: const Key('field-Name'),
+                controller: _name,
+                autofillHints: const [AutofillHints.name],
+                textInputAction: TextInputAction.next,
+                textCapitalization: TextCapitalization.words,
+                validator: (v) => _required(v, 'Please enter your name'),
+              ),
             ),
             const SizedBox(height: AppSpacing.s16),
-            TextFormField(
-              controller: _email,
-              decoration: const InputDecoration(labelText: 'Email'),
-              autofillHints: const [AutofillHints.email],
-              keyboardType: TextInputType.emailAddress,
-              textInputAction: TextInputAction.next,
-              validator: (v) =>
-                  _required(v, 'Please enter your email') ??
-                  (_emailPattern.hasMatch(v!.trim())
-                      ? null
-                      : 'Please enter a valid email'),
+            _Labeled(
+              label: 'Email',
+              child: TextFormField(
+                key: const Key('field-Email'),
+                controller: _email,
+                autofillHints: const [AutofillHints.email],
+                keyboardType: TextInputType.emailAddress,
+                textInputAction: TextInputAction.next,
+                validator: (v) =>
+                    _required(v, 'Please enter your email') ??
+                    (_emailPattern.hasMatch(v!.trim())
+                        ? null
+                        : 'Please enter a valid email'),
+              ),
             ),
             const SizedBox(height: AppSpacing.s24),
             Text('What kind of project?', style: text.labelLarge),
@@ -399,16 +405,17 @@ class _ContactFormState extends ConsumerState<_ContactForm> {
             ),
             if (budgets.isNotEmpty) ...[
               const SizedBox(height: AppSpacing.s24),
-              DropdownButtonFormField<String>(
-                initialValue: _budget,
-                decoration: const InputDecoration(
-                  labelText: 'Budget (optional)',
+              _Labeled(
+                label: 'Budget (optional)',
+                child: DropdownButtonFormField<String>(
+                  initialValue: _budget,
+                  hint: const Text('Select a range'),
+                  items: [
+                    for (final b in budgets)
+                      DropdownMenuItem(value: b, child: Text(b)),
+                  ],
+                  onChanged: (v) => setState(() => _budget = v),
                 ),
-                items: [
-                  for (final b in budgets)
-                    DropdownMenuItem(value: b, child: Text(b)),
-                ],
-                onChanged: (v) => setState(() => _budget = v),
               ),
             ],
             const SizedBox(height: AppSpacing.s24),
@@ -420,18 +427,20 @@ class _ContactFormState extends ConsumerState<_ContactForm> {
                 const SingleActivator(LogicalKeyboardKey.enter, meta: true):
                     _submit,
               },
-              child: TextFormField(
-                controller: _message,
-                decoration: const InputDecoration(
-                  labelText: 'Message',
-                  alignLabelWithHint: true,
-                  helperText: 'Ctrl + Enter to send',
+              child: _Labeled(
+                label: 'Message',
+                child: TextFormField(
+                  key: const Key('field-Message'),
+                  controller: _message,
+                  decoration: const InputDecoration(
+                    helperText: 'Ctrl + Enter to send',
+                  ),
+                  minLines: 5,
+                  maxLines: 10,
+                  keyboardType: TextInputType.multiline,
+                  validator: (v) =>
+                      _required(v, 'Please tell me a little about the project'),
                 ),
-                minLines: 5,
-                maxLines: 10,
-                keyboardType: TextInputType.multiline,
-                validator: (v) =>
-                    _required(v, 'Please tell me a little about the project'),
               ),
             ),
             const SizedBox(height: AppSpacing.s24),
@@ -527,6 +536,28 @@ class _Notice extends StatelessWidget {
             ),
         ],
       ),
+    );
+  }
+}
+
+/// A mono label above its field, so it stays visible once you type.
+class _Labeled extends StatelessWidget {
+  const _Labeled({required this.label, required this.child});
+
+  final String label;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ExcludeSemantics(
+          child: Text(label, style: Theme.of(context).textTheme.labelLarge),
+        ),
+        const SizedBox(height: AppSpacing.s8),
+        Semantics(label: label, child: child),
+      ],
     );
   }
 }

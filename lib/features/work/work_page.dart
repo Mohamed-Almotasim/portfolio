@@ -58,15 +58,19 @@ class _WorkPageState extends ConsumerState<WorkPage> {
                 studies: shown,
                 all: all,
                 compact: c.maxWidth < 720,
+                showType: c.maxWidth >= 900,
                 onPreview: (s) => setState(() => _previewed = s),
               );
-              if (c.maxWidth < 1024 || preview == null) return table;
+              // Always a Row, so the table keeps its place (and a selection
+              // inside it) when the preview appears or goes.
               return Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(flex: 8, child: table),
-                  const SizedBox(width: AppSpacing.s48),
-                  Expanded(flex: 4, child: _Preview(study: preview)),
+                  if (c.maxWidth >= 1024 && preview != null) ...[
+                    const SizedBox(width: AppSpacing.s48),
+                    Expanded(flex: 4, child: _Preview(study: preview)),
+                  ],
                 ],
               );
             },
@@ -91,7 +95,7 @@ class _TypeFilter extends ConsumerWidget {
       note:
           'Chips write workTypeFilterProvider, so the register and the '
           'preview read one state. "All" is the null type.',
-      source: 'lib/features/work/work_page.dart:89',
+      source: 'lib/features/work/work_page.dart:93',
       tokens: const ['AppSpacing.s8', 'AppRadius.sm', 'labelMedium'],
       child: Wrap(
         spacing: AppSpacing.s8,
@@ -114,12 +118,16 @@ class _Register extends StatelessWidget {
     required this.studies,
     required this.all,
     required this.compact,
+    required this.showType,
     required this.onPreview,
   });
 
   final List<CaseStudy> studies;
   final List<CaseStudy> all;
   final bool compact;
+
+  /// The Type column is the first to go when the table gets narrow.
+  final bool showType;
   final ValueChanged<CaseStudy> onPreview;
 
   @override
@@ -133,7 +141,7 @@ class _Register extends StatelessWidget {
       note:
           'Every project in one table: a strong rule under the header, '
           'hairlines between rows. Under 720 px the columns fold into two.',
-      source: 'lib/features/work/work_page.dart:131',
+      source: 'lib/features/work/work_page.dart:139',
       tokens: const [
         'AppDecorations.ruleStrong',
         'AppDecorations.rule',
@@ -149,11 +157,11 @@ class _Register extends StatelessWidget {
             ),
             child: ExcludeSemantics(
               child: compact
-                  ? Text('No. · Title · Type · Year', style: head)
+                  ? Text('No. · Title · Year', style: head)
                   : _Cells(
                       no: Text('No.', style: head),
                       title: Text('Title', style: head),
-                      type: Text('Type', style: head),
+                      type: showType ? Text('Type', style: head) : null,
                       year: Text('Year', style: head),
                       stack: Text('Stack', style: head),
                     ),
@@ -164,6 +172,7 @@ class _Register extends StatelessWidget {
               number: all.indexOf(s) + 1,
               study: s,
               compact: compact,
+              showType: showType,
               onPreview: () => onPreview(s),
             ),
           if (studies.isEmpty)
@@ -186,7 +195,8 @@ class _Cells extends StatelessWidget {
     required this.stack,
   });
 
-  final Widget no, title, type, year, stack;
+  final Widget no, title, year, stack;
+  final Widget? type;
 
   @override
   Widget build(BuildContext context) {
@@ -196,7 +206,7 @@ class _Cells extends StatelessWidget {
       children: [
         SizedBox(width: 56, child: no),
         Expanded(flex: 5, child: title),
-        Expanded(flex: 3, child: type),
+        if (type != null) Expanded(flex: 3, child: type!),
         SizedBox(width: 64, child: year),
         Expanded(flex: 4, child: stack),
       ],
@@ -212,12 +222,14 @@ class RegisterRow extends StatefulWidget {
     required this.number,
     required this.study,
     required this.compact,
+    required this.showType,
     required this.onPreview,
   });
 
   final int number;
   final CaseStudy study;
   final bool compact;
+  final bool showType;
   final VoidCallback onPreview;
 
   @override
@@ -249,7 +261,7 @@ class _RegisterRowState extends State<RegisterRow> {
       note:
           'The whole row is one link. Hover and focus step its tone and '
           'drive the preview; semantics read it as "title, type, year".',
-      source: 'lib/features/work/work_page.dart:247',
+      source: 'lib/features/work/work_page.dart:259',
       tokens: const [
         'surfaceContainerLow',
         'AppMotion.snap',
@@ -287,7 +299,7 @@ class _RegisterRowState extends State<RegisterRow> {
                             Text(s.title, style: text.titleMedium),
                             const SizedBox(height: AppSpacing.s4),
                             Text(
-                              '${s.type} · ${s.year}',
+                              '${s.year}',
                               style: mono?.copyWith(color: deco.inkMute),
                             ),
                           ],
@@ -298,7 +310,7 @@ class _RegisterRowState extends State<RegisterRow> {
                 : _Cells(
                     no: no,
                     title: Text(s.title, style: text.titleMedium),
-                    type: Text(s.type, style: mono),
+                    type: widget.showType ? Text(s.type, style: mono) : null,
                     year: Text('${s.year}', style: mono),
                     stack: Text(
                       s.techStack.join(' / '),
@@ -325,7 +337,7 @@ class _Preview extends StatelessWidget {
       note:
           'Only at 1024 px and up. Cross-fades when another row is hovered '
           'or focused, so the table never moves.',
-      source: 'lib/features/work/work_page.dart:323',
+      source: 'lib/features/work/work_page.dart:335',
       tokens: const ['AppMotion.snap', 'AppSpacing.s16', 'bodyMedium'],
       child: AnimatedSwitcher(
         duration: AppMotion.of(context, AppMotion.snap),

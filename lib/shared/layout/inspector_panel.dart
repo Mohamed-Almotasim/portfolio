@@ -20,6 +20,16 @@ import 'package:portfolio/shared/widgets/code_viewer.dart';
 /// The inspector panel for the selected [Inspectable] (docs/DESIGN.md §7):
 /// docked right on desktop, a bottom sheet below it. AppShell builds this
 /// only while Inspector mode is on, so nothing here costs anything when off.
+/// Width of the docked panel (desktop), and height of the sheet (below it).
+const _dockWidth = 380.0;
+double _sheetHeight(Size screen) => math.min(screen.height * 0.55, 480);
+
+/// The room an open panel takes from the page, so AppShell can shrink the
+/// page instead of letting the panel cover the selected element.
+EdgeInsets inspectorInset(Size screen) => screen.width >= AppBreakpoints.tablet
+    ? const EdgeInsets.only(right: _dockWidth)
+    : EdgeInsets.only(bottom: _sheetHeight(screen));
+
 class InspectorLayer extends StatelessWidget {
   const InspectorLayer({super.key});
 
@@ -199,7 +209,7 @@ class _InspectorPanelState extends State<InspectorPanel> {
             top: AppNavbar.height,
             right: 0,
             bottom: 0,
-            width: 380,
+            width: _dockWidth,
             child: panel,
           )
         else
@@ -207,7 +217,7 @@ class _InspectorPanelState extends State<InspectorPanel> {
             left: 0,
             right: 0,
             bottom: 0,
-            height: math.min(screen.height * 0.55, 480),
+            height: _sheetHeight(screen),
             child: panel,
           ),
       ],
@@ -437,6 +447,7 @@ class _LayoutTabState extends ConsumerState<_LayoutTab> {
                     code: snap.data!,
                     filename: '${src.$1.split('/').last}:${src.$2}',
                     firstLine: src.$2,
+                    wrap: true,
                   )
                 : snap.hasError
                 ? Text('Source unavailable', style: text.bodySmall)

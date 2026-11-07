@@ -14,6 +14,7 @@ class CodeViewer extends StatefulWidget {
     required this.code,
     this.filename,
     this.firstLine = 1,
+    this.wrap = false,
   });
 
   final String code;
@@ -21,6 +22,10 @@ class CodeViewer extends StatefulWidget {
 
   /// Number shown on the first line, for excerpts from the middle of a file.
   final int firstLine;
+
+  /// Wrap long lines instead of scrolling sideways (narrow panels). Drops
+  /// the line numbers, which would no longer line up.
+  final bool wrap;
 
   @override
   State<CodeViewer> createState() => _CodeViewerState();
@@ -47,6 +52,10 @@ class _CodeViewerState extends State<CodeViewer> {
       syntax.plain.withValues(alpha: 0.06),
       deco.codeBackground,
     );
+
+    Widget wrapped(Widget code) => widget.wrap
+        ? code
+        : SingleChildScrollView(scrollDirection: Axis.horizontal, child: code);
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(AppRadius.md),
@@ -92,21 +101,22 @@ class _CodeViewerState extends State<CodeViewer> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ExcludeSemantics(
-                      child: Text(
-                        [
-                          for (var i = 0; i < lineCount; i++)
-                            '${widget.firstLine + i}',
-                        ].join('\n'),
-                        textAlign: TextAlign.right,
-                        style: style.copyWith(color: syntax.lineNumber),
+                    if (!widget.wrap) ...[
+                      ExcludeSemantics(
+                        child: Text(
+                          [
+                            for (var i = 0; i < lineCount; i++)
+                              '${widget.firstLine + i}',
+                          ].join('\n'),
+                          textAlign: TextAlign.right,
+                          style: style.copyWith(color: syntax.lineNumber),
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: AppSpacing.s16),
+                      const SizedBox(width: AppSpacing.s16),
+                    ],
                     Expanded(
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: SelectableText.rich(
+                      child: wrapped(
+                        SelectableText.rich(
                           TextSpan(
                             style: style,
                             children: highlightDart(widget.code, syntax),

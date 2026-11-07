@@ -39,7 +39,7 @@ class _LiveSpecimenState extends ConsumerState<LiveSpecimen> {
         children: [
           CropMarks(
             child: Container(
-              height: 280,
+              height: 200,
               color: scheme.surfaceContainerLow,
               alignment: Alignment.center,
               child: TweenAnimationBuilder<double>(
@@ -58,7 +58,7 @@ class _LiveSpecimenState extends ConsumerState<LiveSpecimen> {
                     child: child,
                   ),
                 ),
-                child: FilledButton(
+                child: OutlinedButton(
                   onPressed: () =>
                       ref.read(developerModeProvider.notifier).toggle(),
                   child: Text(
