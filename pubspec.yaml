@@ -16,6 +16,7 @@ dependencies:
   google_fonts: ^9.0.0
   http: 1.6.0
   url_launcher: 6.3.3
+  video_player: ^2.14.1
   web: 1.1.2
 
 dev_dependencies:
@@ -27,10 +28,12 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
+    - assets/projects/
     - assets/google_fonts/
     # Inspector "View source" excerpts (inspectorSourceFiles).
     - lib/features/landing/widgets/hero_section.dart
-    - lib/features/landing/widgets/selected_work.dart
+    - lib/features/landing/widgets/project_bench.dart
+    - lib/features/work/widgets/project_phone.dart
     - lib/features/landing/widgets/live_specimen.dart
     - lib/features/landing/landing_page.dart
     - lib/features/work/work_page.dart

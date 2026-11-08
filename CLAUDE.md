@@ -39,6 +39,7 @@ Stack: Flutter web, Riverpod 3 (Notifiers), go_router 18 (ShellRoute, path URLs)
 
 - New specimen: add a `SpecimenInfo` to `specimens` (`specimen_info.dart`) and its widget to `specimenBuilders` (`specimen_page.dart`), built on `SpecimenFrame` (controls, readouts, `onReset`). Annotate internals with `Inspectable(source: 'lib/...:line')`, list the file under `assets:` in `pubspec.yaml` and in `inspectorSourceFiles` (a test checks the line).
 - External links go through `openLink`, never `launchUrl` directly.
+- Video goes through `LoopVideo` (`shared/media/loop_video.dart`); tests override `loopVideoFactoryProvider` with a fake, and `projectAssetsProvider` with the footage that "exists". Footage naming: `docs/MEDIA.md`.
 - Don't use `pumpAndSettle` in widget tests: the landing page loops animations. Use `pumpApp` / `settle` from `test/helpers/pump_app.dart`, and `setUpAll(loadAppFonts)` for any test that measures layout.
 - Don't make `/work/:slug`-style routes children of their list route (offstage parent breaks `SelectionArea`).
 

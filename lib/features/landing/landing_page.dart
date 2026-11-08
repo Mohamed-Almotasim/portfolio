@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:portfolio/core/routing/app_routes.dart';
 import 'package:portfolio/features/landing/widgets/hero_section.dart';
 import 'package:portfolio/features/landing/widgets/home_sections.dart';
-import 'package:portfolio/features/landing/widgets/selected_work.dart';
+import 'package:portfolio/features/landing/widgets/project_bench.dart';
 import 'package:portfolio/features/playground/specimens/one_codebase.dart';
 import 'package:portfolio/shared/layout/app_page.dart';
 import 'package:portfolio/shared/widgets/animated_section.dart';
@@ -24,14 +24,14 @@ class LandingPage extends StatelessWidget {
             number: '01',
             title: 'Selected work',
             inspectNote:
-                'Sheet 01: numbered because the home page reads in order. '
+                'Sheet 01, the bench: the register picks what the phone plays. '
                 'On phones the "All work" link drops below the list.',
             inspectSource: 'lib/features/landing/landing_page.dart:23',
             action: ArrowLink(
               label: 'All work',
               onPressed: () => context.go(AppRoutes.work),
             ),
-            child: const AnimatedSection(child: SelectedWork()),
+            child: const AnimatedSection(child: ProjectBench()),
           ),
           AppSection(
             number: '02',

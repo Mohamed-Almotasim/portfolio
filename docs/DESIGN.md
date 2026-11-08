@@ -116,6 +116,7 @@ Body sits on a 16px base. Only five sizes do visible work.
   - `2` for buttons, inputs and chips
   - `4` at most, for the inspector tag
   - No pills except the focus ring around a pill-shaped control, and there shouldn't be any of those.
+  - One exception: the bench's phone (`ProjectPhone`) draws a device, so its frame and screen corners follow the device, not this scale.
 - **Elevation:** none at rest. A shadow appears only on things that really float: menus, dialogs, the mobile drawer and the inspector tag.
 
 ## 5. Lines and spec-sheet marks

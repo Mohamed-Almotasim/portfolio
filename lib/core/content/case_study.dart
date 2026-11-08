@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:portfolio/core/content/project_media.dart';
 
 class CaseStudyLink {
   const CaseStudyLink({
@@ -38,6 +39,7 @@ class CaseStudy {
     required this.role,
     required this.year,
     required this.links,
+    this.media,
     this.gallery = const [],
     this.imagePath,
     this.featured = false,
@@ -57,7 +59,11 @@ class CaseStudy {
   final String result;
   final List<String> techStack;
   final String role;
-  final int year;
+
+  /// Null shows `TODO(me)` until the owner fills it in.
+  final int? year;
+
+  String get yearLabel => year?.toString() ?? 'TODO(me)';
 
   /// Shown only when [CaseStudyLink.isReal].
   final List<CaseStudyLink> links;
@@ -65,6 +71,9 @@ class CaseStudy {
 
   /// Cover image; null shows a placeholder frame.
   final String? imagePath;
+
+  /// Footage for the landing-page bench and the case-study phone.
+  final ProjectMedia? media;
 
   /// Featured case studies appear on the landing page.
   final bool featured;

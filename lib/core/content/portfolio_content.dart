@@ -4,6 +4,7 @@ import 'package:portfolio/core/content/engagement_model.dart';
 import 'package:portfolio/core/content/faq_item.dart';
 import 'package:portfolio/core/content/process_step.dart';
 import 'package:portfolio/core/content/profile.dart';
+import 'package:portfolio/core/content/project_media.dart';
 import 'package:portfolio/core/content/proof_stat.dart';
 import 'package:portfolio/core/content/service_offering.dart';
 import 'package:portfolio/core/content/skill.dart';
@@ -95,8 +96,8 @@ const skills = [
   ),
 ];
 
-// TODO(me): add the Attendance App (GPS + ML) once its details are final,
-// and real screenshots for each gallery.
+// TODO(me): real screenshots for each gallery. Footage for the bench goes in
+// assets/projects/ (docs/MEDIA.md).
 const caseStudies = [
   CaseStudy(
     slug: 'al-risala-academy',
@@ -124,6 +125,19 @@ const caseStudies = [
     techStack: ['Flutter', 'Riverpod', 'REST APIs'],
     role: 'Sole Flutter Developer',
     year: 2024,
+    media: ProjectMedia(
+      prefix: 'Risala',
+      captions: [
+        'TODO(me): screen 1 caption',
+        'TODO(me): screen 2 caption',
+        'TODO(me): screen 3 caption',
+        'TODO(me): screen 4 caption',
+      ],
+      notes: [
+        InspectNote(2, 'TODO(me): what the video shows at 0:02'),
+        InspectNote(6, 'TODO(me): what the video shows at 0:06'),
+      ],
+    ),
     links: [],
     featured: true,
   ),
@@ -175,6 +189,31 @@ const caseStudies = [
     role: 'Flutter UI Developer',
     year: 2022,
     links: [],
+    featured: true,
+  ),
+  // TODO(me): every field below is a placeholder until the details are final.
+  CaseStudy(
+    slug: 'attend',
+    title: 'TODO(me): Attend',
+    type: 'TODO(me): type',
+    outcome: 'TODO(me): one line on what changed because of the work.',
+    tagline: 'TODO(me): one-line tagline.',
+    problem: 'TODO(me): the problem.',
+    solution: 'TODO(me): the approach.',
+    result: 'TODO(me): the result.',
+    techStack: ['TODO(me): stack'],
+    role: 'TODO(me): role',
+    year: null,
+    links: [],
+    media: ProjectMedia(
+      prefix: 'Attend',
+      captions: [
+        'TODO(me): screen 1 caption',
+        'TODO(me): screen 2 caption',
+        'TODO(me): screen 3 caption',
+        'TODO(me): screen 4 caption',
+      ],
+    ),
     featured: true,
   ),
 ];

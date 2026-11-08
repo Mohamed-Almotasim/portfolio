@@ -3,15 +3,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:portfolio/core/content/case_study.dart';
 import 'package:portfolio/core/routing/app_routes.dart';
+import 'package:portfolio/core/state/project_assets_provider.dart';
 import 'package:portfolio/core/theme/app_decorations.dart';
 import 'package:portfolio/core/theme/app_spacing.dart';
 import 'package:portfolio/core/theme/app_typography.dart';
 import 'package:portfolio/features/not_found/not_found_page.dart';
 import 'package:portfolio/features/work/case_studies_provider.dart';
 import 'package:portfolio/features/work/widgets/case_study_cover.dart';
+import 'package:portfolio/features/work/widgets/project_phone.dart';
 import 'package:portfolio/shared/layout/app_page.dart';
 import 'package:portfolio/shared/layout/inspectable.dart';
 import 'package:portfolio/shared/utils/link_launcher.dart';
+import 'package:portfolio/shared/widgets/spec_marks.dart';
 
 /// A case study as a spec sheet: title block, cover, three numbered
 /// sections, the figures, and the neighbouring sheets.
@@ -74,14 +77,23 @@ class CaseStudyPage extends ConsumerWidget {
             ),
           ],
           const SizedBox(height: AppSpacing.s64),
-          CaseStudyCover(project: study),
+          if (study.media == null)
+            CaseStudyCover(project: study)
+          else ...[
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 360),
+              child: ProjectPhone(study: study),
+            ),
+            const SizedBox(height: AppSpacing.s64),
+            _Storyboard(study: study),
+          ],
           for (final (i, (title, body)) in [
             ('Problem', study.problem),
             ('Approach', study.solution),
             ('Result', study.result),
           ].indexed)
             _NumberedBlock(number: i + 1, title: title, body: body),
-          if (study.gallery.isNotEmpty) ...[
+          if (study.media == null && study.gallery.isNotEmpty) ...[
             SizedBox(height: AppSpacing.section(width) / 2),
             _Gallery(figures: study.gallery),
           ],
@@ -133,7 +145,7 @@ class _TitleBlock extends StatelessWidget {
           children: [
             cell('Type', study.type),
             cell('Role', study.role),
-            cell('Year', '${study.year}'),
+            cell('Year', study.yearLabel),
             cell('Stack', study.techStack.join(' / ')),
           ],
         ),
@@ -302,6 +314,64 @@ class _Neighbours extends StatelessWidget {
             Expanded(child: cell('Next project', next, end: true)),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// The four screens in order, each cropped and captioned: the video's
+/// story as stills.
+class _Storyboard extends ConsumerWidget {
+  const _Storyboard({required this.study});
+
+  final CaseStudy study;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final f = Footage(
+      study.media,
+      ref.watch(projectAssetsProvider).value ?? const {},
+    );
+    final deco = AppDecorations.of(context);
+    final label = Theme.of(context).textTheme.labelSmall;
+    return Inspectable(
+      label: 'Storyboard',
+      child: LayoutBuilder(
+        builder: (context, c) {
+          final cols = c.maxWidth >= 840 ? 4 : 2;
+          const gap = AppSpacing.s24;
+          final w = (c.maxWidth - gap * (cols - 1)) / cols;
+          return Wrap(
+            spacing: gap,
+            runSpacing: AppSpacing.s48,
+            children: [
+              for (var i = 0; i < 4; i++)
+                SizedBox(
+                  width: w,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CropMarks(
+                        child: AspectRatio(
+                          aspectRatio: 412 / 915,
+                          child: FigureImage(
+                            path: f.shots[i],
+                            label: f.caption(i),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.s12),
+                      Text(
+                        '${(i + 1).toString().padLeft(2, '0')} · '
+                        '${f.caption(i)}',
+                        style: label?.copyWith(color: deco.inkMute),
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+          );
+        },
       ),
     );
   }

@@ -91,7 +91,8 @@ void main() {
       }
       expect(find.text('Next project'), findsOneWidget);
       expect(find.text('Previous project'), findsOneWidget);
-      expect(find.textContaining(study.gallery.first.caption), findsOneWidget);
+      // Media projects show the storyboard in place of the gallery.
+      expect(find.text('01 · ${study.media!.captions.first}'), findsOneWidget);
       // Every link in the content is still an example.com template.
       expect(find.text('Live Demo'), findsNothing);
     });

@@ -270,7 +270,7 @@ class _RegisterRowState extends State<RegisterRow> {
       ],
       child: Semantics(
         link: true,
-        label: '${s.title}, ${s.type}, ${s.year}',
+        label: '${s.title}, ${s.type}, ${s.yearLabel}',
         excludeSemantics: true,
         child: InkWell(
           onTap: () => context.go(AppRoutes.caseStudy(s.slug)),
@@ -299,7 +299,7 @@ class _RegisterRowState extends State<RegisterRow> {
                             Text(s.title, style: text.titleMedium),
                             const SizedBox(height: AppSpacing.s4),
                             Text(
-                              '${s.year}',
+                              s.yearLabel,
                               style: mono?.copyWith(color: deco.inkMute),
                             ),
                           ],
@@ -311,7 +311,7 @@ class _RegisterRowState extends State<RegisterRow> {
                     no: no,
                     title: Text(s.title, style: text.titleMedium),
                     type: widget.showType ? Text(s.type, style: mono) : null,
-                    year: Text('${s.year}', style: mono),
+                    year: Text(s.yearLabel, style: mono),
                     stack: Text(
                       s.techStack.join(' / '),
                       style: mono?.copyWith(color: deco.inkMute),

@@ -15,7 +15,8 @@ String _dedent(List<String> lines) {
 /// its Layout tab can show the real code at that line.
 const inspectorSourceFiles = [
   'lib/features/landing/widgets/hero_section.dart',
-  'lib/features/landing/widgets/selected_work.dart',
+  'lib/features/landing/widgets/project_bench.dart',
+  'lib/features/work/widgets/project_phone.dart',
   'lib/features/landing/widgets/live_specimen.dart',
   'lib/features/landing/landing_page.dart',
   'lib/features/work/work_page.dart',
