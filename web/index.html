@@ -12,17 +12,21 @@
   <meta name="description" content="Flutter developer building polished mobile and web apps. Case studies, live demos, and the code behind them.">
   <meta name="theme-color" content="#0E1A22" media="(prefers-color-scheme: dark)">
   <meta name="theme-color" content="#F4F1EA" media="(prefers-color-scheme: light)">
-  <!-- TODO(me): <link rel="canonical" href="https://your-domain.dev/"> -->
+  <!-- GitHub Pages address; change all three URLs if you add a custom domain. -->
+  <link rel="canonical" href="https://mohamed-almotasim.github.io/portfolio/">
 
-  <!-- Open Graph / Twitter. TODO(me): replace og:image with a 1200×630 screenshot. -->
+  <!-- Open Graph / Twitter. Previews need absolute image URLs. -->
   <meta property="og:type" content="website">
+  <meta property="og:url" content="https://mohamed-almotasim.github.io/portfolio/">
   <meta property="og:title" content="Mohamed Almotasim Salih — Flutter Developer">
   <meta property="og:description" content="Flutter developer building polished mobile and web apps.">
-  <meta property="og:image" content="icons/Icon-512.png">
+  <meta property="og:image" content="https://mohamed-almotasim.github.io/portfolio/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Mohamed Almotasim Salih — Flutter Developer">
   <meta name="twitter:description" content="Flutter developer building polished mobile and web apps.">
-  <meta name="twitter:image" content="icons/Icon-512.png">
+  <meta name="twitter:image" content="https://mohamed-almotasim.github.io/portfolio/og-image.png">
 
   <!-- iOS -->
   <meta name="mobile-web-app-capable" content="yes">
@@ -32,6 +36,17 @@
 
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="manifest" href="manifest.json">
+
+  <!-- Startup: the first frame waits on these (main.dart preloadFonts), but
+       Dart would only request them after main.dart.js loads. Fetch them now,
+       in parallel. Keep in sync with assets/google_fonts and preloadFonts. -->
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+  <link rel="preload" href="assets/AssetManifest.bin.json" as="fetch" crossorigin>
+  <link rel="preload" href="assets/assets/google_fonts/IBMPlexSans-Regular.ttf" as="fetch" crossorigin>
+  <link rel="preload" href="assets/assets/google_fonts/IBMPlexSans-SemiBold.ttf" as="fetch" crossorigin>
+  <link rel="preload" href="assets/assets/google_fonts/IBMPlexMono-Regular.ttf" as="fetch" crossorigin>
+  <link rel="preload" href="assets/assets/google_fonts/IBMPlexMono-Medium.ttf" as="fetch" crossorigin>
+  <link rel="preload" href="assets/assets/google_fonts/ArchivoExpanded-SemiBold.ttf" as="fetch" crossorigin>
 
   <style>
     /* Branded splash shown until Flutter paints its first frame. */
@@ -54,7 +69,7 @@
   </style>
 </head>
 <body>
-  <div id="splash" aria-hidden="true"><div class="mark">YN</div></div>
+  <div id="splash" aria-hidden="true"><div class="mark">MA</div></div>
   <script>
     window.addEventListener('flutter-first-frame', function () {
       var splash = document.getElementById('splash');

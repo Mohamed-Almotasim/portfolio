@@ -11,7 +11,8 @@ import 'package:portfolio/core/theme/app_typography.dart';
 const allRoutes = [
   '/',
   '/work',
-  '/work/al-risala-academy',
+  '/work/dukkan',
+  '/work/recall',
   '/playground',
   '/playground/one-codebase',
   '/playground/role-based-ui',

@@ -23,21 +23,24 @@ class Footage {
   Footage(this.media, Set<String> assets, {bool videoFailed = false})
     : hasVideo = media != null && !videoFailed && assets.contains(media.video),
       shots = [
-        for (final p in media?.screenshots ?? List.filled(4, ''))
-          assets.contains(p) ? p : null,
+        for (final p in media?.screenshots ?? const <String>[])
+          if (assets.contains(p)) p,
       ];
 
   final ProjectMedia? media;
   final bool hasVideo;
 
-  /// Four slots; null where the screenshot doesn't exist yet.
-  final List<String?> shots;
+  /// The screenshots that exist, in order.
+  final List<String> shots;
 
-  bool get hasShots => shots.any((s) => s != null);
-  String? get poster => shots.first;
+  bool get hasShots => shots.isNotEmpty;
+  String? get poster => shots.firstOrNull;
 
-  String caption(int i) =>
-      media?.captions.elementAtOrNull(i) ?? 'Screen ${i + 1}';
+  /// Caption of `shots[i]`, by its file number (`<prefix>-<n>.png`).
+  String caption(int i) {
+    final n = media!.screenshots.indexOf(shots[i]);
+    return media!.captions.elementAtOrNull(n) ?? 'Screen ${n + 1}';
+  }
 }
 
 /// An emulator-style phone that plays a project's footage: the video, else
@@ -211,7 +214,10 @@ class _ProjectPhoneState extends ConsumerState<ProjectPhone>
       _slides.stop();
       if (v.isReady) _running ? v.play() : v.pause();
     } else if (_running) {
-      _slides.forward();
+      _slides
+        ..duration =
+            _slideEvery * math.max(_footage(widget.study).shots.length, 1)
+        ..forward();
     } else {
       _slides.stop();
     }
@@ -255,7 +261,8 @@ class _ProjectPhoneState extends ConsumerState<ProjectPhone>
 
   void _onSlidesTick() {
     widget.progress?.value = _slides.value;
-    final i = math.min((_slides.value * 4).floor(), 3);
+    final n = math.max(_footage(widget.study).shots.length, 1);
+    final i = math.min((_slides.value * n).floor(), n - 1);
     if (i != _slide) setState(() => _slide = i);
   }
 
@@ -395,7 +402,7 @@ class _ProjectPhoneState extends ConsumerState<ProjectPhone>
               'One frame for every project: only the screen cross-fades. The '
               'poster paints first and the video fades in over it once '
               'decoded, so a switch never shows a blank frame.',
-          source: 'lib/features/work/widgets/project_phone.dart:392',
+          source: 'lib/features/work/widgets/project_phone.dart:399',
           tokens: const ['AppDecorations.ruleStrong', 'surfaceContainerLow'],
           child: Container(
             padding: const EdgeInsets.all(bezel),
@@ -462,7 +469,7 @@ class _ProjectPhoneState extends ConsumerState<ProjectPhone>
                   onTap: () => _pin(null),
                   width: 64,
                 ),
-                for (var i = 0; i < 4; i++)
+                for (var i = 0; i < f.shots.length; i++)
                   _Chapter(
                     label: '${i + 1}',
                     semantics: 'Screen ${i + 1}: ${f.caption(i)}',

@@ -24,6 +24,7 @@ class Profile {
     required this.socials,
     this.responseTime,
     this.resumeUrl,
+    this.photo,
   });
 
   final String name;
@@ -40,6 +41,9 @@ class Profile {
   /// e.g. "Usually within one business day". Hidden when null.
   final String? responseTime;
   final String? resumeUrl;
+
+  /// Asset path of a 4:5 portrait. Hidden when null.
+  final String? photo;
 
   /// [socials] followed by a mailto link for [email].
   List<SocialLink> get contactLinks => [

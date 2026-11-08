@@ -270,7 +270,8 @@ class _MotionLabSpecimenState extends State<MotionLabSpecimen>
                 left: 0,
                 right: 0,
                 bottom: 0,
-                height: _sheetH.clamp(0, _boxH),
+                // Never shorter than the 28px grab handle, or its Column overflows.
+                height: _sheetH.clamp(28, _boxH),
                 child: Inspectable(
                   label: 'SpringSheet',
                   note:
@@ -278,7 +279,7 @@ class _MotionLabSpecimenState extends State<MotionLabSpecimen>
                       'velocity feeds a spring toward the nearest of three '
                       'snap points.',
                   source:
-                      'lib/features/playground/specimens/motion_lab.dart:274',
+                      'lib/features/playground/specimens/motion_lab.dart:275',
                   child: GestureDetector(
                     onVerticalDragStart: (_) {
                       _dragging = true;
@@ -320,7 +321,8 @@ class _MotionLabSpecimenState extends State<MotionLabSpecimen>
                             ),
                           ),
                           Expanded(
-                            child: ClipRect(
+                            child: SingleChildScrollView(
+                              physics: const NeverScrollableScrollPhysics(),
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: AppSpacing.s16,

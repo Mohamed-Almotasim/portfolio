@@ -8,6 +8,7 @@ import 'package:portfolio/core/content/project_media.dart';
 import 'package:portfolio/core/content/proof_stat.dart';
 import 'package:portfolio/core/content/service_offering.dart';
 import 'package:portfolio/core/content/skill.dart';
+import 'package:portfolio/core/content/testimonial.dart';
 
 // All site copy lives here. Widgets read it through Riverpod providers.
 
@@ -21,9 +22,10 @@ const profile = Profile(
       'apps and take over unfinished codebases to get them released. '
       'Switch on Inspect to see how this site is put together.',
   location: 'Khartoum, Sudan',
+  photo: 'assets/images/profile.jpg',
   email: 'moalmotasim98@yahoo.com',
   availability: 'Open to freelance projects',
-  responseTime: 'Usually within one business day', // TODO(me): confirm
+  responseTime: 'Usually within 1–2 hours',
   socials: [
     SocialLink(
       label: 'GitHub',
@@ -96,122 +98,157 @@ const skills = [
   ),
 ];
 
-// TODO(me): real screenshots for each gallery. Footage for the bench goes in
-// assets/projects/ (docs/MEDIA.md).
+// Footage for the bench goes in assets/projects/ (docs/MEDIA.md). Order here
+// is the order on /work and on the landing-page bench.
 const caseStudies = [
+  // From github.com/Mohamed-Almotasim/dukkan (README).
   CaseStudy(
-    slug: 'al-risala-academy',
-    title: 'Al-Risala Academy',
-    type: 'Education platform',
-    outcome: 'One app for ~3,200 students, teachers and admins.',
-    gallery: [
-      CaseStudyFigure(caption: 'Role-based home screens'),
-      CaseStudyFigure(caption: 'Data table with smart search'),
-    ],
+    slug: 'dukkan',
+    title: 'Dukkan',
+    type: 'Point of sale',
+    outcome: 'Sales keep working offline and sync when the network returns.',
     tagline:
-        'The mobile app for a private school platform, built solo in about a year.',
+        'An offline-first inventory and point-of-sale app for small shops, in '
+        'Arabic and English.',
     problem:
-        'A private school needed one mobile app for students, teachers and '
-        'admins, covering classes, tests, grading, study materials, '
-        'permissions, payments and scholarships.',
+        'Small shops lose sales when the connection drops, and owners need to '
+        'trust that a cashier cannot change prices, stock or reports. The app '
+        'had to work on a cheap phone, in Arabic and English.',
     solution:
-        'Integrated ~150 REST endpoints behind a reusable API service layer '
-        'with server-side authentication and encrypted data exchange. Built a '
-        'reusable table component with pagination, caching and smart search '
-        'for dozens of data-heavy screens.',
+        'Every sale is one database transaction: it saves the sale, decrements '
+        'stock after a guarded check, writes a stock movement per line and '
+        'queues the sync in a transactional outbox. A sync engine pushes the '
+        'queue with exponential backoff and resolves conflicts last-write-wins '
+        'with an audit entry. Owner and cashier permissions are enforced in '
+        'the application layer by one PermissionPolicy that the router guards '
+        'and the UI also use.',
     result:
-        'Serves ~3,200 users across three roles and is featured on the '
-        "school's own website. Caching and search cut unnecessary API calls.",
-    techStack: ['Flutter', 'Riverpod', 'REST APIs'],
-    role: 'Sole Flutter Developer',
-    year: 2024,
+        'Two roles in one app with an audited stock log, a live owner '
+        'dashboard and full RTL. A hidden network lab simulates going offline, '
+        'latency and failures, and the whole flow is covered by tests that '
+        'run headlessly in CI.',
+    techStack: ['Flutter', 'Riverpod 3', 'Sembast', 'GoRouter', 'Arabic RTL'],
+    role: 'Solo developer',
+    year: 2026,
+    links: [
+      CaseStudyLink(
+        label: 'GitHub',
+        url: 'https://github.com/Mohamed-Almotasim/dukkan',
+        icon: Icons.code,
+      ),
+    ],
     media: ProjectMedia(
-      prefix: 'Risala',
+      prefix: 'Dukkan',
       captions: [
-        'TODO(me): screen 1 caption',
-        'TODO(me): screen 2 caption',
-        'TODO(me): screen 3 caption',
-        'TODO(me): screen 4 caption',
+        'Sign in as the owner or the cashier',
+        'Stock log: every sale, restock and adjustment',
+        'Products with search and stock filters',
+        "Owner overview: today's revenue and best sellers",
+        'Sell: product grid and cart',
       ],
       notes: [
-        InspectNote(2, 'TODO(me): what the video shows at 0:02'),
-        InspectNote(6, 'TODO(me): what the video shows at 0:06'),
+        InspectNote(2, 'Revenue chart: CustomPainter'),
+        InspectNote(5, 'POS tiles rebuild via select()'),
+        InspectNote(8, 'Stock log: live database query'),
+        InspectNote(12, 'Roles: one PermissionPolicy'),
+        InspectNote(16, 'Cashier: view-only products'),
       ],
     ),
-    links: [],
     featured: true,
   ),
+  // From github.com/Mohamed-Almotasim/recall (README).
   CaseStudy(
-    slug: 'ma7aal',
-    title: 'Ma7aal',
-    type: 'E-commerce app',
-    outcome: 'An unfinished app, completed and prepared for release.',
-    gallery: [
-      CaseStudyFigure(caption: 'Arabic RTL storefront'),
-      CaseStudyFigure(caption: 'Splash screen and icons'),
-    ],
-    tagline: 'Joining an existing e-commerce app in its final stage.',
+    slug: 'recall',
+    title: 'Recall',
+    type: 'Learning app',
+    outcome: 'Cards graded by swipe, scheduled by a fully tested SM-2.',
+    tagline:
+        'A spaced-repetition flashcard app with physics-based swipe grading, '
+        'hand-painted stats and full Arabic support.',
     problem:
-        'The app was close to launch, with its APIs unconnected, features '
-        'unfinished and no Arabic support.',
+        'Flashcard apps live or die on two things: a scheduler you can trust '
+        'and a study loop that feels good enough to come back to every day.',
     solution:
-        'Learned the unfamiliar codebase, connected the APIs, finished the '
-        'remaining features and enabled localization with Arabic RTL.',
+        'The SM-2 scheduler is a pure Dart module behind a Clock interface, '
+        'with table-driven tests that assert exact intervals. Study sessions '
+        'are a Notifier with sealed states. Cards flip in 3D and are graded '
+        'by swiping, driven by a SpringSimulation so release velocity carries '
+        'into the throw. Stats are computed from review logs and drawn with '
+        'CustomPainter.',
     result:
-        'Icons, splash screen, UI polish and release preparation completed, '
-        'leaving the app ready to ship.',
-    techStack: ['Flutter', 'REST APIs', 'Arabic RTL'],
-    role: 'Flutter Developer',
-    year: 2023,
-    links: [],
+        'A yearly heatmap, retention curve and maturity breakdown with no '
+        'chart package, CSV/TSV import and JSON export, keyboard shortcuts on '
+        'larger screens, reduced-motion support and full RTL in both '
+        'directions per card.',
+    techStack: ['Flutter', 'Riverpod 3', 'drift (SQLite)', 'CustomPainter'],
+    role: 'Solo developer',
+    year: 2026,
+    links: [
+      CaseStudyLink(
+        label: 'GitHub',
+        url: 'https://github.com/Mohamed-Almotasim/recall',
+        icon: Icons.code,
+      ),
+    ],
+    media: ProjectMedia(
+      prefix: 'Recall',
+      captions: [
+        'Animated splash, one CustomPainter',
+        'Decks: three seeded demo decks',
+        "Deck detail: cards and what's due",
+        'Study: tap to flip, swipe to grade',
+        'Progress: streak, maturity and heatmap',
+      ],
+      notes: [
+        InspectNote(1, 'Splash: one CustomPainter'),
+        InspectNote(7, 'Heatmap repaints only on new data'),
+        InspectNote(21, 'Arabic: full RTL'),
+        InspectNote(31, 'Session: sealed-state Notifier'),
+        InspectNote(35, 'Swipe: SpringSimulation'),
+      ],
+    ),
     featured: true,
   ),
-  CaseStudy(
-    slug: 'al-husnaa',
-    title: 'Al-Husnaa',
-    type: 'E-commerce app',
-    outcome: 'A mobile design turned into accurate, reusable Flutter UI.',
-    gallery: [
-      CaseStudyFigure(caption: 'Design next to the build'),
-      CaseStudyFigure(caption: 'Reusable widgets'),
-    ],
-    tagline: 'UI implementation for a team working in BLoC.',
-    problem:
-        'The team had a finished mobile design and a BLoC architecture, and '
-        'needed the UI built to match both.',
-    solution:
-        'Built the UI from the design with responsive layouts and reusable '
-        "widgets, structured to plug into the team's BLoC architecture.",
-    result:
-        'Screens that match the design closely and slot into the existing '
-        'state management without rework.',
-    techStack: ['Flutter', 'BLoC'],
-    role: 'Flutter UI Developer',
-    year: 2022,
-    links: [],
-    featured: true,
-  ),
-  // TODO(me): every field below is a placeholder until the details are final.
+  // From github.com/Mohamed-Almotasim/attend (README).
   CaseStudy(
     slug: 'attend',
-    title: 'TODO(me): Attend',
-    type: 'TODO(me): type',
-    outcome: 'TODO(me): one line on what changed because of the work.',
-    tagline: 'TODO(me): one-line tagline.',
-    problem: 'TODO(me): the problem.',
-    solution: 'TODO(me): the approach.',
-    result: 'TODO(me): the result.',
-    techStack: ['TODO(me): stack'],
-    role: 'TODO(me): role',
-    year: null,
-    links: [],
+    title: 'Attend',
+    type: 'Attendance tracker',
+    outcome: 'Check-ins that only count within 30 m of the classroom.',
+    tagline:
+        'A GPS-verified attendance tracker that helps teachers and college '
+        'staff track attendance and spot at-risk students early.',
+    problem:
+        'College attendance has to show a student was actually in the room, '
+        'and teachers need to see who is at risk of failing before final '
+        'grades are in.',
+    solution:
+        'Students check in from their phone and the app checks their GPS '
+        "position against the classroom's: within 30 m, widened by the "
+        'reported accuracy (up to 20 m), with a second high-accuracy reading '
+        'before rejecting. Teachers manage subjects, schedules, students and '
+        'grades, and Firestore security rules enforce role-based access.',
+    result:
+        'Two roles in one app, grade export to PDF and CSV, and per-student '
+        'risk predictions built on transparent rules, so a teacher can see '
+        'why a student was flagged.',
+    techStack: ['Flutter', 'Firebase', 'Riverpod', 'GoRouter'],
+    role: 'Flutter developer',
+    year: 2026,
+    links: [
+      CaseStudyLink(
+        label: 'GitHub',
+        url: 'https://github.com/Mohamed-Almotasim/attend',
+        icon: Icons.code,
+      ),
+    ],
     media: ProjectMedia(
       prefix: 'Attend',
       captions: [
-        'TODO(me): screen 1 caption',
-        'TODO(me): screen 2 caption',
-        'TODO(me): screen 3 caption',
-        'TODO(me): screen 4 caption',
+        'Sign-in, with "Remember me"',
+        'Risk predictions with filters',
+        'Classes by day',
+        'Teacher dashboard',
       ],
     ),
     featured: true,
@@ -251,7 +288,44 @@ const serviceOfferings = [
 const proofStats = [
   ProofStat(label: 'Years building with Flutter', value: '6+'),
   ProofStat(label: 'Five-star Fiverr reviews', value: '9'),
-  ProofStat(label: 'Apps shipped to production'), // TODO(me): e.g. value: '12'
+  ProofStat(label: 'Apps published to Google Play', value: '5'),
+];
+
+/// Where "All reviews on Fiverr" leads.
+const fiverrProfileUrl = 'https://www.fiverr.com/seller/mohamedalmotasi';
+
+// Quoted as written on Fiverr; "…" marks a cut, nothing is reworded.
+const testimonials = [
+  Testimonial(
+    quote:
+        'Brilliant seller, app is perfectly as I described and the seller '
+        'understood my idea. Would definitely recommend and use this seller '
+        'again.',
+    author: 'jord_ob',
+    country: 'Ireland',
+  ),
+  Testimonial(
+    quote:
+        'Within about 15 minutes of a short conversation mohamedalmotasi gave '
+        'me a small series of instructions to follow and I solved the task '
+        '… saved me about 10 hours of searching around on Google and Youtube '
+        'trying to solve the problem myself. … Easy to work with and '
+        'communicate with. A+++',
+    author: 'garyjames88',
+    country: 'Australia',
+  ),
+  Testimonial(
+    quote:
+        'Great experience, it helped me a lot and it was extremely fast, I '
+        'recommend it with confidence.',
+    author: 'noraur',
+    country: 'Romania',
+  ),
+  Testimonial(
+    quote: 'Great support! Helped me even though it was not in the order.',
+    author: 'timuruckun',
+    country: 'Turkey',
+  ),
 ];
 
 const processSteps = [
@@ -357,10 +431,9 @@ const contactBudgets = [
   'Large (3+ months)',
 ];
 
-/// Formspree form URL, e.g. 'https://formspree.io/f/abcdwxyz'. While null the
-/// contact form opens a prefilled email instead.
-// TODO(me): create a form at formspree.io and paste its endpoint here.
-const String? contactFormEndpoint = null;
+/// Formspree form URL the contact form posts to. The provider is nullable:
+/// overriding it with null switches the form to a prefilled email instead.
+const contactFormEndpoint = 'https://formspree.io/f/xzeeqoow';
 
 /// About › How this site is built: the layers, top (what you see) to bottom.
 const siteLayers = [

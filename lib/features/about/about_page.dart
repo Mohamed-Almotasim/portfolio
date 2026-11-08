@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portfolio/core/content/portfolio_content.dart' as content;
@@ -11,6 +13,7 @@ import 'package:portfolio/features/landing/proof_stats_provider.dart';
 import 'package:portfolio/shared/layout/app_page.dart';
 import 'package:portfolio/shared/layout/inspectable.dart';
 import 'package:portfolio/shared/widgets/app_section.dart';
+import 'package:portfolio/shared/widgets/profile_photo.dart';
 
 final skillsProvider = Provider<List<Skill>>((ref) => content.skills);
 final siteLayersProvider = Provider<List<(String, String)>>(
@@ -55,14 +58,46 @@ class _AboutPageState extends ConsumerState<AboutPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: AppSpacing.s48),
-          Semantics(
-            header: true,
-            child: Text('About', style: text.displayLarge),
-          ),
-          const SizedBox(height: AppSpacing.s16),
-          ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 720),
-            child: Text(profile.shortBio, style: AppTypography.lead(context)),
+          LayoutBuilder(
+            builder: (context, c) {
+              final intro = Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Semantics(
+                    header: true,
+                    child: Text('About', style: text.displayLarge),
+                  ),
+                  const SizedBox(height: AppSpacing.s16),
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 720),
+                    child: Text(
+                      profile.shortBio,
+                      style: AppTypography.lead(context),
+                    ),
+                  ),
+                ],
+              );
+              if (profile.photo == null) return intro;
+              // Photo beside the intro on wide screens, below it on phones.
+              if (c.maxWidth < 860) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    intro,
+                    const SizedBox(height: AppSpacing.s32),
+                    ProfilePhoto(width: math.min(280.0, c.maxWidth)),
+                  ],
+                );
+              }
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(child: intro),
+                  const SizedBox(width: AppSpacing.s64),
+                  const ProfilePhoto(width: 300),
+                ],
+              );
+            },
           ),
           const SizedBox(height: AppSpacing.s48),
           const _Facts(),

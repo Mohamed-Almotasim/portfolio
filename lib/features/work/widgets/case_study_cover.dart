@@ -25,7 +25,15 @@ class CaseStudyCover extends StatelessWidget {
         aspectRatio: aspectRatio,
         child: Hero(
           tag: heroTag(project),
-          child: FigureImage(path: project.imagePath, label: project.title),
+          // No dedicated cover: show the first app screen, whole, instead
+          // of "No image yet". Missing files still fall back to the well.
+          child: project.imagePath != null
+              ? FigureImage(path: project.imagePath, label: project.title)
+              : FigureImage(
+                  path: project.media?.screenshots.firstOrNull,
+                  label: project.title,
+                  fit: BoxFit.contain,
+                ),
         ),
       ),
     );
@@ -35,9 +43,17 @@ class CaseStudyCover extends StatelessWidget {
 /// An image, or a `ground-2` well that says plainly it has no image yet.
 /// Never an icon in a box (DESIGN.md §8).
 class FigureImage extends StatelessWidget {
-  const FigureImage({super.key, required this.path, required this.label});
+  const FigureImage({
+    super.key,
+    required this.path,
+    required this.label,
+    this.fit = BoxFit.cover,
+  });
 
   final String? path;
+
+  /// [BoxFit.contain] shows a whole phone screen inside a wider frame.
+  final BoxFit fit;
 
   /// What the image shows; read by screen readers.
   final String label;
@@ -63,12 +79,15 @@ class FigureImage extends StatelessWidget {
       child: ExcludeSemantics(
         child: path == null
             ? empty
-            : Image.asset(
-                path!,
-                fit: BoxFit.cover,
-                width: double.infinity,
-                height: double.infinity,
-                errorBuilder: (_, _, _) => empty,
+            : ColoredBox(
+                color: scheme.surfaceContainerLow,
+                child: Image.asset(
+                  path!,
+                  fit: fit,
+                  width: double.infinity,
+                  height: double.infinity,
+                  errorBuilder: (_, _, _) => empty,
+                ),
               ),
       ),
     );

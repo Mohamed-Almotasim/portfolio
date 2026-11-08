@@ -63,6 +63,8 @@ void main() {
       path: AppRoutes.contact,
       size: const Size(1280, 1800),
       overrides: [
+        // The live site posts to Formspree; these cover the mailto fallback.
+        contactFormEndpointProvider.overrideWithValue(null),
         linkLauncherProvider.overrideWithValue((uri) async {
           launched.add(uri);
           return result();

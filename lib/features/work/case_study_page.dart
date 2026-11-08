@@ -319,8 +319,8 @@ class _Neighbours extends StatelessWidget {
   }
 }
 
-/// The four screens in order, each cropped and captioned: the video's
-/// story as stills.
+/// The project's screenshots in order, each cropped and captioned: the
+/// video's story as stills.
 class _Storyboard extends ConsumerWidget {
   const _Storyboard({required this.study});
 
@@ -345,7 +345,7 @@ class _Storyboard extends ConsumerWidget {
             spacing: gap,
             runSpacing: AppSpacing.s48,
             children: [
-              for (var i = 0; i < 4; i++)
+              for (var i = 0; i < f.shots.length; i++)
                 SizedBox(
                   width: w,
                   child: Column(

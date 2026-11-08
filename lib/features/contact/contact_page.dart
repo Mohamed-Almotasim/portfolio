@@ -18,6 +18,7 @@ import 'package:portfolio/shared/layout/inspectable.dart';
 import 'package:portfolio/shared/utils/link_launcher.dart';
 import 'package:portfolio/shared/widgets/app_section.dart';
 import 'package:portfolio/shared/widgets/faq_accordion.dart';
+import 'package:portfolio/shared/widgets/profile_photo.dart';
 
 final contactProjectTypesProvider = Provider<List<String>>(
   (ref) => content.contactProjectTypes,
@@ -213,6 +214,11 @@ class _Pitch extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // A face next to the address: who is going to reply.
+            if (profile.photo != null) ...[
+              const ProfilePhoto(width: 180),
+              const SizedBox(height: AppSpacing.s32),
+            ],
             Text(
               'Or write directly',
               style: text.labelSmall?.copyWith(color: deco.inkMute),

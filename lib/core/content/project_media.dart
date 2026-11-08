@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 /// A moment in a project's video, shown as an Inspector tag in Inspect mode.
 class InspectNote {
   const InspectNote(this.seconds, this.label);
@@ -24,8 +26,11 @@ class ProjectMedia {
 
   String get video => 'assets/projects/$prefix-video.mp4';
 
+  /// `<prefix>-1.png` up to one per caption (at least four), so a project
+  /// with five captioned screens shows all five.
   List<String> get screenshots => [
-    for (var i = 1; i <= 4; i++) 'assets/projects/$prefix-$i.png',
+    for (var i = 1; i <= math.max(4, captions.length); i++)
+      'assets/projects/$prefix-$i.png',
   ];
 
   /// Optional Lottie splash. shortcut: not played yet (no lottie package);

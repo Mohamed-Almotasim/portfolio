@@ -63,6 +63,7 @@ void main() {
         for (final s in profile.contactLinks) s.url,
         for (final c in caseStudies)
           for (final l in c.links) l.url,
+        fiverrProfileUrl,
       ];
       for (final url in urls) {
         expect(_isLinkable(url), isTrue, reason: url);
@@ -81,6 +82,16 @@ void main() {
       expect(skillNames.toSet().length, skillNames.length);
       expect(serviceOfferings, isNotEmpty);
       expect(faqs.map((f) => f.question).toSet().length, faqs.length);
+    });
+
+    test('reviews are attributed and the portrait is a bundled asset', () {
+      expect(testimonials, isNotEmpty);
+      for (final t in testimonials) {
+        expect(t.quote.trim(), isNotEmpty);
+        expect(t.author.trim(), isNotEmpty, reason: t.quote);
+        expect(t.country.trim(), isNotEmpty, reason: t.author);
+      }
+      expect(profile.photo, startsWith('assets/images/'));
     });
 
     test('the proof strip only shows stats that have a value', () {

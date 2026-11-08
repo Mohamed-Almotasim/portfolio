@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:portfolio/core/routing/app_routes.dart';
+import 'package:portfolio/features/landing/widgets/client_reviews.dart';
 import 'package:portfolio/features/landing/widgets/hero_section.dart';
 import 'package:portfolio/features/landing/widgets/home_sections.dart';
 import 'package:portfolio/features/landing/widgets/project_bench.dart';
@@ -9,7 +10,7 @@ import 'package:portfolio/shared/layout/app_page.dart';
 import 'package:portfolio/shared/widgets/animated_section.dart';
 import 'package:portfolio/shared/widgets/app_section.dart';
 
-/// The drawing set's cover sheet: the hero, then five numbered sheets.
+/// The drawing set's cover sheet: the hero, then six numbered sheets.
 class LandingPage extends StatelessWidget {
   const LandingPage({super.key});
 
@@ -26,7 +27,7 @@ class LandingPage extends StatelessWidget {
             inspectNote:
                 'Sheet 01, the bench: the register picks what the phone plays. '
                 'On phones the "All work" link drops below the list.',
-            inspectSource: 'lib/features/landing/landing_page.dart:23',
+            inspectSource: 'lib/features/landing/landing_page.dart:24',
             action: ArrowLink(
               label: 'All work',
               onPressed: () => context.go(AppRoutes.work),
@@ -53,11 +54,17 @@ class LandingPage extends StatelessWidget {
           ),
           const AppSection(
             number: '04',
+            title: 'What clients say',
+            action: FiverrReviewsLink(),
+            child: AnimatedSection(child: ClientReviews()),
+          ),
+          const AppSection(
+            number: '05',
             title: 'How I work',
             child: AnimatedSection(child: ProcessLine()),
           ),
           const AppSection(
-            number: '05',
+            number: '06',
             title: "Tell me what you're building",
             child: AnimatedSection(child: ContactBlock()),
           ),
