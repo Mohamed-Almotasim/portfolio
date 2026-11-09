@@ -12,8 +12,6 @@
   <meta name="description" content="Flutter developer building polished mobile and web apps. Case studies, live demos, and the code behind them.">
   <meta name="theme-color" content="#0E1A22" media="(prefers-color-scheme: dark)">
   <meta name="theme-color" content="#F4F1EA" media="(prefers-color-scheme: light)">
-  <!-- GitHub Pages address; change all three URLs if you add a custom domain. -->
-  <link rel="canonical" href="https://mohamed-almotasim.github.io/portfolio/">
 
   <!-- Open Graph / Twitter. Previews need absolute image URLs. -->
   <meta property="og:type" content="website">
@@ -41,6 +39,9 @@
        Dart would only request them after main.dart.js loads. Fetch them now,
        in parallel. Keep in sync with assets/google_fonts and preloadFonts. -->
   <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+  <!-- The app itself. flutter_bootstrap.js would only request it after it
+       loads, a full round trip later; this starts it with the page. -->
+  <link rel="preload" href="main.dart.js" as="script">
   <link rel="preload" href="assets/AssetManifest.bin.json" as="fetch" crossorigin>
   <link rel="preload" href="assets/assets/google_fonts/IBMPlexSans-Regular.ttf" as="fetch" crossorigin>
   <link rel="preload" href="assets/assets/google_fonts/IBMPlexSans-SemiBold.ttf" as="fetch" crossorigin>

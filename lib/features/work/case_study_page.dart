@@ -32,6 +32,15 @@ class CaseStudyPage extends ConsumerWidget {
     }
     final text = Theme.of(context).textTheme;
     final width = MediaQuery.sizeOf(context).width;
+    final wide = width >= AppBreakpoints.tablet;
+    final sections = [
+      for (final (i, (title, body)) in [
+        ('Problem', study.problem),
+        ('Approach', study.solution),
+        ('Result', study.result),
+      ].indexed)
+        _NumberedBlock(number: i + 1, title: title, body: body),
+    ];
 
     return AppPage(
       child: Column(
@@ -76,23 +85,44 @@ class CaseStudyPage extends ConsumerWidget {
               ],
             ),
           ],
-          const SizedBox(height: AppSpacing.s64),
-          if (study.media == null)
-            CaseStudyCover(project: study)
-          else ...[
+          if (study.media == null) ...[
+            const SizedBox(height: AppSpacing.s64),
+            CaseStudyCover(project: study),
+            ...sections,
+          ] else if (wide) ...[
+            // Desktop: the phone beside the write-up instead of alone above
+            // an empty column. The storyboard follows at full width.
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: sections,
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.s64),
+                Padding(
+                  padding: const EdgeInsets.only(top: AppSpacing.s64),
+                  child: SizedBox(
+                    width: 360,
+                    child: ProjectPhone(study: study),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.s64),
+            _Storyboard(study: study),
+          ] else ...[
+            const SizedBox(height: AppSpacing.s64),
             ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 360),
               child: ProjectPhone(study: study),
             ),
             const SizedBox(height: AppSpacing.s64),
             _Storyboard(study: study),
+            ...sections,
           ],
-          for (final (i, (title, body)) in [
-            ('Problem', study.problem),
-            ('Approach', study.solution),
-            ('Result', study.result),
-          ].indexed)
-            _NumberedBlock(number: i + 1, title: title, body: body),
           if (study.media == null && study.gallery.isNotEmpty) ...[
             SizedBox(height: AppSpacing.section(width) / 2),
             _Gallery(figures: study.gallery),

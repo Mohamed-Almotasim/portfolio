@@ -150,17 +150,14 @@ class _ProjectBenchState extends ConsumerState<ProjectBench> {
                   children: [
                     list,
                     const SizedBox(height: AppSpacing.s32),
-                    // The active project in one line, so the list side
-                    // says what the phone is showing.
+                    // What the phone is showing: the outcome, then its stack
+                    // and role, so the list side carries as much as the
+                    // phone instead of trailing off into empty space.
                     AnimatedSwitcher(
                       duration: AppMotion.of(context, _fade),
-                      child: ConstrainedBox(
+                      child: _ActiveSpec(
                         key: ValueKey(study.slug),
-                        constraints: const BoxConstraints(maxWidth: 560),
-                        child: Text(
-                          study.outcome,
-                          style: Theme.of(context).textTheme.bodyLarge,
-                        ),
+                        study: study,
                       ),
                     ),
                   ],
@@ -210,7 +207,7 @@ class _ProjectBenchState extends ConsumerState<ProjectBench> {
       note:
           'Hover, touch or focus holds auto-advance; it resumes after 5s of '
           'quiet. Off-screen or in a hidden tab, playback pauses.',
-      source: 'lib/features/landing/widgets/project_bench.dart:208',
+      source: 'lib/features/landing/widgets/project_bench.dart:205',
       tokens: const ['AppBreakpoints.tablet', 'AppSpacing.s48'],
       child: Focus(
         canRequestFocus: false,
@@ -225,6 +222,44 @@ class _ProjectBenchState extends ConsumerState<ProjectBench> {
           onPointerSignal: _poke,
           child: body,
         ),
+      ),
+    );
+  }
+}
+
+/// The active project under the register: outcome, then stack and role as
+/// mono spec lines.
+class _ActiveSpec extends StatelessWidget {
+  const _ActiveSpec({super.key, required this.study});
+
+  final CaseStudy study;
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
+    final deco = AppDecorations.of(context);
+    final label = text.labelSmall?.copyWith(color: deco.inkMute);
+    Widget line(String name, String value) => Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.s12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.baseline,
+        textBaseline: TextBaseline.alphabetic,
+        children: [
+          SizedBox(width: 72, child: Text(name, style: label)),
+          Expanded(child: Text(value, style: text.labelLarge)),
+        ],
+      ),
+    );
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 560),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(study.outcome, style: text.bodyLarge),
+          const SizedBox(height: AppSpacing.s12),
+          line('Stack', study.techStack.join(' / ')),
+          line('Role', study.role),
+        ],
       ),
     );
   }

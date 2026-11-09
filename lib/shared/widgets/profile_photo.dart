@@ -56,7 +56,9 @@ class ProfilePhoto extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: AppSpacing.s12),
-            Text('${profile.name} · ${profile.location}', style: caption),
+            // Name and place on their own lines: no awkward wrap mid-place.
+            Text(profile.name, style: caption),
+            Text(profile.location, style: caption),
           ],
         ),
       ),
