@@ -10,8 +10,10 @@ import 'package:portfolio/core/theme/app_decorations.dart';
 import 'package:portfolio/core/theme/app_spacing.dart';
 import 'package:portfolio/features/work/case_studies_provider.dart';
 import 'package:portfolio/features/work/widgets/project_phone.dart';
+import 'package:portfolio/l10n/app_localizations.dart';
 import 'package:portfolio/shared/layout/inspectable.dart';
 import 'package:portfolio/shared/widgets/app_navbar.dart';
+import 'package:portfolio/shared/widgets/app_section.dart';
 
 /// Matches the phone's screen cross-fade, so row, title bar and screen move
 /// together.
@@ -95,6 +97,7 @@ class _ProjectBenchState extends ConsumerState<ProjectBench> {
     final study = studies[i];
     final wide = MediaQuery.sizeOf(context).width >= AppBreakpoints.tablet;
     final reduced = MediaQuery.disableAnimationsOf(context);
+    final l10n = AppLocalizations.of(context);
     void open() => context.go(AppRoutes.caseStudy(study.slug));
 
     final phone = ProjectPhone(
@@ -119,7 +122,7 @@ class _ProjectBenchState extends ConsumerState<ProjectBench> {
       note:
           'Every row keeps the same height whether active or not; the action '
           'fades in place and the progress line has its own 2px slot.',
-      source: 'lib/features/landing/widgets/project_bench.dart:117',
+      source: 'lib/features/landing/widgets/project_bench.dart:120',
       tokens: const ['AppDecorations.ruleStrong', 'AppSpacing.s16'],
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -189,13 +192,13 @@ class _ProjectBenchState extends ConsumerState<ProjectBench> {
               phone,
               const SizedBox(height: AppSpacing.s16),
               Align(
-                alignment: Alignment.centerLeft,
+                alignment: AlignmentDirectional.centerStart,
                 child: TextButton(
                   onPressed: open,
                   style: TextButton.styleFrom(padding: EdgeInsets.zero),
                   child: Text(
-                    'Open case study →',
-                    semanticsLabel: 'Open the ${study.title} case study',
+                    '${l10n.openCaseStudy} ${directionalArrow(context)}',
+                    semanticsLabel: l10n.openCaseStudyOf(study.title),
                   ),
                 ),
               ),
@@ -207,7 +210,7 @@ class _ProjectBenchState extends ConsumerState<ProjectBench> {
       note:
           'Hover, touch or focus holds auto-advance; it resumes after 5s of '
           'quiet. Off-screen or in a hidden tab, playback pauses.',
-      source: 'lib/features/landing/widgets/project_bench.dart:205',
+      source: 'lib/features/landing/widgets/project_bench.dart:208',
       tokens: const ['AppBreakpoints.tablet', 'AppSpacing.s48'],
       child: Focus(
         canRequestFocus: false,
@@ -239,6 +242,7 @@ class _ActiveSpec extends StatelessWidget {
     final text = Theme.of(context).textTheme;
     final deco = AppDecorations.of(context);
     final label = text.labelSmall?.copyWith(color: deco.inkMute);
+    final l10n = AppLocalizations.of(context);
     Widget line(String name, String value) => Padding(
       padding: const EdgeInsets.only(top: AppSpacing.s12),
       child: Row(
@@ -257,8 +261,8 @@ class _ActiveSpec extends StatelessWidget {
         children: [
           Text(study.outcome, style: text.bodyLarge),
           const SizedBox(height: AppSpacing.s12),
-          line('Stack', study.techStack.join(' / ')),
-          line('Role', study.role),
+          line(l10n.stack, study.techStack.join(' / ')),
+          line(l10n.role, study.role),
         ],
       ),
     );
@@ -274,16 +278,17 @@ class _HeaderRow extends StatelessWidget {
     final head = Theme.of(
       context,
     ).textTheme.labelSmall?.copyWith(color: deco.inkMute);
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.only(bottom: AppSpacing.s8),
       decoration: BoxDecoration(
         border: Border(bottom: BorderSide(color: deco.ruleStrong)),
       ),
       child: _Columns(
-        no: Text('No.', style: head),
-        name: Text('Project', style: head),
-        type: Text('Type', style: head),
-        year: Text('Year', style: head),
+        no: Text(l10n.colNo, style: head),
+        name: Text(l10n.colProject, style: head),
+        type: Text(l10n.colType, style: head),
+        year: Text(l10n.colYear, style: head),
       ),
     );
   }
@@ -340,6 +345,7 @@ class _BenchRow extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final fade = AppMotion.of(context, _fade);
     final mono = text.labelMedium?.copyWith(color: deco.inkMute);
+    final l10n = AppLocalizations.of(context);
 
     return Semantics(
       selected: active,
@@ -370,16 +376,18 @@ class _BenchRow extends StatelessWidget {
                   name: Text(
                     study.title,
                     style: text.titleMedium,
-                    semanticsLabel: 'Show ${study.title} on the phone',
+                    semanticsLabel: l10n.showOnPhone(study.title),
                   ),
                   type: Text(study.type, style: mono),
                   year: Text(study.yearLabel, style: mono),
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 48 + AppSpacing.s4),
+                padding: const EdgeInsetsDirectional.only(
+                  start: 48 + AppSpacing.s4,
+                ),
                 child: Align(
-                  alignment: Alignment.centerLeft,
+                  alignment: AlignmentDirectional.centerStart,
                   child: AnimatedOpacity(
                     opacity: active ? 1 : 0,
                     duration: fade,
@@ -396,9 +404,8 @@ class _BenchRow extends StatelessWidget {
                               padding: EdgeInsets.zero,
                             ),
                             child: Text(
-                              'Open case study →',
-                              semanticsLabel:
-                                  'Open the ${study.title} case study',
+                              '${l10n.openCaseStudy} ${directionalArrow(context)}',
+                              semanticsLabel: l10n.openCaseStudyOf(study.title),
                             ),
                           ),
                         ),
@@ -445,7 +452,7 @@ class _ProgressSlot extends StatelessWidget {
             ValueListenableBuilder(
               valueListenable: progress,
               builder: (context, p, _) => FractionallySizedBox(
-                alignment: Alignment.centerLeft,
+                alignment: AlignmentDirectional.centerStart,
                 widthFactor: p,
                 child: ColoredBox(color: deco.accent),
               ),
@@ -494,7 +501,7 @@ class _Tabs extends StatelessWidget {
                     child: Stack(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                             AppSpacing.s4,
                             AppSpacing.s12,
                             AppSpacing.s16,

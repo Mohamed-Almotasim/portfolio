@@ -6,6 +6,7 @@ import 'package:portfolio/features/landing/widgets/hero_section.dart';
 import 'package:portfolio/features/landing/widgets/home_sections.dart';
 import 'package:portfolio/features/landing/widgets/project_bench.dart';
 import 'package:portfolio/features/playground/specimens/one_codebase.dart';
+import 'package:portfolio/l10n/app_localizations.dart';
 import 'package:portfolio/shared/layout/app_page.dart';
 import 'package:portfolio/shared/widgets/animated_section.dart';
 import 'package:portfolio/shared/widgets/app_section.dart';
@@ -16,6 +17,7 @@ class LandingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return AppPage(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -23,50 +25,56 @@ class LandingPage extends StatelessWidget {
           const HeroSection(),
           AppSection(
             number: '01',
-            title: 'Selected work',
+            title: l10n.sectionSelectedWork,
+            inspectLabel: 'Selected work',
             inspectNote:
                 'Sheet 01, the bench: the register picks what the phone plays. '
                 'On phones the "All work" link drops below the list.',
-            inspectSource: 'lib/features/landing/landing_page.dart:24',
+            inspectSource: 'lib/features/landing/landing_page.dart:26',
             action: ArrowLink(
-              label: 'All work',
+              label: l10n.allWork,
               onPressed: () => context.go(AppRoutes.work),
             ),
             child: const AnimatedSection(child: ProjectBench()),
           ),
           AppSection(
             number: '02',
-            title: 'Try one',
+            title: l10n.sectionTryOne,
+            inspectLabel: 'Try one',
             action: ArrowLink(
-              label: 'Playground',
+              label: l10n.navPlayground,
               onPressed: () => context.go(AppRoutes.playground),
             ),
             child: const AnimatedSection(child: OneCodebaseSpecimen()),
           ),
           AppSection(
             number: '03',
-            title: 'What I do',
+            title: l10n.sectionWhatIDo,
+            inspectLabel: 'What I do',
             action: ArrowLink(
-              label: 'Ways to work together',
+              label: l10n.waysToWork,
               onPressed: () => context.go(AppRoutes.contact),
             ),
             child: const AnimatedSection(child: ServicesList()),
           ),
-          const AppSection(
+          AppSection(
             number: '04',
-            title: 'What clients say',
-            action: FiverrReviewsLink(),
-            child: AnimatedSection(child: ClientReviews()),
+            title: l10n.sectionClients,
+            inspectLabel: 'What clients say',
+            action: const FiverrReviewsLink(),
+            child: const AnimatedSection(child: ClientReviews()),
           ),
-          const AppSection(
+          AppSection(
             number: '05',
-            title: 'How I work',
-            child: AnimatedSection(child: ProcessLine()),
+            title: l10n.sectionHowIWork,
+            inspectLabel: 'How I work',
+            child: const AnimatedSection(child: ProcessLine()),
           ),
-          const AppSection(
+          AppSection(
             number: '06',
-            title: "Tell me what you're building",
-            child: AnimatedSection(child: ContactBlock()),
+            title: l10n.sectionTellMe,
+            inspectLabel: "Tell me what you're building",
+            child: const AnimatedSection(child: ContactBlock()),
           ),
         ],
       ),

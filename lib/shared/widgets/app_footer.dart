@@ -5,6 +5,7 @@ import 'package:portfolio/core/routing/app_routes.dart';
 import 'package:portfolio/core/state/profile_provider.dart';
 import 'package:portfolio/core/theme/app_decorations.dart';
 import 'package:portfolio/core/theme/app_spacing.dart';
+import 'package:portfolio/l10n/app_localizations.dart';
 import 'package:portfolio/shared/utils/link_launcher.dart';
 
 /// The closing title block: the name at full width, then one mono row of
@@ -18,10 +19,11 @@ class AppFooter extends ConsumerWidget {
     final text = Theme.of(context).textTheme;
     final deco = AppDecorations.of(context);
     final mute = text.labelMedium?.copyWith(color: deco.inkMute);
+    final l10n = AppLocalizations.of(context);
 
     return Semantics(
       container: true,
-      label: 'Footer',
+      label: l10n.footer,
       child: Container(
         padding: const EdgeInsets.only(top: AppSpacing.s24),
         decoration: BoxDecoration(
@@ -44,14 +46,13 @@ class AppFooter extends ConsumerWidget {
                   ),
                 TextButton(
                   onPressed: () => context.go(AppRoutes.aboutBuilt),
-                  child: const Text('How this site is built'),
+                  child: Text(l10n.howSiteBuilt),
                 ),
               ],
             ),
             const SizedBox(height: AppSpacing.s16),
             Text(
-              '© ${DateTime.now().year} ${profile.name} · '
-              'Built in Flutter, every pixel a widget.',
+              l10n.footerColophon('${DateTime.now().year}', profile.name),
               style: mute,
             ),
           ],

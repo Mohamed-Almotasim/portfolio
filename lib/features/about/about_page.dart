@@ -3,13 +3,16 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portfolio/core/content/portfolio_content.dart' as content;
+import 'package:portfolio/core/content/portfolio_content_ar.dart' as ar;
 import 'package:portfolio/core/content/skill.dart';
 import 'package:portfolio/core/state/developer_mode_provider.dart';
+import 'package:portfolio/core/state/locale_provider.dart';
 import 'package:portfolio/core/state/profile_provider.dart';
 import 'package:portfolio/core/theme/app_decorations.dart';
 import 'package:portfolio/core/theme/app_spacing.dart';
 import 'package:portfolio/core/theme/app_typography.dart';
 import 'package:portfolio/features/landing/proof_stats_provider.dart';
+import 'package:portfolio/l10n/app_localizations.dart';
 import 'package:portfolio/shared/layout/app_page.dart';
 import 'package:portfolio/shared/layout/inspectable.dart';
 import 'package:portfolio/shared/widgets/app_section.dart';
@@ -17,10 +20,10 @@ import 'package:portfolio/shared/widgets/profile_photo.dart';
 
 final skillsProvider = Provider<List<Skill>>((ref) => content.skills);
 final siteLayersProvider = Provider<List<(String, String)>>(
-  (ref) => content.siteLayers,
+  (ref) => ref.watch(isArabicProvider) ? ar.siteLayers : content.siteLayers,
 );
 final siteNotesProvider = Provider<List<(String, String)>>(
-  (ref) => content.siteNotes,
+  (ref) => ref.watch(isArabicProvider) ? ar.siteNotes : content.siteNotes,
 );
 
 /// Who, with what, and how this very site is put together.
@@ -52,6 +55,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
   Widget build(BuildContext context) {
     final profile = ref.watch(profileProvider);
     final text = Theme.of(context).textTheme;
+    final l10n = AppLocalizations.of(context);
 
     return AppPage(
       child: Column(
@@ -65,7 +69,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
                 children: [
                   Semantics(
                     header: true,
-                    child: Text('About', style: text.displayLarge),
+                    child: Text(l10n.navAbout, style: text.displayLarge),
                   ),
                   const SizedBox(height: AppSpacing.s16),
                   ConstrainedBox(
@@ -101,14 +105,16 @@ class _AboutPageState extends ConsumerState<AboutPage> {
           ),
           const SizedBox(height: AppSpacing.s48),
           const _Facts(),
-          const AppSection(number: '01', title: 'Toolbox', child: _Toolbox()),
+          AppSection(
+            number: '01',
+            title: l10n.abToolbox,
+            child: const _Toolbox(),
+          ),
           AppSection(
             key: _builtKey,
             number: '02',
-            title: 'How this site is built',
-            lead:
-                'A Flutter web app, top to bottom. Switch on Inspect to see '
-                'the layout of any page.',
+            title: l10n.howSiteBuilt,
+            lead: l10n.abBuiltLead,
             child: const _Built(),
           ),
         ],
@@ -127,11 +133,12 @@ class _Facts extends ConsumerWidget {
     final stats = ref.watch(proofStatsProvider);
     final text = Theme.of(context).textTheme;
     final deco = AppDecorations.of(context);
+    final l10n = AppLocalizations.of(context);
     final facts = [
-      ('Role', profile.title),
-      ('Based in', profile.location),
-      ('Availability', profile.availability),
-      if (profile.responseTime != null) ('Replies', profile.responseTime!),
+      (l10n.role, profile.title),
+      (l10n.basedIn, profile.location),
+      (l10n.availability, profile.availability),
+      if (profile.responseTime != null) (l10n.replies, profile.responseTime!),
       for (final s in stats) (s.label, s.value!),
     ];
     return Inspectable(
@@ -149,11 +156,9 @@ class _Facts extends ConsumerWidget {
             for (final (label, value) in facts)
               Container(
                 width: 260,
-                padding: const EdgeInsets.fromLTRB(
-                  0,
-                  AppSpacing.s12,
-                  AppSpacing.s24,
-                  0,
+                padding: const EdgeInsetsDirectional.only(
+                  top: AppSpacing.s12,
+                  end: AppSpacing.s24,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -183,6 +188,7 @@ class _Toolbox extends ConsumerWidget {
     final skills = ref.watch(skillsProvider);
     final text = Theme.of(context).textTheme;
     final deco = AppDecorations.of(context);
+    final l10n = AppLocalizations.of(context);
     return Column(
       children: [
         for (final cat in SkillCategory.values)
@@ -198,10 +204,13 @@ class _Toolbox extends ConsumerWidget {
                 children: [
                   Expanded(
                     flex: 4,
-                    child: Text(
-                      cat.label,
-                      style: text.labelMedium?.copyWith(color: deco.inkMute),
-                    ),
+                    child: Text(switch (cat) {
+                      SkillCategory.language => l10n.skillLanguages,
+                      SkillCategory.framework => l10n.skillFrameworks,
+                      SkillCategory.backend => l10n.skillBackend,
+                      SkillCategory.stateManagement => l10n.skillState,
+                      SkillCategory.navigation => l10n.skillNavigation,
+                    }, style: text.labelMedium?.copyWith(color: deco.inkMute)),
                   ),
                   Expanded(
                     flex: 8,
@@ -231,6 +240,7 @@ class _Built extends ConsumerWidget {
     final inspecting = ref.watch(developerModeProvider);
     final text = Theme.of(context).textTheme;
     final deco = AppDecorations.of(context);
+    final l10n = AppLocalizations.of(context);
 
     // The three layers as a stacked section drawing: each band names its
     // folder, and the arrows say who may import whom.
@@ -256,6 +266,12 @@ class _Built extends ConsumerWidget {
                       width: 104,
                       child: Text(
                         path,
+                        // A folder path reads left to right in Arabic too.
+                        textDirection: TextDirection.ltr,
+                        textAlign:
+                            Directionality.of(context) == TextDirection.rtl
+                            ? TextAlign.right
+                            : TextAlign.left,
                         style: text.labelLarge?.copyWith(
                           color: deco.accentText,
                         ),
@@ -322,7 +338,7 @@ class _Built extends ConsumerWidget {
         const SizedBox(height: AppSpacing.s16),
         OutlinedButton(
           onPressed: () => ref.read(developerModeProvider.notifier).toggle(),
-          child: Text(inspecting ? 'Stop inspecting' : 'Inspect this page'),
+          child: Text(inspecting ? l10n.stopInspecting : l10n.inspectThisPage),
         ),
       ],
     );
@@ -337,7 +353,7 @@ class _ImportNote extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Text(
-    'Read top to bottom: what you see, what it is built from, what it stands on.',
+    AppLocalizations.of(context).abImportNote,
     style: style?.copyWith(color: color),
   );
 }

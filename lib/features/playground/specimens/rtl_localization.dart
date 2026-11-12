@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:portfolio/core/theme/app_decorations.dart';
 import 'package:portfolio/core/theme/app_spacing.dart';
+import 'package:portfolio/l10n/app_localizations.dart';
 import 'package:portfolio/shared/demo/specimen_frame.dart';
 import 'package:portfolio/shared/layout/inspectable.dart';
 
@@ -104,20 +105,21 @@ class _RtlLocalizationSpecimenState extends State<RtlLocalizationSpecimen> {
     ].reduce((a, b) => a + b);
     final delivery = DateTime(2026, 12, 3);
     String n(int v) => formatNumber(v, eastern: _eastern);
+    final l10n = AppLocalizations.of(context);
 
     return SpecimenFrame(
       label: 'Specimen · RTL and localization',
       onReset: _reset,
       readouts: [
-        ('direction', ar ? 'rtl' : 'ltr'),
-        ('locale', ar ? 'ar-SA' : 'en-US'),
-        ('text size', '${(_scale * 100).round()}%'),
-        ('subtotal', '${n(subtotal)} ${s.currency}'),
-        ('date', _formatDate(delivery, s, eastern: _eastern)),
+        (l10n.rlDirection, ar ? 'rtl' : 'ltr'),
+        (l10n.rlLocale, ar ? 'ar-SA' : 'en-US'),
+        (l10n.rlTextSize, '${(_scale * 100).round()}%'),
+        (l10n.rlSubtotal, '${n(subtotal)} ${s.currency}'),
+        (l10n.rlDate, _formatDate(delivery, s, eastern: _eastern)),
       ],
       controls: [
         SpecChoice<_Lang>(
-          label: 'LANGUAGE',
+          label: l10n.rlLanguage.toUpperCase(),
           value: _lang,
           options: const [(_Lang.en, 'English'), (_Lang.ar, 'العربية')],
           onChanged: (l) => setState(() {
@@ -126,12 +128,12 @@ class _RtlLocalizationSpecimenState extends State<RtlLocalizationSpecimen> {
           }),
         ),
         SpecSwitch(
-          label: 'EASTERN ARABIC NUMERALS',
+          label: l10n.rlEasternNumerals.toUpperCase(),
           value: _eastern,
           onChanged: (v) => setState(() => _eastern = v),
         ),
         SpecSlider(
-          label: 'TEXT SIZE',
+          label: l10n.rlTextSize.toUpperCase(),
           value: _scale,
           min: 0.8,
           max: 2,
@@ -152,7 +154,7 @@ class _RtlLocalizationSpecimenState extends State<RtlLocalizationSpecimen> {
                 'alignment use the Directional variants, so nothing is '
                 'hard-coded left or right.',
             source:
-                'lib/features/playground/specimens/rtl_localization.dart:148',
+                'lib/features/playground/specimens/rtl_localization.dart:150',
             child: _Cart(
               s: s,
               qty: _qty,

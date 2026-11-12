@@ -5,8 +5,10 @@ import 'package:portfolio/core/routing/app_routes.dart';
 import 'package:portfolio/core/state/developer_mode_provider.dart';
 import 'package:portfolio/core/theme/app_decorations.dart';
 import 'package:portfolio/core/theme/app_spacing.dart';
+import 'package:portfolio/l10n/app_localizations.dart';
 import 'package:portfolio/shared/layout/inspectable.dart';
 import 'package:portfolio/shared/widgets/brand_logo.dart';
+import 'package:portfolio/shared/widgets/language_toggle.dart';
 import 'package:portfolio/shared/widgets/theme_toggle_button.dart';
 
 /// The title block: a plain paper strip with a full-ink bottom rule, mono
@@ -35,13 +37,14 @@ class AppNavbar extends StatelessWidget {
     final isDesktop = width >= AppBreakpoints.tablet;
     final isCompact = width < AppBreakpoints.mobile;
     final margin = AppSpacing.margin(width);
+    final l10n = AppLocalizations.of(context);
 
     return Inspectable(
       label: 'AppNavbar',
       note:
           'The title block: a plain strip with one strong bottom rule. It '
           'overlays every page, which pads itself by AppNavbar.height.',
-      source: 'lib/shared/widgets/app_navbar.dart:38',
+      source: 'lib/shared/widgets/app_navbar.dart:42',
       tokens: const [
         'AppNavbar.height',
         'AppSpacing.margin',
@@ -69,7 +72,7 @@ class AppNavbar extends StatelessWidget {
                     flex: 0,
                     child: Semantics(
                       button: true,
-                      label: 'Home',
+                      label: l10n.home,
                       excludeSemantics: true,
                       child: InkWell(
                         onTap: () => context.go(AppRoutes.home),
@@ -80,7 +83,7 @@ class AppNavbar extends StatelessWidget {
                             minHeight: 48,
                           ),
                           child: Align(
-                            alignment: Alignment.centerLeft,
+                            alignment: AlignmentDirectional.centerStart,
                             widthFactor: 1,
                             heightFactor: 1,
                             child: BrandLogo(showName: !isCompact),
@@ -95,16 +98,17 @@ class AppNavbar extends StatelessWidget {
                       // scaleDown only matters at 1024–1100 with 7 links.
                       child: FittedBox(
                         fit: BoxFit.scaleDown,
-                        alignment: Alignment.centerRight,
+                        alignment: AlignmentDirectional.centerEnd,
                         child: Row(
                           children: [
                             for (final d in navDestinations)
                               _NavLink(
-                                label: d.label,
+                                label: d.localizedLabel(l10n),
                                 isActive: location == d.path,
                                 onPressed: () => context.go(d.path),
                               ),
                             const SizedBox(width: AppSpacing.s16),
+                            const LanguageToggle(),
                             const ThemeToggleButton(),
                             const InspectToggle(),
                             const SizedBox(width: AppSpacing.s12),
@@ -116,7 +120,7 @@ class AppNavbar extends StatelessWidget {
                                 ),
                                 minimumSize: const Size(48, 48),
                               ),
-                              child: const Text('Start a project'),
+                              child: Text(l10n.startProject),
                             ),
                           ],
                         ),
@@ -133,13 +137,15 @@ class AppNavbar extends StatelessWidget {
                             horizontal: AppSpacing.s16,
                           ),
                         ),
-                        child: const Text('Hire me', maxLines: 1),
+                        child: Text(l10n.hireMe, maxLines: 1),
                       )
-                    else
+                    else ...[
+                      const LanguageToggle(),
                       const ThemeToggleButton(),
+                    ],
                     const SizedBox(width: AppSpacing.s4),
                     IconButton(
-                      tooltip: 'Open menu',
+                      tooltip: l10n.openMenu,
                       icon: const Icon(Icons.menu),
                       onPressed: onMenuPressed,
                     ),
@@ -164,6 +170,7 @@ class InspectToggle extends ConsumerWidget {
     final on = ref.watch(developerModeProvider);
     final deco = AppDecorations.of(context);
     final scheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context);
     return Semantics(
       toggled: on,
       child: TextButton(
@@ -173,12 +180,10 @@ class InspectToggle extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s12),
         ),
         child: Tooltip(
-          message: on
-              ? 'Inspector mode on: hide layout and code'
-              : 'Inspector mode: show the layout and code behind the site',
+          message: on ? l10n.inspectTooltipOn : l10n.inspectTooltipOff,
           // Mono, with the state spelled out: no icon legend needed.
           child: Text(
-            'Inspect: ${on ? 'on' : 'off'}',
+            on ? l10n.inspectOn : l10n.inspectOff,
             style: Theme.of(context).textTheme.labelMedium,
           ),
         ),

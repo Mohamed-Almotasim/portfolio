@@ -2,3 +2,7 @@
 String? readStoredThemeMode() => null;
 
 void writeStoredThemeMode(String value) {}
+
+String? readStoredLocale() => null;
+
+void writeStoredLocale(String value) {}

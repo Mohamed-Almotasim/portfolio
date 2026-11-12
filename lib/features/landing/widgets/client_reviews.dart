@@ -4,6 +4,7 @@ import 'package:portfolio/core/content/portfolio_content.dart' as content;
 import 'package:portfolio/core/content/testimonial.dart';
 import 'package:portfolio/core/theme/app_decorations.dart';
 import 'package:portfolio/core/theme/app_spacing.dart';
+import 'package:portfolio/l10n/app_localizations.dart';
 import 'package:portfolio/shared/layout/inspectable.dart';
 import 'package:portfolio/shared/utils/link_launcher.dart';
 import 'package:portfolio/shared/widgets/app_section.dart';
@@ -67,11 +68,19 @@ class _Review extends StatelessWidget {
           children: [
             Text(
               '${(index + 1).toString().padLeft(2, '0')} · '
-              '${review.source} review',
+              '${AppLocalizations.of(context).reviewLabel(review.source)}',
               style: mute,
             ),
             const SizedBox(height: AppSpacing.s12),
-            Text('“${review.quote}”', style: text.titleMedium),
+            // Quotes stay in English: laid out left-to-right, on the reading side.
+            Text(
+              '“${review.quote}”',
+              style: text.titleMedium,
+              textDirection: TextDirection.ltr,
+              textAlign: Directionality.of(context) == TextDirection.rtl
+                  ? TextAlign.right
+                  : TextAlign.left,
+            ),
             const SizedBox(height: AppSpacing.s12),
             Text(
               '${review.author} · ${review.country}',
@@ -90,7 +99,7 @@ class FiverrReviewsLink extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) => ArrowLink(
-    label: 'All reviews on Fiverr',
+    label: AppLocalizations.of(context).allReviewsFiverr,
     onPressed: () =>
         openLink(context, ref, Uri.parse(content.fiverrProfileUrl)),
   );

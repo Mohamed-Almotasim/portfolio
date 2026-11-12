@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:portfolio/core/theme/app_decorations.dart';
 import 'package:portfolio/core/theme/app_spacing.dart';
+import 'package:portfolio/l10n/app_localizations.dart';
 import 'package:portfolio/shared/demo/specimen_frame.dart';
 import 'package:portfolio/shared/layout/inspectable.dart';
 
@@ -157,6 +158,7 @@ class _OfflineSyncSpecimenState extends State<OfflineSyncSpecimen> {
     final text = Theme.of(context).textTheme;
     final mute = text.labelMedium?.copyWith(color: deco.inkMute);
     final failed = _tasks.where((t) => t.sync == _Sync.failed).length;
+    final l10n = AppLocalizations.of(context);
 
     Widget body;
     if (_loading) {
@@ -172,16 +174,16 @@ class _OfflineSyncSpecimenState extends State<OfflineSyncSpecimen> {
       );
     } else if (_error) {
       body = _Notice(
-        title: "Couldn't reload",
-        body: 'No connection. Showing what is saved on this device.',
-        action: 'Try again',
+        title: l10n.osReloadFailedTitle,
+        body: l10n.osReloadFailedBody,
+        action: l10n.osTryAgain,
         onAction: _reload,
       );
     } else if (_tasks.isEmpty) {
       body = _Notice(
-        title: 'No tasks yet',
-        body: 'Add one. It will sync when it can.',
-        action: 'Add task',
+        title: l10n.osNoTasksTitle,
+        body: l10n.osNoTasksBody,
+        action: l10n.osAddTask,
         onAction: _add,
       );
     } else {
@@ -202,24 +204,27 @@ class _OfflineSyncSpecimenState extends State<OfflineSyncSpecimen> {
       label: 'Specimen · Offline and sync',
       onReset: _reset,
       readouts: [
-        ('network', _online ? 'online' : 'offline'),
-        ('queue', '${_queue.length}'),
-        ('sent', '$_sent'),
-        ('retries', '$_retries'),
-        ('failed', '$failed'),
+        (l10n.osNetwork, _online ? l10n.osOnline : l10n.osOffline),
+        (l10n.osQueue, '${_queue.length}'),
+        (l10n.osSent, '$_sent'),
+        (l10n.osRetries, '$_retries'),
+        (l10n.osFailed, '$failed'),
       ],
       controls: [
         SpecChoice<bool>(
-          label: 'NETWORK',
+          label: l10n.osNetwork.toUpperCase(),
           value: _online,
-          options: const [(true, 'Online'), (false, 'Offline')],
+          options: [
+            (true, capitalized(l10n.osOnline)),
+            (false, capitalized(l10n.osOffline)),
+          ],
           onChanged: (v) {
             setState(() => _online = v);
             _pump();
           },
         ),
         SpecSlider(
-          label: 'LATENCY',
+          label: l10n.osLatency.toUpperCase(),
           value: _latency,
           min: 100,
           max: 2000,
@@ -228,7 +233,7 @@ class _OfflineSyncSpecimenState extends State<OfflineSyncSpecimen> {
           onChanged: (v) => setState(() => _latency = v),
         ),
         SpecSlider(
-          label: 'FAILURE RATE',
+          label: l10n.osFailureRate.toUpperCase(),
           value: _failPct,
           min: 0,
           max: 100,
@@ -240,14 +245,14 @@ class _OfflineSyncSpecimenState extends State<OfflineSyncSpecimen> {
           spacing: AppSpacing.s8,
           runSpacing: AppSpacing.s8,
           children: [
-            OutlinedButton(onPressed: _add, child: const Text('Add task')),
-            OutlinedButton(onPressed: _reload, child: const Text('Reload')),
+            OutlinedButton(onPressed: _add, child: Text(l10n.osAddTask)),
+            OutlinedButton(onPressed: _reload, child: Text(l10n.osReload)),
             OutlinedButton(
               onPressed: () => setState(() {
                 _tasks.clear();
                 _queue.clear();
               }),
-              child: const Text('Clear all'),
+              child: Text(l10n.osClearAll),
             ),
           ],
         ),
@@ -263,10 +268,7 @@ class _OfflineSyncSpecimenState extends State<OfflineSyncSpecimen> {
                 border: Border.all(color: _online ? deco.rule : deco.warning),
               ),
               child: Text(
-                _online
-                    ? 'Online. Changes are sent as you make them.'
-                    : 'Offline. Changes are kept on this device and sent '
-                          'when you reconnect.',
+                _online ? l10n.osOnlineBanner : l10n.osOfflineBanner,
                 style: text.bodyMedium,
               ),
             ),
@@ -277,7 +279,7 @@ class _OfflineSyncSpecimenState extends State<OfflineSyncSpecimen> {
                   'Optimistic: a change shows at once and is marked pending '
                   'until the queue confirms it. Empty, loading and error '
                   'each have their own state.',
-              source: 'lib/features/playground/specimens/offline_sync.dart:274',
+              source: 'lib/features/playground/specimens/offline_sync.dart:276',
               child: body,
             ),
             const SizedBox(height: AppSpacing.s16),
@@ -286,11 +288,13 @@ class _OfflineSyncSpecimenState extends State<OfflineSyncSpecimen> {
               note:
                   'One change at a time, in order. A failure retries up to '
                   '3 times, then the task is marked failed and offers Retry.',
-              source: 'lib/features/playground/specimens/offline_sync.dart:284',
+              source: 'lib/features/playground/specimens/offline_sync.dart:286',
               child: Text(
                 _queue.isEmpty
-                    ? 'queue: empty'
-                    : 'queue: ${_queue.map((t) => '#${t.id}').join('  ')}',
+                    ? l10n.osQueueEmpty
+                    : l10n.osQueueItems(
+                        _queue.map((t) => '#${t.id}').join('  '),
+                      ),
                 style: mute,
               ),
             ),
@@ -318,11 +322,14 @@ class _TaskRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final deco = AppDecorations.of(context);
     final text = Theme.of(context).textTheme;
+    final l10n = AppLocalizations.of(context);
     final label = switch (task.sync) {
-      _Sync.synced => 'synced',
+      _Sync.synced => l10n.osSynced,
       _Sync.pending =>
-        task.tries == 0 ? 'pending' : 'retry ${task.tries}/$maxTries',
-      _Sync.failed => 'failed',
+        task.tries == 0
+            ? l10n.osPending
+            : l10n.osRetryCount(task.tries, maxTries),
+      _Sync.failed => l10n.osFailed,
     };
     return Container(
       constraints: const BoxConstraints(minHeight: 48),
@@ -369,7 +376,7 @@ class _TaskRow extends StatelessWidget {
             ),
           ),
           if (task.sync == _Sync.failed)
-            TextButton(onPressed: onRetry, child: const Text('Retry')),
+            TextButton(onPressed: onRetry, child: Text(l10n.osRetry)),
         ],
       ),
     );

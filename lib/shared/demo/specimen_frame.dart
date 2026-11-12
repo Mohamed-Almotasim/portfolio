@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:portfolio/core/theme/app_decorations.dart';
 import 'package:portfolio/core/theme/app_spacing.dart';
+import 'package:portfolio/l10n/app_localizations.dart';
 import 'package:portfolio/shared/layout/inspectable.dart';
 import 'package:portfolio/shared/widgets/spec_marks.dart';
 
@@ -16,6 +17,9 @@ String groupDigits(num n) {
   }
   return out.toString();
 }
+
+/// `online` → `Online`, for a choice that shares its word with a readout.
+String capitalized(String s) => s[0].toUpperCase() + s.substring(1);
 
 /// The one frame every specimen sits in: the live specimen in a crop-mark
 /// well, and beside it (below it on compact screens) a CONTROLS panel with a
@@ -55,6 +59,7 @@ class _SpecimenFrameState extends State<SpecimenFrame> {
     final mute = Theme.of(
       context,
     ).textTheme.labelMedium?.copyWith(color: deco.inkMute);
+    final l10n = AppLocalizations.of(context);
 
     return Inspectable(
       label: widget.label,
@@ -91,7 +96,7 @@ class _SpecimenFrameState extends State<SpecimenFrame> {
                 child: OutlinedButton(
                   key: const Key('specimen-reset'),
                   onPressed: widget.onReset,
-                  child: const Text('Reset'),
+                  child: Text(l10n.reset),
                 ),
               ),
             ],
@@ -113,7 +118,7 @@ class _SpecimenFrameState extends State<SpecimenFrame> {
           final readouts = Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              head('READOUTS'),
+              head(l10n.readouts),
               for (final (name, value) in widget.readouts)
                 Container(
                   padding: const EdgeInsets.symmetric(vertical: AppSpacing.s8),
@@ -143,10 +148,10 @@ class _SpecimenFrameState extends State<SpecimenFrame> {
                 child: InkWell(
                   onTap: wide ? null : () => setState(() => _open = !_open),
                   child: head(
-                    'CONTROLS',
+                    l10n.controls,
                     trailing: wide
                         ? null
-                        : Text(_open ? '− hide' : '+ show', style: mute),
+                        : Text(_open ? l10n.hide : l10n.show, style: mute),
                   ),
                 ),
               ),

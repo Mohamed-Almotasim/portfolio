@@ -9,6 +9,7 @@ import 'package:portfolio/core/state/developer_mode_provider.dart';
 import 'package:portfolio/core/state/project_assets_provider.dart';
 import 'package:portfolio/core/theme/app_decorations.dart';
 import 'package:portfolio/core/theme/app_spacing.dart';
+import 'package:portfolio/l10n/app_localizations.dart';
 import 'package:portfolio/shared/layout/inspectable.dart';
 import 'package:portfolio/shared/media/loop_video.dart';
 import 'package:portfolio/shared/widgets/spec_marks.dart';
@@ -325,14 +326,15 @@ class _ProjectPhoneState extends ConsumerState<ProjectPhone>
     final fade = AppMotion.of(context, _fade);
     final vh = MediaQuery.sizeOf(context).height;
     final playing = _running;
+    final l10n = AppLocalizations.of(context);
 
     final caption = _pinned != null
-        ? 'Fig. ${_pinned! + 1} · ${f.caption(_pinned!)}'
+        ? l10n.figCaption(_pinned! + 1, f.caption(_pinned!))
         : f.hasVideo
-        ? (playing ? 'Video' : 'Video · paused')
+        ? (playing ? l10n.video : l10n.videoPaused)
         : f.hasShots
-        ? 'Fig. ${_slide + 1} · ${f.caption(_slide)}'
-        : 'No footage yet';
+        ? l10n.figCaption(_slide + 1, f.caption(_slide))
+        : l10n.noFootage;
 
     return LayoutBuilder(
       builder: (context, c) {
@@ -390,7 +392,7 @@ class _ProjectPhoneState extends ConsumerState<ProjectPhone>
                     minimumSize: const Size(48, 48),
                     padding: EdgeInsets.zero,
                   ),
-                  child: const Icon(Icons.play_arrow, semanticLabel: 'Play'),
+                  child: Icon(Icons.play_arrow, semanticLabel: l10n.play),
                 ),
               ),
           ],
@@ -402,7 +404,7 @@ class _ProjectPhoneState extends ConsumerState<ProjectPhone>
               'One frame for every project: only the screen cross-fades. The '
               'poster paints first and the video fades in over it once '
               'decoded, so a switch never shows a blank frame.',
-          source: 'lib/features/work/widgets/project_phone.dart:399',
+          source: 'lib/features/work/widgets/project_phone.dart:401',
           tokens: const ['AppDecorations.ruleStrong', 'surfaceContainerLow'],
           child: Container(
             padding: const EdgeInsets.all(bezel),
@@ -419,8 +421,8 @@ class _ProjectPhoneState extends ConsumerState<ProjectPhone>
                 child: Semantics(
                   button: widget.onOpen != null,
                   label: widget.onOpen != null
-                      ? 'Open the ${study.title} case study'
-                      : '${study.title} footage',
+                      ? l10n.openCaseStudyOf(study.title)
+                      : l10n.footageOf(study.title),
                   onTap: widget.onOpen,
                   child: MouseRegion(
                     cursor: widget.onOpen != null
@@ -463,8 +465,8 @@ class _ProjectPhoneState extends ConsumerState<ProjectPhone>
               runSpacing: AppSpacing.s8,
               children: [
                 _Chapter(
-                  label: f.hasVideo || !f.hasShots ? 'Video' : 'Loop',
-                  semantics: 'Play the loop',
+                  label: f.hasVideo || !f.hasShots ? l10n.video : l10n.loop,
+                  semantics: l10n.playLoop,
                   selected: _pinned == null,
                   onTap: () => _pin(null),
                   width: 64,
@@ -472,7 +474,7 @@ class _ProjectPhoneState extends ConsumerState<ProjectPhone>
                 for (var i = 0; i < f.shots.length; i++)
                   _Chapter(
                     label: '${i + 1}',
-                    semantics: 'Screen ${i + 1}: ${f.caption(i)}',
+                    semantics: l10n.screenCaption(i + 1, f.caption(i)),
                     path: f.shots[i],
                     selected: _pinned == i,
                     onTap: () => _pin(i),
@@ -513,6 +515,7 @@ class _TitleBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final deco = AppDecorations.of(context);
     final label = Theme.of(context).textTheme.labelSmall;
+    final l10n = AppLocalizations.of(context);
     return Container(
       decoration: BoxDecoration(
         border: Border(bottom: BorderSide(color: deco.rule)),
@@ -526,7 +529,7 @@ class _TitleBar extends StatelessWidget {
                 return AnimatedSwitcher(
                   duration: fade,
                   layoutBuilder: (current, previous) => Stack(
-                    alignment: Alignment.centerLeft,
+                    alignment: AlignmentDirectional.centerStart,
                     children: [...previous, ?current],
                   ),
                   child: Text(
@@ -542,12 +545,12 @@ class _TitleBar extends StatelessWidget {
           ),
           IconButton(
             onPressed: onReplay,
-            tooltip: 'Replay',
+            tooltip: l10n.replay,
             icon: const Icon(Icons.replay, size: 18),
           ),
           IconButton(
             onPressed: onToggle,
-            tooltip: playing ? 'Pause' : 'Play',
+            tooltip: playing ? l10n.pause : l10n.play,
             icon: Icon(playing ? Icons.pause : Icons.play_arrow, size: 18),
           ),
         ],
@@ -695,7 +698,10 @@ class _AwaitingFootage extends StatelessWidget {
                   children: [
                     Text(title, style: text.titleMedium),
                     const SizedBox(height: AppSpacing.s8),
-                    Text('Awaiting footage', style: mute),
+                    Text(
+                      AppLocalizations.of(context).awaitingFootage,
+                      style: mute,
+                    ),
                     if (prefix != null) ...[
                       const SizedBox(height: AppSpacing.s4),
                       Text('$prefix-video.mp4', style: mute),

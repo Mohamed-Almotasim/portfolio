@@ -7,12 +7,15 @@ import 'package:http/http.dart' as http;
 import 'package:portfolio/core/content/engagement_model.dart';
 import 'package:portfolio/core/content/faq_item.dart';
 import 'package:portfolio/core/content/portfolio_content.dart' as content;
+import 'package:portfolio/core/content/portfolio_content_ar.dart' as ar;
 import 'package:portfolio/core/content/profile.dart';
+import 'package:portfolio/core/state/locale_provider.dart';
 import 'package:portfolio/core/state/profile_provider.dart';
 import 'package:portfolio/core/theme/app_decorations.dart';
 import 'package:portfolio/core/theme/app_spacing.dart';
 import 'package:portfolio/core/theme/app_typography.dart';
 import 'package:portfolio/features/contact/contact_mailto.dart';
+import 'package:portfolio/l10n/app_localizations.dart';
 import 'package:portfolio/shared/layout/app_page.dart';
 import 'package:portfolio/shared/layout/inspectable.dart';
 import 'package:portfolio/shared/utils/link_launcher.dart';
@@ -21,10 +24,13 @@ import 'package:portfolio/shared/widgets/faq_accordion.dart';
 import 'package:portfolio/shared/widgets/profile_photo.dart';
 
 final contactProjectTypesProvider = Provider<List<String>>(
-  (ref) => content.contactProjectTypes,
+  (ref) => ref.watch(isArabicProvider)
+      ? ar.contactProjectTypes
+      : content.contactProjectTypes,
 );
 final contactBudgetsProvider = Provider<List<String>>(
-  (ref) => content.contactBudgets,
+  (ref) =>
+      ref.watch(isArabicProvider) ? ar.contactBudgets : content.contactBudgets,
 );
 final contactFormEndpointProvider = Provider<String?>(
   (ref) => content.contactFormEndpoint,
@@ -40,9 +46,9 @@ final httpClientProvider = Provider<http.Client>((ref) {
 Future<void> _copyEmail(BuildContext context, String email) async {
   await Clipboard.setData(ClipboardData(text: email));
   if (context.mounted) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Email address copied')));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(AppLocalizations.of(context).emailCopied)),
+    );
   }
 }
 
@@ -65,6 +71,7 @@ class ContactPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final profile = ref.watch(profileProvider);
     final text = Theme.of(context).textTheme;
+    final l10n = AppLocalizations.of(context);
     return AppPage(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,16 +79,12 @@ class ContactPage extends ConsumerWidget {
           const SizedBox(height: AppSpacing.s48),
           Semantics(
             header: true,
-            child: Text('Contact', style: text.displayLarge),
+            child: Text(l10n.navContact, style: text.displayLarge),
           ),
           const SizedBox(height: AppSpacing.s16),
           ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 640),
-            child: Text(
-              "Tell me what you're building and where you're stuck. I'll "
-              "reply with how I'd approach it and what it would take.",
-              style: AppTypography.lead(context),
-            ),
+            child: Text(l10n.ctLead, style: AppTypography.lead(context)),
           ),
           const SizedBox(height: AppSpacing.s64),
           LayoutBuilder(
@@ -111,14 +114,14 @@ class ContactPage extends ConsumerWidget {
               );
             },
           ),
-          const AppSection(
+          AppSection(
             number: '01',
-            title: 'Ways to work together',
-            child: _Engagements(),
+            title: l10n.waysToWork,
+            child: const _Engagements(),
           ),
           AppSection(
             number: '02',
-            title: 'Questions',
+            title: l10n.ctQuestions,
             child: FaqAccordion(items: ref.watch(faqsProvider)),
           ),
         ],
@@ -128,9 +131,13 @@ class ContactPage extends ConsumerWidget {
 }
 
 final engagementModelsProvider = Provider<List<EngagementModel>>(
-  (ref) => content.engagementModels,
+  (ref) => ref.watch(isArabicProvider)
+      ? ar.engagementModels
+      : content.engagementModels,
 );
-final faqsProvider = Provider<List<FaqItem>>((ref) => content.faqs);
+final faqsProvider = Provider<List<FaqItem>>(
+  (ref) => ref.watch(isArabicProvider) ? ar.faqs : content.faqs,
+);
 
 /// Engagement models as ruled rows; a price shows only when one is set.
 class _Engagements extends ConsumerWidget {
@@ -142,6 +149,7 @@ class _Engagements extends ConsumerWidget {
     final text = Theme.of(context).textTheme;
     final deco = AppDecorations.of(context);
     final mute = text.labelMedium?.copyWith(color: deco.inkMute);
+    final l10n = AppLocalizations.of(context);
     return Column(
       children: [
         for (final (i, m) in models.indexed)
@@ -170,8 +178,8 @@ class _Engagements extends ConsumerWidget {
                 SizedBox(
                   width: 300,
                   child: Text(
-                    'Best for: ${m.bestFor}'
-                    '${m.price == null ? '' : '\nFrom ${m.price}'}',
+                    l10n.ctBestFor(m.bestFor) +
+                        (m.price == null ? '' : '\n${l10n.ctFrom(m.price!)}'),
                     style: mute?.copyWith(height: 1.8),
                   ),
                 ),
@@ -192,6 +200,7 @@ class _Pitch extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final text = Theme.of(context).textTheme;
     final deco = AppDecorations.of(context);
+    final l10n = AppLocalizations.of(context);
     Widget fact(String label, String value) => Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.s16),
       child: Column(
@@ -220,7 +229,7 @@ class _Pitch extends ConsumerWidget {
               const SizedBox(height: AppSpacing.s32),
             ],
             Text(
-              'Or write directly',
+              l10n.ctWriteDirectly,
               style: text.labelSmall?.copyWith(color: deco.inkMute),
             ),
             Row(
@@ -229,17 +238,17 @@ class _Pitch extends ConsumerWidget {
                   child: SelectableText(profile.email, style: text.titleMedium),
                 ),
                 IconButton(
-                  tooltip: 'Copy email address',
+                  tooltip: l10n.copyEmail,
                   icon: const Icon(Icons.copy, size: 18),
                   onPressed: () => _copyEmail(context, profile.email),
                 ),
               ],
             ),
             const SizedBox(height: AppSpacing.s16),
-            fact('Availability', profile.availability),
+            fact(l10n.availability, profile.availability),
             if (profile.responseTime != null)
-              fact('Replies', profile.responseTime!),
-            fact('Based in', profile.location),
+              fact(l10n.replies, profile.responseTime!),
+            fact(l10n.basedIn, profile.location),
             Wrap(
               spacing: AppSpacing.s8,
               children: [
@@ -272,8 +281,14 @@ class _ContactFormState extends ConsumerState<_ContactForm> {
   final _name = TextEditingController();
   final _email = TextEditingController();
   final _message = TextEditingController();
-  late String _projectType = ref.read(contactProjectTypesProvider).first;
-  String? _budget;
+  // Indexes, not labels, so a pick survives a language switch.
+  int _projectTypeIndex = 0;
+  int? _budgetIndex;
+  String get _projectType =>
+      ref.read(contactProjectTypesProvider)[_projectTypeIndex];
+  String? get _budget => _budgetIndex == null
+      ? null
+      : ref.read(contactBudgetsProvider)[_budgetIndex!];
   _Status _status = _Status.idle;
   String? _error; // why the form service rejected the message
 
@@ -291,10 +306,11 @@ class _ContactFormState extends ConsumerState<_ContactForm> {
     if (_status == _Status.sending) return; // no double submits
     if (!_formKey.currentState!.validate()) return;
     setState(() => _status = _Status.sending);
+    final l10n = AppLocalizations.of(context);
     final endpoint = ref.read(contactFormEndpointProvider);
     final String? error;
     if (endpoint != null) {
-      error = await _post(endpoint);
+      error = await _post(endpoint, l10n);
     } else {
       final uri = contactMailto(
         to: ref.read(profileProvider).email,
@@ -321,7 +337,7 @@ class _ContactFormState extends ConsumerState<_ContactForm> {
   }
 
   /// Sends the form to Formspree. Returns null on success, else the reason.
-  Future<String?> _post(String endpoint) async {
+  Future<String?> _post(String endpoint, AppLocalizations l10n) async {
     final name = _name.text.trim();
     try {
       final res = await ref
@@ -342,10 +358,9 @@ class _ContactFormState extends ConsumerState<_ContactForm> {
             }),
           );
       if (res.statusCode >= 200 && res.statusCode < 300) return null;
-      return _formspreeError(res.body) ??
-          'The form service answered ${res.statusCode}.';
+      return _formspreeError(res.body) ?? l10n.ctServiceStatus(res.statusCode);
     } on Exception {
-      return "Couldn't reach the form service.";
+      return l10n.ctServiceUnreachable;
     }
   }
 
@@ -356,6 +371,8 @@ class _ContactFormState extends ConsumerState<_ContactForm> {
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
     final scheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context);
+    final types = ref.watch(contactProjectTypesProvider);
     final budgets = ref.watch(contactBudgetsProvider);
     final sending = _status == _Status.sending;
     final viaForm = ref.watch(contactFormEndpointProvider) != null;
@@ -368,19 +385,19 @@ class _ContactFormState extends ConsumerState<_ContactForm> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _Labeled(
-              label: 'Name',
+              label: l10n.name,
               child: TextFormField(
                 key: const Key('field-Name'),
                 controller: _name,
                 autofillHints: const [AutofillHints.name],
                 textInputAction: TextInputAction.next,
                 textCapitalization: TextCapitalization.words,
-                validator: (v) => _required(v, 'Please enter your name'),
+                validator: (v) => _required(v, l10n.ctNameRequired),
               ),
             ),
             const SizedBox(height: AppSpacing.s16),
             _Labeled(
-              label: 'Email',
+              label: l10n.ctEmail,
               child: TextFormField(
                 key: const Key('field-Email'),
                 controller: _email,
@@ -388,39 +405,39 @@ class _ContactFormState extends ConsumerState<_ContactForm> {
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.next,
                 validator: (v) =>
-                    _required(v, 'Please enter your email') ??
+                    _required(v, l10n.ctEmailRequired) ??
                     (_emailPattern.hasMatch(v!.trim())
                         ? null
-                        : 'Please enter a valid email'),
+                        : l10n.ctEmailInvalid),
               ),
             ),
             const SizedBox(height: AppSpacing.s24),
-            Text('What kind of project?', style: text.labelLarge),
+            Text(l10n.ctProjectKind, style: text.labelLarge),
             const SizedBox(height: AppSpacing.s8),
             Wrap(
               spacing: AppSpacing.s8,
               runSpacing: AppSpacing.s8,
               children: [
-                for (final t in ref.watch(contactProjectTypesProvider))
+                for (final (i, t) in types.indexed)
                   ChoiceChip(
                     label: Text(t),
-                    selected: _projectType == t,
-                    onSelected: (_) => setState(() => _projectType = t),
+                    selected: _projectTypeIndex == i,
+                    onSelected: (_) => setState(() => _projectTypeIndex = i),
                   ),
               ],
             ),
             if (budgets.isNotEmpty) ...[
               const SizedBox(height: AppSpacing.s24),
               _Labeled(
-                label: 'Budget (optional)',
-                child: DropdownButtonFormField<String>(
-                  initialValue: _budget,
-                  hint: const Text('Select a range'),
+                label: l10n.ctBudget,
+                child: DropdownButtonFormField<int>(
+                  initialValue: _budgetIndex,
+                  hint: Text(l10n.ctBudgetHint),
                   items: [
-                    for (final b in budgets)
-                      DropdownMenuItem(value: b, child: Text(b)),
+                    for (final (i, b) in budgets.indexed)
+                      DropdownMenuItem(value: i, child: Text(b)),
                   ],
-                  onChanged: (v) => setState(() => _budget = v),
+                  onChanged: (v) => setState(() => _budgetIndex = v),
                 ),
               ),
             ],
@@ -434,18 +451,15 @@ class _ContactFormState extends ConsumerState<_ContactForm> {
                     _submit,
               },
               child: _Labeled(
-                label: 'Message',
+                label: l10n.ctMessage,
                 child: TextFormField(
                   key: const Key('field-Message'),
                   controller: _message,
-                  decoration: const InputDecoration(
-                    helperText: 'Ctrl + Enter to send',
-                  ),
+                  decoration: InputDecoration(helperText: l10n.ctMessageHelper),
                   minLines: 5,
                   maxLines: 10,
                   keyboardType: TextInputType.multiline,
-                  validator: (v) =>
-                      _required(v, 'Please tell me a little about the project'),
+                  validator: (v) => _required(v, l10n.ctMessageRequired),
                 ),
               ),
             ),
@@ -460,10 +474,10 @@ class _ContactFormState extends ConsumerState<_ContactForm> {
                   : const Icon(Icons.send, size: 18),
               label: Text(
                 !sending
-                    ? 'Send message'
+                    ? l10n.ctSend
                     : viaForm
-                    ? 'Sending…'
-                    : 'Opening your email…',
+                    ? l10n.ctSending
+                    : l10n.ctOpeningEmail,
               ),
             ),
             const SizedBox(height: AppSpacing.s16),
@@ -474,15 +488,13 @@ class _ContactFormState extends ConsumerState<_ContactForm> {
                   key: const ValueKey('sent'),
                   icon: Icons.check_circle_outline,
                   color: AppDecorations.of(context).success,
-                  message:
-                      "Thanks, your message was sent. I'll reply to "
-                      '${_email.text.trim()}.',
+                  message: l10n.ctSent(_email.text.trim()),
                 ),
                 _Status.sent => _Notice(
                   key: const ValueKey('sent'),
                   icon: Icons.check_circle_outline,
                   color: AppDecorations.of(context).success,
-                  message: 'If no email app opened, email me at $myEmail',
+                  message: l10n.ctSentMailto(myEmail),
                   copyEmail: myEmail,
                 ),
                 _Status.failed => _Notice(
@@ -490,10 +502,8 @@ class _ContactFormState extends ConsumerState<_ContactForm> {
                   icon: Icons.error_outline,
                   color: scheme.error,
                   message: viaForm
-                      ? "Couldn't send your message: $_error "
-                            'Please email me at $myEmail instead.'
-                      : "Couldn't open your email app. Please write to "
-                            '$myEmail directly.',
+                      ? l10n.ctFailedForm(_error ?? '', myEmail)
+                      : l10n.ctFailedMailto(myEmail),
                   copyEmail: myEmail,
                 ),
                 _ => const SizedBox.shrink(),
@@ -536,7 +546,7 @@ class _Notice extends StatelessWidget {
           ),
           if (copyEmail case final email?)
             IconButton(
-              tooltip: 'Copy email address',
+              tooltip: AppLocalizations.of(context).copyEmail,
               icon: const Icon(Icons.copy, size: 18),
               onPressed: () => _copyEmail(context, email),
             ),

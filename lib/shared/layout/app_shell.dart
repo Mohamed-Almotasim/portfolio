@@ -6,10 +6,13 @@ import 'package:portfolio/core/routing/app_routes.dart';
 import 'package:portfolio/core/state/developer_mode_provider.dart';
 import 'package:portfolio/core/state/theme_mode_provider.dart';
 import 'package:portfolio/core/theme/app_spacing.dart';
+import 'package:portfolio/l10n/app_localizations.dart';
 import 'package:portfolio/shared/layout/inspectable.dart';
 import 'package:portfolio/shared/layout/inspector_panel.dart';
+import 'package:portfolio/shared/layout/locale_transition_host.dart';
 import 'package:portfolio/shared/widgets/app_navbar.dart';
 import 'package:portfolio/shared/widgets/brand_logo.dart';
+import 'package:portfolio/shared/widgets/language_toggle.dart';
 
 /// Built once by the router's ShellRoute: navbar and drawer persist while
 /// [child] (the current page) changes underneath.
@@ -78,6 +81,7 @@ class _AppShellState extends ConsumerState<AppShell> {
   /// Explains developer mode the first time it's switched on.
   void _maybeShowDevBanner(bool enabled) {
     final messenger = ScaffoldMessenger.of(context);
+    final l10n = AppLocalizations.of(context);
     if (!enabled) {
       messenger.hideCurrentMaterialBanner();
       return;
@@ -87,21 +91,18 @@ class _AppShellState extends ConsumerState<AppShell> {
     messenger.showMaterialBanner(
       MaterialBanner(
         leading: const Icon(Icons.code),
-        content: const Text(
-          'Inspector mode is on. Hover a section for its widget and size; '
-          'click one to open the inspector. Demos show the real source.',
-        ),
+        content: Text(l10n.inspectorBanner),
         actions: [
           TextButton(
             onPressed: () {
               messenger.hideCurrentMaterialBanner();
               context.go(AppRoutes.aboutBuilt);
             },
-            child: const Text('How this site is built'),
+            child: Text(l10n.howSiteBuilt),
           ),
           TextButton(
             onPressed: messenger.hideCurrentMaterialBanner,
-            child: const Text('Got it'),
+            child: Text(l10n.gotIt),
           ),
         ],
       ),
@@ -199,6 +200,7 @@ class _AppDrawer extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final index = navDestinations.indexWhere((d) => d.path == location);
     final brightness = Theme.of(context).brightness;
+    final l10n = AppLocalizations.of(context);
     return NavigationDrawer(
       selectedIndex: index < 0 ? null : index,
       onDestinationSelected: (i) {
@@ -210,7 +212,7 @@ class _AppDrawer extends ConsumerWidget {
           padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
           child: Semantics(
             button: true,
-            label: 'Home',
+            label: l10n.home,
             excludeSemantics: true,
             child: InkWell(
               onTap: () {
@@ -225,7 +227,10 @@ class _AppDrawer extends ConsumerWidget {
           ),
         ),
         for (final d in navDestinations)
-          NavigationDrawerDestination(icon: Icon(d.icon), label: Text(d.label)),
+          NavigationDrawerDestination(
+            icon: Icon(d.icon),
+            label: Text(d.localizedLabel(l10n)),
+          ),
         const Padding(
           padding: EdgeInsets.symmetric(horizontal: 28, vertical: 8),
           child: Divider(),
@@ -233,7 +238,7 @@ class _AppDrawer extends ConsumerWidget {
         SwitchListTile(
           contentPadding: const EdgeInsets.symmetric(horizontal: 28),
           secondary: const Icon(Icons.dark_mode_outlined),
-          title: const Text('Dark theme'),
+          title: Text(l10n.darkTheme),
           value: brightness == Brightness.dark,
           onChanged: (_) =>
               ref.read(themeModeProvider.notifier).toggle(brightness),
@@ -241,9 +246,18 @@ class _AppDrawer extends ConsumerWidget {
         SwitchListTile(
           contentPadding: const EdgeInsets.symmetric(horizontal: 28),
           secondary: const Icon(Icons.code),
-          title: const Text('Inspect'),
+          title: Text(l10n.inspect),
           value: ref.watch(developerModeProvider),
           onChanged: (v) => ref.read(developerModeProvider.notifier).set(v),
+        ),
+        ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 28),
+          leading: const Icon(Icons.translate),
+          title: languageLabel(context),
+          onTap: () {
+            LocaleTransitionHost.of(context).switchLocale(otherLocale(context));
+            Navigator.pop(context);
+          },
         ),
       ],
     );

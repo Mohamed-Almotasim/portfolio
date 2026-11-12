@@ -3,19 +3,24 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:portfolio/core/content/portfolio_content.dart' as content;
+import 'package:portfolio/core/content/portfolio_content_ar.dart' as ar;
 import 'package:portfolio/core/content/process_step.dart';
 import 'package:portfolio/core/content/service_offering.dart';
 import 'package:portfolio/core/routing/app_routes.dart';
+import 'package:portfolio/core/state/locale_provider.dart';
 import 'package:portfolio/core/state/profile_provider.dart';
 import 'package:portfolio/core/theme/app_decorations.dart';
 import 'package:portfolio/core/theme/app_spacing.dart';
+import 'package:portfolio/l10n/app_localizations.dart';
 import 'package:portfolio/shared/layout/inspectable.dart';
 
 final serviceOfferingsProvider = Provider<List<ServiceOffering>>(
-  (ref) => content.serviceOfferings,
+  (ref) => ref.watch(isArabicProvider)
+      ? ar.serviceOfferings
+      : content.serviceOfferings,
 );
 final processStepsProvider = Provider<List<ProcessStep>>(
-  (ref) => content.processSteps,
+  (ref) => ref.watch(isArabicProvider) ? ar.processSteps : content.processSteps,
 );
 
 /// Services as a numbered list: title and description on the left,
@@ -81,7 +86,9 @@ class ServicesList extends ConsumerWidget {
                             head,
                             const SizedBox(height: AppSpacing.s12),
                             Padding(
-                              padding: const EdgeInsets.only(left: 40),
+                              padding: const EdgeInsetsDirectional.only(
+                                start: 40,
+                              ),
                               child: deliverables,
                             ),
                           ],
@@ -127,15 +134,17 @@ class ProcessLine extends ConsumerWidget {
             // Vertical: one continuous line down the left edge.
             return Container(
               decoration: BoxDecoration(
-                border: Border(left: BorderSide(color: deco.ruleStrong)),
+                border: BorderDirectional(
+                  start: BorderSide(color: deco.ruleStrong),
+                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   for (final (i, s) in steps.indexed)
                     Padding(
-                      padding: const EdgeInsets.only(
-                        left: AppSpacing.s24,
+                      padding: const EdgeInsetsDirectional.only(
+                        start: AppSpacing.s24,
                         bottom: AppSpacing.s32,
                       ),
                       child: body(i, s),
@@ -160,9 +169,9 @@ class ProcessLine extends ConsumerWidget {
                       children: [
                         tick,
                         Padding(
-                          padding: const EdgeInsets.only(
+                          padding: const EdgeInsetsDirectional.only(
                             top: AppSpacing.s12,
-                            right: AppSpacing.s32,
+                            end: AppSpacing.s32,
                           ),
                           child: body(i, s),
                         ),
@@ -189,6 +198,7 @@ class ContactBlock extends ConsumerWidget {
     final profile = ref.watch(profileProvider);
     final text = Theme.of(context).textTheme;
     final deco = AppDecorations.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Inspectable(
       label: 'ContactBlock',
@@ -199,7 +209,7 @@ class ContactBlock extends ConsumerWidget {
         children: [
           FilledButton(
             onPressed: () => context.go(AppRoutes.contact),
-            child: const Text('Start a project'),
+            child: Text(l10n.startProject),
           ),
           Row(
             mainAxisSize: MainAxisSize.min,
@@ -209,14 +219,14 @@ class ContactBlock extends ConsumerWidget {
                 style: text.labelLarge?.copyWith(color: deco.inkMute),
               ),
               IconButton(
-                tooltip: 'Copy email address',
+                tooltip: l10n.copyEmail,
                 icon: const Icon(Icons.copy, size: 18),
                 onPressed: () async {
                   await Clipboard.setData(ClipboardData(text: profile.email));
                   if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Email address copied')),
-                    );
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text(l10n.emailCopied)));
                   }
                 },
               ),

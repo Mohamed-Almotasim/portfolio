@@ -4,8 +4,10 @@ import 'package:portfolio/core/routing/app_routes.dart';
 import 'package:portfolio/core/theme/app_decorations.dart';
 import 'package:portfolio/core/theme/app_spacing.dart';
 import 'package:portfolio/core/theme/app_typography.dart';
+import 'package:portfolio/l10n/app_localizations.dart';
 import 'package:portfolio/shared/layout/app_page.dart';
 import 'package:portfolio/shared/layout/inspectable.dart';
+import 'package:portfolio/shared/widgets/app_section.dart';
 import 'package:portfolio/shared/widgets/spec_marks.dart';
 
 /// A missing sheet in the drawing set: the path that was asked for, and the
@@ -19,6 +21,7 @@ class NotFoundPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
     final deco = AppDecorations.of(context);
+    final l10n = AppLocalizations.of(context);
     return AppPage(
       child: Inspectable(
         label: 'NotFound',
@@ -32,10 +35,7 @@ class NotFoundPage extends StatelessWidget {
               child: Text('404', style: text.displayLarge),
             ),
             const SizedBox(height: AppSpacing.s16),
-            Text(
-              'There is no sheet at this address.',
-              style: AppTypography.lead(context),
-            ),
+            Text(l10n.notFoundLead, style: AppTypography.lead(context)),
             const SizedBox(height: AppSpacing.s8),
             SelectableText(
               path,
@@ -44,7 +44,7 @@ class NotFoundPage extends StatelessWidget {
             const SizedBox(height: AppSpacing.s32),
             FilledButton(
               onPressed: () => context.go(AppRoutes.home),
-              child: const Text('Back home'),
+              child: Text(l10n.backHome),
             ),
             const SizedBox(height: AppSpacing.s64),
             Container(
@@ -58,7 +58,9 @@ class NotFoundPage extends StatelessWidget {
                   for (final d in navDestinations)
                     TextButton(
                       onPressed: () => context.go(d.path),
-                      child: Text('${d.label} →'),
+                      child: Text(
+                        '${d.localizedLabel(l10n)} ${directionalArrow(context)}',
+                      ),
                     ),
                 ],
               ),

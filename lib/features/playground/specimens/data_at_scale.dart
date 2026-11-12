@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:portfolio/core/theme/app_decorations.dart';
 import 'package:portfolio/core/theme/app_spacing.dart';
+import 'package:portfolio/l10n/app_localizations.dart';
 import 'package:portfolio/shared/demo/specimen_frame.dart';
 import 'package:portfolio/shared/layout/inspectable.dart';
 
@@ -23,6 +24,14 @@ const _first = [
 ];
 const _last = ['Lin', 'Haddad', 'Park', 'Khan', 'Diaz', 'Aziz', 'Berg', 'Noor'];
 const _states = ['Open', 'Paid', 'Late'];
+
+/// The rows keep English states as data; this is what the visitor reads.
+String _stateLabel(AppLocalizations l10n, String state) => switch (state) {
+  'Open' => l10n.dsOpen,
+  'Paid' => l10n.ocPaid,
+  'Late' => l10n.dsLate,
+  _ => l10n.dsAll,
+};
 
 /// Fake but stable: the same index is always the same row.
 List<_Row> _generate(int n) => [
@@ -148,35 +157,42 @@ class _DataAtScaleSpecimenState extends State<DataAtScaleSpecimen> {
       context,
     ).textTheme.labelMedium?.copyWith(color: deco.inkMute);
     final capped = !_virtual && _shown.length > _naiveCap;
+    final l10n = AppLocalizations.of(context);
 
     return SpecimenFrame(
       label: 'Specimen · Data at scale',
       onReset: _reset,
       readouts: [
         (
-          'rows built',
+          l10n.dsRowsBuilt,
           '${groupDigits(_built)} / ${groupDigits(_shown.length)}',
         ),
-        ('matching', '${groupDigits(_shown.length)} of ${groupDigits(_count)}'),
-        ('frame time', _ms == 0 ? '—' : '${_ms.toStringAsFixed(1)} ms'),
         (
-          'list',
+          l10n.dsMatching,
+          l10n.dsMatchingValue(groupDigits(_shown.length), groupDigits(_count)),
+        ),
+        (l10n.dsFrameTime, _ms == 0 ? '—' : '${_ms.toStringAsFixed(1)} ms'),
+        (
+          l10n.dsList,
           capped
-              ? 'naive, first 10,000'
+              ? l10n.dsNaiveCapped
               : _virtual
-              ? 'virtualized'
-              : 'naive',
+              ? l10n.dsVirtualized
+              : l10n.dsNaive,
         ),
       ],
       controls: [
         SpecChoice<bool>(
-          label: 'LIST',
+          label: l10n.dsList.toUpperCase(),
           value: _virtual,
-          options: const [(false, 'Naive'), (true, 'Virtualized')],
+          options: [
+            (false, capitalized(l10n.dsNaive)),
+            (true, capitalized(l10n.dsVirtualized)),
+          ],
           onChanged: (v) => _change(() => _virtual = v),
         ),
         SpecChoice<int>(
-          label: 'ROWS',
+          label: l10n.dsRows.toUpperCase(),
           value: _count,
           options: [
             for (final n in [1000, 10000, 50000]) (n, groupDigits(n)),
@@ -187,32 +203,32 @@ class _DataAtScaleSpecimenState extends State<DataAtScaleSpecimen> {
           }),
         ),
         SpecChoice<_Sort>(
-          label: 'SORT',
+          label: l10n.dsSort.toUpperCase(),
           value: _sort,
-          options: const [
+          options: [
             (_Sort.id, 'ID'),
-            (_Sort.name, 'Name'),
-            (_Sort.amount, 'Amount'),
+            (_Sort.name, l10n.name),
+            (_Sort.amount, l10n.dsAmount),
           ],
           onChanged: (s) => _change(() => _sort = s),
         ),
         SpecChoice<String>(
-          label: 'STATUS',
+          label: l10n.dsStatus.toUpperCase(),
           value: _status,
           options: [
-            for (final s in ['All', ..._states]) (s, s),
+            for (final s in ['All', ..._states]) (s, _stateLabel(l10n, s)),
           ],
           onChanged: (s) => _change(() => _status = s),
         ),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('SEARCH', style: mute),
+            Text(l10n.dsSearch.toUpperCase(), style: mute),
             const SizedBox(height: AppSpacing.s8),
             TextField(
               controller: _search,
               onChanged: (_) => _change(() {}),
-              decoration: const InputDecoration(hintText: 'Name or ID'),
+              decoration: InputDecoration(hintText: l10n.dsSearchHint),
             ),
           ],
         ),
@@ -222,9 +238,9 @@ class _DataAtScaleSpecimenState extends State<DataAtScaleSpecimen> {
         note:
             'Virtualized: ListView.builder with a fixed itemExtent builds '
             'only what is on screen. Naive: every row is built up front.',
-        source: 'lib/features/playground/specimens/data_at_scale.dart:220',
+        source: 'lib/features/playground/specimens/data_at_scale.dart:236',
         child: _shown.isEmpty
-            ? Center(child: Text('No rows match.', style: mute))
+            ? Center(child: Text(l10n.dsNoRows, style: mute))
             : _list,
       ),
     );
@@ -313,8 +329,12 @@ class _CellState extends State<_Cell> {
             ),
           ),
           SizedBox(
-            width: 52,
-            child: Text(r.status, style: mono, textAlign: TextAlign.end),
+            width: 60,
+            child: Text(
+              _stateLabel(AppLocalizations.of(context), r.status),
+              style: mono,
+              textAlign: TextAlign.end,
+            ),
           ),
         ],
       ),

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portfolio/core/state/developer_mode_provider.dart';
 import 'package:portfolio/core/theme/app_decorations.dart';
 import 'package:portfolio/core/theme/app_spacing.dart';
+import 'package:portfolio/l10n/app_localizations.dart';
 import 'package:portfolio/shared/layout/inspectable.dart';
 import 'package:portfolio/shared/widgets/spec_marks.dart';
 
@@ -26,13 +27,14 @@ class _LiveSpecimenState extends ConsumerState<LiveSpecimen> {
     final text = Theme.of(context).textTheme;
     final inspecting = ref.watch(developerModeProvider);
     final label = text.labelSmall!.copyWith(color: deco.inkMute);
+    final l10n = AppLocalizations.of(context);
 
     return Inspectable(
       label: 'LiveSpecimen',
       note:
           'A real button measured live: the slider sets its padding and '
           'the dimension marks follow the actual box.',
-      source: 'lib/features/landing/widgets/live_specimen.dart:30',
+      source: 'lib/features/landing/widgets/live_specimen.dart:32',
       tokens: const ['AppSpacing.s24', 'AppDecorations.inkMute', 'labelSmall'],
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -62,7 +64,7 @@ class _LiveSpecimenState extends ConsumerState<LiveSpecimen> {
                   onPressed: () =>
                       ref.read(developerModeProvider.notifier).toggle(),
                   child: Text(
-                    inspecting ? 'Stop inspecting' : 'Inspect this page',
+                    inspecting ? l10n.stopInspecting : l10n.inspectThisPage,
                   ),
                 ),
               ),
@@ -79,7 +81,8 @@ class _LiveSpecimenState extends ConsumerState<LiveSpecimen> {
                   max: 48,
                   divisions: 10,
                   label: _padding.round().toString(),
-                  semanticFormatterCallback: (v) => 'Padding ${v.round()}',
+                  semanticFormatterCallback: (v) =>
+                      l10n.paddingValue(v.round()),
                   onChanged: (v) => setState(() => _padding = v),
                 ),
               ),
@@ -93,10 +96,7 @@ class _LiveSpecimenState extends ConsumerState<LiveSpecimen> {
               ),
             ],
           ),
-          Text(
-            'Fig. 1 · A live FilledButton. Drag to change its padding.',
-            style: label,
-          ),
+          Text(l10n.liveSpecimenCaption, style: label),
         ],
       ),
     );

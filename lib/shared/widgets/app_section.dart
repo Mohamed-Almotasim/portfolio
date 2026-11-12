@@ -83,8 +83,8 @@ class AppSection extends StatelessWidget {
             if (lead != null) ...[
               const SizedBox(height: AppSpacing.s12),
               Padding(
-                padding: EdgeInsets.only(
-                  left: number == null
+                padding: EdgeInsetsDirectional.only(
+                  start: number == null
                       ? 0
                       : (width < AppBreakpoints.mobile ? 40 : 64),
                 ),
@@ -110,6 +110,10 @@ class AppSection extends StatelessWidget {
   }
 }
 
+/// "→", pointing the way the text reads; [back] points against it.
+String directionalArrow(BuildContext context, {bool back = false}) =>
+    (Directionality.of(context) == TextDirection.rtl) != back ? '←' : '→';
+
 /// A mono "View all →" style link for [AppSection.action] and elsewhere.
 class ArrowLink extends StatelessWidget {
   const ArrowLink({super.key, required this.label, required this.onPressed});
@@ -119,6 +123,9 @@ class ArrowLink extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextButton(onPressed: onPressed, child: Text('$label →'));
+    return TextButton(
+      onPressed: onPressed,
+      child: Text('$label ${directionalArrow(context)}'),
+    );
   }
 }

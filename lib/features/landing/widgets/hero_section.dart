@@ -7,6 +7,7 @@ import 'package:portfolio/core/theme/app_decorations.dart';
 import 'package:portfolio/core/theme/app_spacing.dart';
 import 'package:portfolio/core/theme/app_typography.dart';
 import 'package:portfolio/features/landing/widgets/live_specimen.dart';
+import 'package:portfolio/l10n/app_localizations.dart';
 import 'package:portfolio/shared/layout/inspectable.dart';
 import 'package:portfolio/shared/widgets/spec_marks.dart';
 
@@ -21,6 +22,7 @@ class HeroSection extends ConsumerWidget {
     final profile = ref.watch(profileProvider);
     final text = Theme.of(context).textTheme;
     final deco = AppDecorations.of(context);
+    final l10n = AppLocalizations.of(context);
 
     // Fluid display size; the measure (~9em, about 14 characters of this
     // wide face) keeps a short statement on two balanced lines.
@@ -34,7 +36,10 @@ class HeroSection extends ConsumerWidget {
             profile.tagline,
             style: text.displayLarge?.copyWith(
               fontSize: size,
-              letterSpacing: -0.03 * size,
+              // Arabic is a joined script: tracking would break the words.
+              letterSpacing: text.displayLarge?.letterSpacing == null
+                  ? null
+                  : -0.03 * size,
             ),
           ),
         ),
@@ -55,11 +60,11 @@ class HeroSection extends ConsumerWidget {
           children: [
             FilledButton(
               onPressed: () => context.go(AppRoutes.contact),
-              child: const Text('Start a project'),
+              child: Text(l10n.startProject),
             ),
             OutlinedButton(
               onPressed: () => context.go(AppRoutes.work),
-              child: const Text('See the work'),
+              child: Text(l10n.seeTheWork),
             ),
           ],
         ),
@@ -94,7 +99,7 @@ class HeroSection extends ConsumerWidget {
       note:
           'Ruler, one full-width statement, then pitch and specimen split '
           '5/6. Under 900 px they stack, so neither column gets squeezed.',
-      source: 'lib/features/landing/widgets/hero_section.dart:92',
+      source: 'lib/features/landing/widgets/hero_section.dart:97',
       tokens: const ['AppSpacing.s64', 'AppSpacing.s48', 'AppSpacing.s32'],
       child: LayoutBuilder(
         builder: (context, c) {
@@ -110,7 +115,7 @@ class HeroSection extends ConsumerWidget {
                     'Size is width / 7.6, clamped 36–88, with a 9.2em '
                     'measure: the tagline holds two balanced lines at any '
                     'width.',
-                source: 'lib/features/landing/widgets/hero_section.dart:107',
+                source: 'lib/features/landing/widgets/hero_section.dart:112',
                 tokens: const ['displayLarge', 'AppDecorations.typeScale'],
                 child: statement(c.maxWidth),
               ),

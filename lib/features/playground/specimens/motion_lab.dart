@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:portfolio/core/theme/app_decorations.dart';
 import 'package:portfolio/core/theme/app_spacing.dart';
+import 'package:portfolio/l10n/app_localizations.dart';
 import 'package:portfolio/shared/demo/specimen_frame.dart';
 import 'package:portfolio/shared/layout/inspectable.dart';
 
@@ -198,6 +199,12 @@ class _MotionLabSpecimenState extends State<MotionLabSpecimen>
     final mute = Theme.of(
       context,
     ).textTheme.labelMedium?.copyWith(color: deco.inkMute);
+    final l10n = AppLocalizations.of(context);
+    final modeName = switch (_mode) {
+      _Mode.origami => l10n.mlOrigami,
+      _Mode.magnetic => l10n.mlMagnetic,
+      _Mode.sheet => l10n.mlSheet,
+    }.toLowerCase();
 
     final Widget stage = switch (_mode) {
       _Mode.origami => GestureDetector(
@@ -208,7 +215,7 @@ class _MotionLabSpecimenState extends State<MotionLabSpecimen>
               'Twelve tiles, each a Transform with perspective, folding on '
               'its top edge. One progress value drives all of them with a '
               'stagger.',
-          source: 'lib/features/playground/specimens/motion_lab.dart:205',
+          source: 'lib/features/playground/specimens/motion_lab.dart:212',
           child: _Origami(progress: _fold),
         ),
       ),
@@ -232,7 +239,7 @@ class _MotionLabSpecimenState extends State<MotionLabSpecimen>
                     'A spring per dot, pulled toward the pointer inside a '
                     '110 px radius. The ticker runs only while something '
                     'moves.',
-                source: 'lib/features/playground/specimens/motion_lab.dart:229',
+                source: 'lib/features/playground/specimens/motion_lab.dart:236',
                 child: CustomPaint(
                   size: Size.infinite,
                   painter: _MagneticPainter(
@@ -260,11 +267,7 @@ class _MotionLabSpecimenState extends State<MotionLabSpecimen>
             children: [
               Padding(
                 padding: const EdgeInsets.all(AppSpacing.s16),
-                child: Text(
-                  'Map view\nDrag the sheet up and let go. It keeps the '
-                  'speed of your finger.',
-                  style: mute,
-                ),
+                child: Text(l10n.mlMapBlurb, style: mute),
               ),
               Positioned(
                 left: 0,
@@ -279,7 +282,7 @@ class _MotionLabSpecimenState extends State<MotionLabSpecimen>
                       'velocity feeds a spring toward the nearest of three '
                       'snap points.',
                   source:
-                      'lib/features/playground/specimens/motion_lab.dart:275',
+                      'lib/features/playground/specimens/motion_lab.dart:278',
                   child: GestureDetector(
                     onVerticalDragStart: (_) {
                       _dragging = true;
@@ -331,10 +334,10 @@ class _MotionLabSpecimenState extends State<MotionLabSpecimen>
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     for (final p in [
-                                      'Harbour Cafe · 120 m',
-                                      'Old Library · 300 m',
-                                      'Central Market · 450 m',
-                                      'Riverside Park · 800 m',
+                                      l10n.mlPlace1,
+                                      l10n.mlPlace2,
+                                      l10n.mlPlace3,
+                                      l10n.mlPlace4,
                                     ])
                                       Padding(
                                         padding: const EdgeInsets.only(
@@ -363,24 +366,24 @@ class _MotionLabSpecimenState extends State<MotionLabSpecimen>
       label: 'Specimen · Motion lab',
       onReset: _reset,
       readouts: [
-        ('mode', _mode.name),
-        ('state', _moving ? 'moving' : 'settled'),
+        (l10n.mlMode, modeName),
+        (l10n.mlState, _moving ? l10n.mlMoving : l10n.mlSettled),
         (
-          _mode == _Mode.origami ? 'progress' : 'peak speed',
+          _mode == _Mode.origami ? l10n.mlProgress : l10n.mlPeakSpeed,
           _mode == _Mode.origami
               ? '${(_fold * 100).round()}%'
               : '${groupDigits(_speed)} px/s',
         ),
-        ('last settle', '${groupDigits(_settleMs)} ms'),
+        (l10n.mlLastSettle, '${groupDigits(_settleMs)} ms'),
       ],
       controls: [
         SpecChoice<_Mode>(
-          label: 'STUDY',
+          label: l10n.mlStudy.toUpperCase(),
           value: _mode,
-          options: const [
-            (_Mode.origami, 'Origami'),
-            (_Mode.magnetic, 'Magnetic'),
-            (_Mode.sheet, 'Sheet'),
+          options: [
+            (_Mode.origami, l10n.mlOrigami),
+            (_Mode.magnetic, l10n.mlMagnetic),
+            (_Mode.sheet, l10n.mlSheet),
           ],
           onChanged: (m) {
             _ticker.stop();
@@ -393,14 +396,14 @@ class _MotionLabSpecimenState extends State<MotionLabSpecimen>
         ),
         if (_mode != _Mode.origami) ...[
           SpecSlider(
-            label: 'STIFFNESS',
+            label: l10n.mlStiffness.toUpperCase(),
             value: _stiffness,
             min: 50,
             max: 600,
             onChanged: (v) => setState(() => _stiffness = v),
           ),
           SpecSlider(
-            label: 'DAMPING',
+            label: l10n.mlDamping.toUpperCase(),
             value: _damping,
             min: 4,
             max: 60,
@@ -408,7 +411,7 @@ class _MotionLabSpecimenState extends State<MotionLabSpecimen>
           ),
         ] else ...[
           SpecSlider(
-            label: 'DURATION',
+            label: l10n.mlDuration.toUpperCase(),
             value: _durationMs,
             min: 200,
             max: 2000,
@@ -417,12 +420,12 @@ class _MotionLabSpecimenState extends State<MotionLabSpecimen>
           ),
           OutlinedButton(
             onPressed: _toFold,
-            child: Text(_foldTarget ? 'Unfold' : 'Fold'),
+            child: Text(_foldTarget ? l10n.mlUnfold : l10n.mlFold),
           ),
         ],
         if (_mode == _Mode.magnetic)
           SpecSwitch(
-            label: 'REPEL INSTEAD OF PULL',
+            label: l10n.mlRepel.toUpperCase(),
             value: _repel,
             onChanged: (v) => setState(() => _repel = v),
           ),
@@ -432,21 +435,21 @@ class _MotionLabSpecimenState extends State<MotionLabSpecimen>
             children: [
               OutlinedButton(
                 onPressed: () => _sheetTo(_snaps.last),
-                child: const Text('Open'),
+                child: Text(l10n.mlOpen),
               ),
               OutlinedButton(
                 onPressed: () => _sheetTo(_snaps.first),
-                child: const Text('Close'),
+                child: Text(l10n.mlClose),
               ),
             ],
           ),
         SpecSwitch(
-          label: 'SLOW MOTION (÷4)',
+          label: l10n.mlSlowMotion.toUpperCase(),
           value: _slow,
           onChanged: (v) => setState(() => _slow = v),
         ),
       ],
-      demo: Semantics(label: 'Motion study: ${_mode.name}', child: stage),
+      demo: Semantics(label: l10n.mlMotionStudy(modeName), child: stage),
     );
   }
 }

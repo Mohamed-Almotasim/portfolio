@@ -6,39 +6,46 @@ import 'package:portfolio/core/theme/app_typography.dart';
 import 'package:portfolio/core/theme/theme_tokens.dart';
 
 abstract final class AppTheme {
-  // Built once per (brightness, compact): app.dart asks again on every resize.
-  static final _cache = <(Brightness, bool), ThemeData>{};
+  // Built once per (brightness, compact, arabic): app.dart asks again on
+  // every resize.
+  static final _cache = <(Brightness, bool, bool), ThemeData>{};
 
-  /// [compact] shrinks display/headline sizes for mobile widths. [tokens]
-  /// are the inspector's live overrides; those themes aren't cached.
+  /// [compact] shrinks display/headline sizes for mobile widths. [arabic]
+  /// swaps in the Arabic type. [tokens] are the inspector's live overrides;
+  /// those themes aren't cached.
   static ThemeData light({
     bool compact = false,
+    bool arabic = false,
     ThemeTokens tokens = const ThemeTokens(),
   }) => tokens.isDefault
-      ? _cache[(Brightness.light, compact)] ??= _build(
+      ? _cache[(Brightness.light, compact, arabic)] ??= _build(
           AppColors.light,
           AppDecorations.light,
           compact,
+          arabic,
           tokens,
         )
-      : _build(AppColors.light, AppDecorations.light, compact, tokens);
+      : _build(AppColors.light, AppDecorations.light, compact, arabic, tokens);
 
   static ThemeData dark({
     bool compact = false,
+    bool arabic = false,
     ThemeTokens tokens = const ThemeTokens(),
   }) => tokens.isDefault
-      ? _cache[(Brightness.dark, compact)] ??= _build(
+      ? _cache[(Brightness.dark, compact, arabic)] ??= _build(
           AppColors.dark,
           AppDecorations.dark,
           compact,
+          arabic,
           tokens,
         )
-      : _build(AppColors.dark, AppDecorations.dark, compact, tokens);
+      : _build(AppColors.dark, AppDecorations.dark, compact, arabic, tokens);
 
   static ThemeData _build(
     ColorScheme scheme,
     AppDecorations deco,
     bool compact,
+    bool arabic,
     ThemeTokens t,
   ) {
     final a = t.accent.colors(scheme.brightness);
@@ -50,7 +57,7 @@ abstract final class AppTheme {
       space: t.space,
       typeScale: t.typeScale,
     );
-    final base = AppTypography.textTheme(s, compact: compact);
+    final base = AppTypography.textTheme(s, compact: compact, arabic: arabic);
     final text = t.typeScale == 1
         ? base
         : base.apply(fontSizeFactor: t.typeScale);

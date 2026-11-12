@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portfolio/core/state/theme_mode_provider.dart';
+import 'package:portfolio/l10n/app_localizations.dart';
 
 class ThemeToggleButton extends ConsumerWidget {
   const ThemeToggleButton({super.key});
@@ -9,8 +10,9 @@ class ThemeToggleButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final brightness = Theme.of(context).brightness;
     final isDark = brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context);
     return IconButton(
-      tooltip: isDark ? 'Switch to light theme' : 'Switch to dark theme',
+      tooltip: isDark ? l10n.themeToLight : l10n.themeToDark,
       onPressed: () => ref.read(themeModeProvider.notifier).toggle(brightness),
       icon: AnimatedSwitcher(
         duration: const Duration(milliseconds: 250),

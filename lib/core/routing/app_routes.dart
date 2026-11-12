@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:portfolio/l10n/app_localizations.dart';
 
 abstract final class AppRoutes {
   static const home = '/';
@@ -27,9 +28,18 @@ class NavDestination {
     required this.icon,
   });
 
+  /// English; widgets show [localizedLabel].
   final String label;
   final String path;
   final IconData icon;
+
+  String localizedLabel(AppLocalizations l10n) => switch (path) {
+    AppRoutes.work => l10n.navWork,
+    AppRoutes.playground => l10n.navPlayground,
+    AppRoutes.about => l10n.navAbout,
+    AppRoutes.contact => l10n.navContact,
+    _ => label,
+  };
 }
 
 /// Single source for the navbar, drawer and footer links, in display order.

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:portfolio/core/theme/app_decorations.dart';
 import 'package:portfolio/core/theme/app_spacing.dart';
+import 'package:portfolio/l10n/app_localizations.dart';
 import 'package:portfolio/shared/demo/specimen_frame.dart';
 import 'package:portfolio/shared/layout/inspectable.dart';
 
@@ -8,16 +9,44 @@ enum _Role { admin, staff, customer }
 
 /// Every permission the screen asks about, with its public name.
 enum _Perm {
-  viewAll('orders.view_all', 'Admin or Staff'),
-  edit('orders.edit', 'Admin or Staff'),
-  refund('orders.refund', 'Admin'),
-  export('orders.export', 'Admin'),
-  cancelOwn('orders.cancel_own', 'Customer');
+  viewAll('orders.view_all'),
+  edit('orders.edit'),
+  refund('orders.refund'),
+  export('orders.export'),
+  cancelOwn('orders.cancel_own');
 
-  const _Perm(this.key, this.needs);
+  const _Perm(this.key);
   final String key;
-  final String needs;
+
+  /// Who holds it, in words.
+  String needs(AppLocalizations l10n) => switch (this) {
+    viewAll || edit => l10n.rbAdminOrStaff,
+    refund || export => l10n.rbAdmin,
+    cancelOwn => l10n.rbCustomer,
+  };
 }
+
+String _roleLabel(AppLocalizations l10n, _Role role) => switch (role) {
+  _Role.admin => l10n.rbAdmin,
+  _Role.staff => l10n.rbStaff,
+  _Role.customer => l10n.rbCustomer,
+};
+
+/// Orders keep English items and statuses as data; this is what is shown.
+String _shown(AppLocalizations l10n, String value) => switch (value) {
+  'Oak desk' => l10n.ocOakDesk,
+  'Wool rug' => l10n.ocWoolRug,
+  'Desk lamp' => l10n.ocDeskLamp,
+  'Bookshelf' => l10n.ocBookshelf,
+  'Side table' => l10n.ocSideTable,
+  'Floor lamp' => l10n.ocFloorLamp,
+  'Paid' => l10n.ocPaid,
+  'Packing' => l10n.ocPacking,
+  'Shipped' => l10n.ocShipped,
+  'Refunded' => l10n.rbRefunded,
+  'Cancelled' => l10n.rbCancelled,
+  _ => value,
+};
 
 /// One table decides everything. The UI only ever asks `_can`.
 const _grants = {
@@ -60,7 +89,9 @@ class _RoleBasedUiSpecimenState extends State<RoleBasedUiSpecimen> {
   _Role _role = _Role.admin;
   var _orders = _seed();
   int _selected = 0;
-  String _last = 'none yet';
+  // The last permission asked and its answer, worded at build time so it
+  // follows the language.
+  (_Perm, bool)? _last;
 
   List<_Order> get _visible => _can(_role, _Perm.viewAll)
       ? _orders
@@ -70,19 +101,16 @@ class _RoleBasedUiSpecimenState extends State<RoleBasedUiSpecimen> {
     _role = _Role.admin;
     _orders = _seed();
     _selected = 0;
-    _last = 'none yet';
+    _last = null;
   });
 
   /// Runs [action] if the role may, otherwise records why not.
   void _try(_Perm perm, void Function(_Order o) action) {
     final order = _visible[_selected.clamp(0, _visible.length - 1)];
     setState(() {
-      if (_can(_role, perm)) {
-        action(order);
-        _last = 'allowed ${perm.key}';
-      } else {
-        _last = 'denied ${perm.key} (needs ${perm.needs})';
-      }
+      final ok = _can(_role, perm);
+      if (ok) action(order);
+      _last = (perm, ok);
     });
   }
 
@@ -94,6 +122,7 @@ class _RoleBasedUiSpecimenState extends State<RoleBasedUiSpecimen> {
     final text = Theme.of(context).textTheme;
     final mute = text.labelMedium?.copyWith(color: deco.inkMute);
     final sel = visible[_selected.clamp(0, visible.length - 1)];
+    final l10n = AppLocalizations.of(context);
 
     Widget action(String label, _Perm perm, void Function(_Order) run) {
       final ok = _can(_role, perm);
@@ -114,7 +143,10 @@ class _RoleBasedUiSpecimenState extends State<RoleBasedUiSpecimen> {
           ),
           Padding(
             padding: const EdgeInsets.only(top: AppSpacing.s4),
-            child: Text(ok ? perm.key : 'Needs ${perm.needs}', style: mute),
+            child: Text(
+              ok ? perm.key : l10n.rbNeeds(perm.needs(l10n)),
+              style: mute,
+            ),
           ),
         ],
       );
@@ -124,19 +156,23 @@ class _RoleBasedUiSpecimenState extends State<RoleBasedUiSpecimen> {
       label: 'Specimen · Role-based UI',
       onReset: _reset,
       readouts: [
-        ('role', _role.name),
-        ('rows visible', '${visible.length} / ${_orders.length}'),
-        ('actions allowed', '$allowed / ${_Perm.values.length}'),
-        ('last check', _last),
+        (l10n.role.toLowerCase(), _roleLabel(l10n, _role).toLowerCase()),
+        (l10n.rbRowsVisible, '${visible.length} / ${_orders.length}'),
+        (l10n.rbActionsAllowed, '$allowed / ${_Perm.values.length}'),
+        (
+          l10n.rbLastCheck,
+          switch (_last) {
+            null => l10n.rbNoneYet,
+            (final p, true) => l10n.rbAllowed(p.key),
+            (final p, false) => l10n.rbDenied(p.key, p.needs(l10n)),
+          },
+        ),
       ],
       controls: [
         SpecChoice<_Role>(
-          label: 'ROLE',
+          label: l10n.role.toUpperCase(),
           value: _role,
-          options: [
-            for (final r in _Role.values)
-              (r, r.name[0].toUpperCase() + r.name.substring(1)),
-          ],
+          options: [for (final r in _Role.values) (r, _roleLabel(l10n, r))],
           onChanged: (r) => setState(() {
             _role = r;
             _selected = 0;
@@ -144,8 +180,8 @@ class _RoleBasedUiSpecimenState extends State<RoleBasedUiSpecimen> {
         ),
         Text(
           _role == _Role.customer
-              ? 'Signed in as $_me.'
-              : 'Signed in as a ${_role.name} account.',
+              ? l10n.rbSignedInAsMe(_me)
+              : l10n.rbSignedInAsRole(_roleLabel(l10n, _role).toLowerCase()),
           style: mute,
         ),
       ],
@@ -155,7 +191,7 @@ class _RoleBasedUiSpecimenState extends State<RoleBasedUiSpecimen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              _can(_role, _Perm.viewAll) ? 'All orders' : 'Your orders',
+              _can(_role, _Perm.viewAll) ? l10n.rbAllOrders : l10n.rbYourOrders,
               style: text.titleMedium,
             ),
             const SizedBox(height: AppSpacing.s8),
@@ -167,7 +203,7 @@ class _RoleBasedUiSpecimenState extends State<RoleBasedUiSpecimen> {
                     'full list with rows hidden. Data they may not see never '
                     'reaches the widget.',
                 source:
-                    'lib/features/playground/specimens/role_based_ui.dart:163',
+                    'lib/features/playground/specimens/role_based_ui.dart:199',
                 child: ListView.builder(
                   itemCount: visible.length,
                   itemBuilder: (context, i) {
@@ -185,9 +221,9 @@ class _RoleBasedUiSpecimenState extends State<RoleBasedUiSpecimen> {
                           color: on
                               ? Theme.of(context).colorScheme.surfaceContainer
                               : null,
-                          border: Border(
+                          border: BorderDirectional(
                             bottom: BorderSide(color: deco.rule),
-                            left: BorderSide(
+                            start: BorderSide(
                               color: on ? deco.accent : Colors.transparent,
                               width: 3,
                             ),
@@ -198,12 +234,13 @@ class _RoleBasedUiSpecimenState extends State<RoleBasedUiSpecimen> {
                             SizedBox(width: 56, child: Text(o.id, style: mute)),
                             Expanded(
                               child: Text(
-                                '${o.item} · ${o.owner}',
+                                '${_shown(l10n, o.item)} · ${o.owner}',
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
                             Text(
-                              '\$${groupDigits(o.amount)}  ${o.status}',
+                              '\$${groupDigits(o.amount)}  '
+                              '${_shown(l10n, o.status)}',
                               style: text.labelMedium,
                             ),
                           ],
@@ -215,7 +252,7 @@ class _RoleBasedUiSpecimenState extends State<RoleBasedUiSpecimen> {
               ),
             ),
             const SizedBox(height: AppSpacing.s12),
-            Text('${sel.id} · ${sel.item}', style: mute),
+            Text('${sel.id} · ${_shown(l10n, sel.item)}', style: mute),
             const SizedBox(height: AppSpacing.s8),
             Inspectable(
               label: 'ActionBar',
@@ -223,20 +260,24 @@ class _RoleBasedUiSpecimenState extends State<RoleBasedUiSpecimen> {
                   'Each button asks _can(role, permission). Locked ones stay '
                   'visible, say what they need, and explain when pressed.',
               source:
-                  'lib/features/playground/specimens/role_based_ui.dart:220',
+                  'lib/features/playground/specimens/role_based_ui.dart:257',
               child: Wrap(
                 spacing: AppSpacing.s16,
                 runSpacing: AppSpacing.s12,
                 children: [
-                  action('Advance status', _Perm.edit, (o) {
+                  action(l10n.rbAdvance, _Perm.edit, (o) {
                     final next =
                         (_statuses.indexOf(o.status) + 1) % _statuses.length;
                     o.status = _statuses[next];
                   }),
-                  action('Refund', _Perm.refund, (o) => o.status = 'Refunded'),
-                  action('Export CSV', _Perm.export, (_) {}),
                   action(
-                    'Cancel mine',
+                    l10n.rbRefund,
+                    _Perm.refund,
+                    (o) => o.status = 'Refunded',
+                  ),
+                  action(l10n.rbExport, _Perm.export, (_) {}),
+                  action(
+                    l10n.rbCancelMine,
                     _Perm.cancelOwn,
                     (o) => o.status = 'Cancelled',
                   ),

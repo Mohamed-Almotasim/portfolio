@@ -1,18 +1,24 @@
 import 'package:web/web.dart' as web;
 
-const _key = 'themeMode';
-
 // localStorage throws when the browser blocks site data; then just don't remember.
-String? readStoredThemeMode() {
+String? _read(String key) {
   try {
-    return web.window.localStorage.getItem(_key);
+    return web.window.localStorage.getItem(key);
   } catch (_) {
     return null;
   }
 }
 
-void writeStoredThemeMode(String value) {
+void _write(String key, String value) {
   try {
-    web.window.localStorage.setItem(_key, value);
+    web.window.localStorage.setItem(key, value);
   } catch (_) {}
 }
+
+String? readStoredThemeMode() => _read('themeMode');
+
+void writeStoredThemeMode(String value) => _write('themeMode', value);
+
+String? readStoredLocale() => _read('locale');
+
+void writeStoredLocale(String value) => _write('locale', value);

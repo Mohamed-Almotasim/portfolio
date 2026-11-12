@@ -12,8 +12,10 @@ import 'package:portfolio/features/playground/specimens/offline_sync.dart';
 import 'package:portfolio/features/playground/specimens/one_codebase.dart';
 import 'package:portfolio/features/playground/specimens/role_based_ui.dart';
 import 'package:portfolio/features/playground/specimens/rtl_localization.dart';
+import 'package:portfolio/l10n/app_localizations.dart';
 import 'package:portfolio/shared/layout/app_page.dart';
 import 'package:portfolio/shared/layout/inspectable.dart';
+import 'package:portfolio/shared/widgets/app_section.dart';
 
 /// The live widget for each [SpecimenInfo.slug].
 const specimenBuilders = <String, Widget Function()>{
@@ -34,9 +36,11 @@ class SpecimenPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final specimens = specimensOf(context);
     final i = specimens.indexWhere((s) => s.slug == slug);
     if (i < 0) return NotFoundPage(path: AppRoutes.specimen(slug));
     final info = specimens[i];
+    final l10n = AppLocalizations.of(context);
     final text = Theme.of(context).textTheme;
     final deco = AppDecorations.of(context);
     final mute = text.labelMedium?.copyWith(color: deco.inkMute);
@@ -59,7 +63,7 @@ class SpecimenPage extends StatelessWidget {
     );
 
     final tryThis = block(
-      'TRY THIS',
+      l10n.spTryThis,
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -78,7 +82,7 @@ class SpecimenPage extends StatelessWidget {
       ),
     );
     final hard = block(
-      "WHY IT'S HARD",
+      l10n.spWhyHard,
       Text(info.whyHard, style: text.bodyMedium),
     );
 
@@ -90,7 +94,9 @@ class SpecimenPage extends StatelessWidget {
           TextButton(
             onPressed: () => context.go(AppRoutes.playground),
             style: TextButton.styleFrom(padding: EdgeInsets.zero),
-            child: const Text('← Playground'),
+            child: Text(
+              '${directionalArrow(context, back: true)} ${l10n.navPlayground}',
+            ),
           ),
           const SizedBox(height: AppSpacing.s24),
           Semantics(
@@ -116,7 +122,7 @@ class SpecimenPage extends StatelessWidget {
             builder: (context, c) => Inspectable(
               label: 'TryAndWhy',
               note: 'Two short blocks: what to do, and why it is hard.',
-              source: 'lib/features/playground/specimen_page.dart:116',
+              source: 'lib/features/playground/specimen_page.dart:122',
               child: c.maxWidth < 720
                   ? Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -152,6 +158,7 @@ class _Neighbours extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final deco = AppDecorations.of(context);
+    final specimens = specimensOf(context);
     final prev = index > 0 ? specimens[index - 1] : null;
     final next = index < specimens.length - 1 ? specimens[index + 1] : null;
 
@@ -159,7 +166,11 @@ class _Neighbours extends StatelessWidget {
       if (s == null) return const SizedBox.shrink();
       return TextButton(
         onPressed: () => context.go(AppRoutes.specimen(s.slug)),
-        child: Text(back ? '← ${s.name}' : '${s.name} →'),
+        child: Text(
+          back
+              ? '${directionalArrow(context, back: true)} ${s.name}'
+              : '${s.name} ${directionalArrow(context)}',
+        ),
       );
     }
 

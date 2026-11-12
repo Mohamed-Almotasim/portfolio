@@ -9,12 +9,15 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   flutter_riverpod: 3.4.3
   flutter_web_plugins:
     sdk: flutter
   go_router: 18.1.2
   google_fonts: ^9.0.0
   http: 1.6.0
+  intl: any
   url_launcher: 6.3.3
   video_player: ^2.14.1
   web: 1.1.2
@@ -26,6 +29,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  generate: true
   assets:
     - assets/images/
     - assets/projects/

@@ -5,6 +5,7 @@ import 'package:portfolio/core/theme/app_decorations.dart';
 import 'package:portfolio/core/theme/app_spacing.dart';
 import 'package:portfolio/core/theme/app_typography.dart';
 import 'package:portfolio/features/playground/specimen_info.dart';
+import 'package:portfolio/l10n/app_localizations.dart';
 import 'package:portfolio/shared/layout/app_page.dart';
 import 'package:portfolio/shared/layout/inspectable.dart';
 
@@ -17,6 +18,7 @@ class PlaygroundPage extends StatelessWidget {
     final text = Theme.of(context).textTheme;
     final deco = AppDecorations.of(context);
     final head = text.labelSmall?.copyWith(color: deco.inkMute);
+    final l10n = AppLocalizations.of(context);
 
     return AppPage(
       child: Column(
@@ -25,16 +27,12 @@ class PlaygroundPage extends StatelessWidget {
           const SizedBox(height: AppSpacing.s48),
           Semantics(
             header: true,
-            child: Text('Playground', style: text.displayLarge),
+            child: Text(l10n.navPlayground, style: text.displayLarge),
           ),
           const SizedBox(height: AppSpacing.s16),
           ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 640),
-            child: Text(
-              'Experiments, each proving one thing. Turn the knobs, '
-              'break things and watch the app cope.',
-              style: AppTypography.lead(context),
-            ),
+            child: Text(l10n.pgLead, style: AppTypography.lead(context)),
           ),
           const SizedBox(height: AppSpacing.s48),
           LayoutBuilder(
@@ -45,7 +43,7 @@ class PlaygroundPage extends StatelessWidget {
                 note:
                     'Same table as Work: a strong rule under the header, '
                     'hairlines between rows. Under 720 px the tags fold away.',
-                source: 'lib/features/playground/playground_page.dart:43',
+                source: 'lib/features/playground/playground_page.dart:41',
                 tokens: const [
                   'AppDecorations.ruleStrong',
                   'AppDecorations.rule',
@@ -65,16 +63,19 @@ class PlaygroundPage extends StatelessWidget {
                       ),
                       child: ExcludeSemantics(
                         child: compact
-                            ? Text('No. · Specimen', style: head)
+                            ? Text(
+                                '${l10n.colNo} · ${l10n.pgColSpecimen}',
+                                style: head,
+                              )
                             : _Cells(
-                                no: Text('No.', style: head),
-                                name: Text('Specimen', style: head),
-                                proves: Text('What it proves', style: head),
-                                tags: Text('Tags', style: head),
+                                no: Text(l10n.colNo, style: head),
+                                name: Text(l10n.pgColSpecimen, style: head),
+                                proves: Text(l10n.pgColProves, style: head),
+                                tags: Text(l10n.pgColTags, style: head),
                               ),
                       ),
                     ),
-                    for (final (i, s) in specimens.indexed)
+                    for (final (i, s) in specimensOf(context).indexed)
                       _Row(number: i + 1, info: s, compact: compact),
                   ],
                 ),
@@ -176,11 +177,15 @@ class _RowState extends State<_Row> {
               : _Cells(
                   no: no,
                   name: Padding(
-                    padding: const EdgeInsets.only(right: AppSpacing.s16),
+                    padding: const EdgeInsetsDirectional.only(
+                      end: AppSpacing.s16,
+                    ),
                     child: Text(s.name, style: text.titleMedium),
                   ),
                   proves: Padding(
-                    padding: const EdgeInsets.only(right: AppSpacing.s16),
+                    padding: const EdgeInsetsDirectional.only(
+                      end: AppSpacing.s16,
+                    ),
                     child: Text(s.claim, style: text.bodyMedium),
                   ),
                   tags: Text(

@@ -1,6 +1,6 @@
 // Renders routes to PNG in dark and light, for docs and visual checks. Opt-in:
 //   SHOT_DIR=out SHOT_PATHS="/,/work" SHOT_W=1280 SHOT_H=900 [SHOT_DEV=1] \
-//     [SHOT_HOVER=x,y] [SHOT_SELECT=x,y] \
+//     [SHOT_HOVER=x,y] [SHOT_SELECT=x,y] [SHOT_LOCALE=ar] \
 //     flutter test test/tool/screenshots_test.dart
 import 'dart:io';
 import 'dart:ui' as ui;
@@ -14,6 +14,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:portfolio/app.dart';
 import 'package:portfolio/core/routing/app_router.dart';
 import 'package:portfolio/core/state/developer_mode_provider.dart';
+import 'package:portfolio/core/state/locale_provider.dart';
 import 'package:portfolio/core/state/theme_mode_provider.dart';
 import 'package:portfolio/core/theme/app_typography.dart';
 
@@ -26,6 +27,11 @@ class _Dev extends DeveloperModeNotifier {
 class _Dark extends ThemeModeNotifier {
   @override
   ThemeMode build() => ThemeMode.dark;
+}
+
+class _Arabic extends LocaleNotifier {
+  @override
+  Locale build() => const Locale('ar');
 }
 
 class _Light extends ThemeModeNotifier {
@@ -74,6 +80,8 @@ void main() {
                 themeModeProvider.overrideWith(light ? _Light.new : _Dark.new),
                 if (Platform.environment['SHOT_DEV'] != null)
                   developerModeProvider.overrideWith(_Dev.new),
+                if (Platform.environment['SHOT_LOCALE'] == 'ar')
+                  localeProvider.overrideWith(_Arabic.new),
               ],
               child: const PortfolioApp(),
             ),

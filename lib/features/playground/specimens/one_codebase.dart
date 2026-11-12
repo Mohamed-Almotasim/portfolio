@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:portfolio/core/theme/app_decorations.dart';
 import 'package:portfolio/core/theme/app_spacing.dart';
+import 'package:portfolio/l10n/app_localizations.dart';
 import 'package:portfolio/shared/demo/specimen_frame.dart';
 import 'package:portfolio/shared/layout/inspectable.dart';
 
@@ -46,27 +47,39 @@ class _OneCodebaseSpecimenState extends State<OneCodebaseSpecimen> {
   @override
   Widget build(BuildContext context) {
     final cls = _classOf(_width);
+    final l10n = AppLocalizations.of(context);
+    String className(_SizeClass c) => switch (c) {
+      _SizeClass.phone => l10n.ocPhone,
+      _SizeClass.tablet => l10n.ocTablet,
+      _SizeClass.desktop => l10n.ocDesktop,
+    };
     return SpecimenFrame(
       label: 'Specimen · One codebase',
       onReset: _reset,
       readouts: [
-        ('width', '${_width.round()} px'),
-        ('size class', cls.name),
-        ('selected', _selected == null ? 'none' : _orders[_selected!].$1),
-        ('layout', cls == _SizeClass.desktop ? 'list + detail' : 'one pane'),
+        (l10n.ocWidth, '${_width.round()} px'),
+        (l10n.ocSizeClass, className(cls)),
+        (
+          l10n.ocSelected,
+          _selected == null ? l10n.ocNone : _orders(l10n)[_selected!].$1,
+        ),
+        (
+          l10n.ocLayout,
+          cls == _SizeClass.desktop ? l10n.ocListDetail : l10n.ocOnePane,
+        ),
       ],
       controls: [
         SpecChoice<_SizeClass>(
-          label: 'SIZE CLASS',
+          label: l10n.ocSizeClass.toUpperCase(),
           value: cls,
           options: [
             for (final c in _SizeClass.values)
-              (c, c.name[0].toUpperCase() + c.name.substring(1)),
+              (c, className(c)[0].toUpperCase() + className(c).substring(1)),
           ],
           onChanged: (c) => setState(() => _width = _presets[c]!),
         ),
         SpecSlider(
-          label: 'WIDTH',
+          label: l10n.ocWidth.toUpperCase(),
           value: _width,
           min: _min,
           max: _max,
@@ -81,12 +94,12 @@ class _OneCodebaseSpecimenState extends State<OneCodebaseSpecimen> {
           return Padding(
             padding: const EdgeInsets.all(AppSpacing.s16),
             child: Align(
-              alignment: Alignment.topLeft,
+              alignment: AlignmentDirectional.topStart,
               // FittedBox, not Transform.scale: the child must lay out at its
               // real width, which Transform would clamp to the well (overflow).
               child: FittedBox(
                 fit: BoxFit.scaleDown,
-                alignment: Alignment.topLeft,
+                alignment: AlignmentDirectional.topStart,
                 child: SizedBox(
                   width: _width + handle,
                   height: (c.maxHeight - 32) / scale,
@@ -108,8 +121,15 @@ class _OneCodebaseSpecimenState extends State<OneCodebaseSpecimen> {
                       ),
                       _Handle(
                         onDrag: (dx) => setState(
-                          () =>
-                              _width = (_width + dx / scale).clamp(_min, _max),
+                          // The handle is on the app's end edge: left in RTL.
+                          () => _width =
+                              (_width +
+                                      (Directionality.of(context) ==
+                                                  TextDirection.rtl
+                                              ? -dx
+                                              : dx) /
+                                          scale)
+                                  .clamp(_min, _max),
                         ),
                       ),
                     ],
@@ -209,15 +229,15 @@ class _MiniApp extends StatelessWidget {
   final ValueChanged<int> onSelect;
   final VoidCallback onBack;
 
-  static const _tabs = [
-    (Icons.inbox_outlined, 'Orders'),
-    (Icons.local_shipping_outlined, 'Shipping'),
-    (Icons.settings_outlined, 'Settings'),
-  ];
-
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context);
+    final tabs = [
+      (Icons.inbox_outlined, l10n.ocOrders),
+      (Icons.local_shipping_outlined, l10n.ocShipping),
+      (Icons.settings_outlined, l10n.ocSettings),
+    ];
     return LayoutBuilder(
       builder: (context, c) {
         final wide = c.maxWidth >= 1024;
@@ -228,7 +248,7 @@ class _MiniApp extends StatelessWidget {
         );
         final Widget body;
         if (tab != 0) {
-          body = _OtherTab(name: _tabs[tab].$2);
+          body = _OtherTab(name: tabs[tab].$2, shipping: tab == 1);
         } else if (wide) {
           body = Row(
             children: [
@@ -247,7 +267,7 @@ class _MiniApp extends StatelessWidget {
             note:
                 'Under 600 px: one pane and a bottom NavigationBar. The same '
                 'list and detail widgets as on desktop.',
-            source: 'lib/features/playground/specimens/one_codebase.dart:245',
+            source: 'lib/features/playground/specimens/one_codebase.dart:265',
             child: Material(
               color: scheme.surface,
               child: Column(
@@ -258,7 +278,7 @@ class _MiniApp extends StatelessWidget {
                     selectedIndex: tab,
                     onDestinationSelected: onTab,
                     destinations: [
-                      for (final (icon, label) in _tabs)
+                      for (final (icon, label) in tabs)
                         NavigationDestination(icon: Icon(icon), label: label),
                     ],
                   ),
@@ -273,7 +293,7 @@ class _MiniApp extends StatelessWidget {
               ? 'From 1024 px: a NavigationRail, and the list and the detail '
                     'side by side.'
               : '600 to 1023 px: a NavigationRail and one pane at a time.',
-          source: 'lib/features/playground/specimens/one_codebase.dart:270',
+          source: 'lib/features/playground/specimens/one_codebase.dart:290',
           child: Material(
             color: scheme.surface,
             child: Row(
@@ -283,7 +303,7 @@ class _MiniApp extends StatelessWidget {
                   onDestinationSelected: onTab,
                   labelType: NavigationRailLabelType.all,
                   destinations: [
-                    for (final (icon, label) in _tabs)
+                    for (final (icon, label) in tabs)
                       NavigationRailDestination(
                         icon: Icon(icon),
                         label: Text(label),
@@ -301,19 +321,20 @@ class _MiniApp extends StatelessWidget {
   }
 }
 
-const _orders = [
-  ('#1042', 'Oak desk', 'Shipped'),
-  ('#1043', 'Wool rug', 'Packing'),
-  ('#1044', 'Desk lamp', 'Paid'),
-  ('#1045', 'Bookshelf', 'Shipped'),
-  ('#1046', 'Side table', 'Paid'),
-  ('#1047', 'Floor lamp', 'Packing'),
+List<(String, String, String)> _orders(AppLocalizations l10n) => [
+  ('#1042', l10n.ocOakDesk, l10n.ocShipped),
+  ('#1043', l10n.ocWoolRug, l10n.ocPacking),
+  ('#1044', l10n.ocDeskLamp, l10n.ocPaid),
+  ('#1045', l10n.ocBookshelf, l10n.ocShipped),
+  ('#1046', l10n.ocSideTable, l10n.ocPaid),
+  ('#1047', l10n.ocFloorLamp, l10n.ocPacking),
 ];
 
 class _OtherTab extends StatelessWidget {
-  const _OtherTab({required this.name});
+  const _OtherTab({required this.name, required this.shipping});
 
   final String name;
+  final bool shipping;
 
   @override
   Widget build(BuildContext context) {
@@ -321,6 +342,7 @@ class _OtherTab extends StatelessWidget {
     final mute = text.labelMedium?.copyWith(
       color: AppDecorations.of(context).inkMute,
     );
+    final l10n = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.all(AppSpacing.s24),
       child: Column(
@@ -329,17 +351,9 @@ class _OtherTab extends StatelessWidget {
           Text(name, style: text.headlineSmall),
           const SizedBox(height: AppSpacing.s12),
           for (final line
-              in name == 'Shipping'
-                  ? [
-                      'Carrier A · 2 days',
-                      'Carrier B · 5 days',
-                      'Pickup · free',
-                    ]
-                  : [
-                      'Notifications · on',
-                      'Currency · USD',
-                      'Language · English',
-                    ])
+              in shipping
+                  ? [l10n.ocCarrierA, l10n.ocCarrierB, l10n.ocPickup]
+                  : [l10n.ocNotifications, l10n.ocCurrency, l10n.ocLanguage])
             Padding(
               padding: const EdgeInsets.only(bottom: AppSpacing.s8),
               child: Text(line, style: mute),
@@ -359,11 +373,12 @@ class _OrderList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mono = Theme.of(context).textTheme.labelSmall;
+    final orders = _orders(AppLocalizations.of(context));
     return ListView.separated(
-      itemCount: _orders.length,
+      itemCount: orders.length,
       separatorBuilder: (_, _) => const Divider(height: 1),
       itemBuilder: (context, i) {
-        final (id, item, status) = _orders[i];
+        final (id, item, status) = orders[i];
         return ListTile(
           selected: selected == i,
           title: Text(item),
@@ -385,27 +400,31 @@ class _OrderDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
+    final l10n = AppLocalizations.of(context);
     if (index == null) {
-      return Center(child: Text('Select an order', style: text.bodyMedium));
+      return Center(child: Text(l10n.ocSelectOrder, style: text.bodyMedium));
     }
-    final (id, item, status) = _orders[index!];
+    final (id, item, status) = _orders(l10n)[index!];
     return ListView(
       padding: const EdgeInsets.all(AppSpacing.s24),
       children: [
         if (onBack != null)
           Align(
-            alignment: Alignment.centerLeft,
-            child: TextButton(onPressed: onBack, child: const Text('← Orders')),
+            alignment: AlignmentDirectional.centerStart,
+            child: TextButton(
+              onPressed: onBack,
+              // Back points against the reading direction.
+              child: Text(
+                '${Directionality.of(context) == TextDirection.rtl ? '→' : '←'} '
+                '${l10n.ocOrders}',
+              ),
+            ),
           ),
         Text(item, style: text.headlineSmall),
         const SizedBox(height: AppSpacing.s8),
         Text('$id · $status', style: text.labelMedium),
         const SizedBox(height: AppSpacing.s24),
-        Text(
-          'The same detail widget is a full page on a phone and a pane on '
-          'a desktop. Only the layout around it changes.',
-          style: text.bodyMedium,
-        ),
+        Text(l10n.ocDetailBlurb, style: text.bodyMedium),
       ],
     );
   }
