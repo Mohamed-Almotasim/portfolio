@@ -8,6 +8,7 @@ import 'package:portfolio/core/theme/app_spacing.dart';
 import 'package:portfolio/core/theme/app_typography.dart';
 import 'package:portfolio/features/work/case_studies_provider.dart';
 import 'package:portfolio/features/work/widgets/case_study_cover.dart';
+import 'package:portfolio/l10n/app_localizations.dart';
 import 'package:portfolio/shared/layout/app_page.dart';
 import 'package:portfolio/shared/layout/inspectable.dart';
 
@@ -29,6 +30,7 @@ class _WorkPageState extends ConsumerState<WorkPage> {
     final type = ref.watch(workTypeFilterProvider);
     final shown = filterByType(all, type);
     final text = Theme.of(context).textTheme;
+    final l10n = AppLocalizations.of(context);
     final preview = _previewed ?? (shown.isEmpty ? null : shown.first);
 
     return AppPage(
@@ -38,16 +40,12 @@ class _WorkPageState extends ConsumerState<WorkPage> {
           const SizedBox(height: AppSpacing.s48),
           Semantics(
             header: true,
-            child: Text('Work', style: text.displayLarge),
+            child: Text(l10n.navWork, style: text.displayLarge),
           ),
           const SizedBox(height: AppSpacing.s16),
           ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 640),
-            child: Text(
-              'Every project in one register. Open a row for the problem, '
-              'the approach and the result.',
-              style: AppTypography.lead(context),
-            ),
+            child: Text(l10n.workLead, style: AppTypography.lead(context)),
           ),
           const SizedBox(height: AppSpacing.s48),
           _TypeFilter(types: allTypes(all), selected: type),
@@ -90,12 +88,13 @@ class _TypeFilter extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final notifier = ref.read(workTypeFilterProvider.notifier);
+    final l10n = AppLocalizations.of(context);
     return Inspectable(
       label: 'TypeFilter',
       note:
           'Chips write workTypeFilterProvider, so the register and the '
           'preview read one state. "All" is the null type.',
-      source: 'lib/features/work/work_page.dart:93',
+      source: 'lib/features/work/work_page.dart:92',
       tokens: const ['AppSpacing.s8', 'AppRadius.sm', 'labelMedium'],
       child: Wrap(
         spacing: AppSpacing.s8,
@@ -103,7 +102,7 @@ class _TypeFilter extends ConsumerWidget {
         children: [
           for (final t in [null, ...types])
             ChoiceChip(
-              label: Text(t ?? 'All'),
+              label: Text(t ?? l10n.all),
               selected: selected == t,
               onSelected: (_) => notifier.setType(t),
             ),
@@ -134,6 +133,7 @@ class _Register extends StatelessWidget {
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
     final deco = AppDecorations.of(context);
+    final l10n = AppLocalizations.of(context);
     final head = text.labelSmall?.copyWith(color: deco.inkMute);
 
     return Inspectable(
@@ -157,13 +157,16 @@ class _Register extends StatelessWidget {
             ),
             child: ExcludeSemantics(
               child: compact
-                  ? Text('No. · Title · Year', style: head)
+                  ? Text(
+                      '${l10n.colNo} · ${l10n.colTitle} · ${l10n.colYear}',
+                      style: head,
+                    )
                   : _Cells(
-                      no: Text('No.', style: head),
-                      title: Text('Title', style: head),
-                      type: showType ? Text('Type', style: head) : null,
-                      year: Text('Year', style: head),
-                      stack: Text('Stack', style: head),
+                      no: Text(l10n.colNo, style: head),
+                      title: Text(l10n.colTitle, style: head),
+                      type: showType ? Text(l10n.colType, style: head) : null,
+                      year: Text(l10n.colYear, style: head),
+                      stack: Text(l10n.stack, style: head),
                     ),
             ),
           ),
@@ -178,7 +181,7 @@ class _Register extends StatelessWidget {
           if (studies.isEmpty)
             Padding(
               padding: const EdgeInsets.all(AppSpacing.s24),
-              child: Text('Nothing of this type yet.', style: text.bodyLarge),
+              child: Text(l10n.workNoRows, style: text.bodyLarge),
             ),
         ],
       ),
@@ -261,7 +264,7 @@ class _RegisterRowState extends State<RegisterRow> {
       note:
           'The whole row is one link. Hover and focus step its tone and '
           'drive the preview; semantics read it as "title, type, year".',
-      source: 'lib/features/work/work_page.dart:259',
+      source: 'lib/features/work/work_page.dart:262',
       tokens: const [
         'surfaceContainerLow',
         'AppMotion.snap',
@@ -337,7 +340,7 @@ class _Preview extends StatelessWidget {
       note:
           'Only at 1024 px and up. Cross-fades when another row is hovered '
           'or focused, so the table never moves.',
-      source: 'lib/features/work/work_page.dart:335',
+      source: 'lib/features/work/work_page.dart:338',
       tokens: const ['AppMotion.snap', 'AppSpacing.s16', 'bodyMedium'],
       child: AnimatedSwitcher(
         duration: AppMotion.of(context, AppMotion.snap),

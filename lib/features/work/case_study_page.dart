@@ -11,9 +11,11 @@ import 'package:portfolio/features/not_found/not_found_page.dart';
 import 'package:portfolio/features/work/case_studies_provider.dart';
 import 'package:portfolio/features/work/widgets/case_study_cover.dart';
 import 'package:portfolio/features/work/widgets/project_phone.dart';
+import 'package:portfolio/l10n/app_localizations.dart';
 import 'package:portfolio/shared/layout/app_page.dart';
 import 'package:portfolio/shared/layout/inspectable.dart';
 import 'package:portfolio/shared/utils/link_launcher.dart';
+import 'package:portfolio/shared/widgets/app_section.dart';
 import 'package:portfolio/shared/widgets/spec_marks.dart';
 
 /// A case study as a spec sheet: title block, cover, three numbered
@@ -31,13 +33,14 @@ class CaseStudyPage extends ConsumerWidget {
       return NotFoundPage(path: AppRoutes.caseStudy(slug));
     }
     final text = Theme.of(context).textTheme;
+    final l10n = AppLocalizations.of(context);
     final width = MediaQuery.sizeOf(context).width;
     final wide = width >= AppBreakpoints.tablet;
     final sections = [
       for (final (i, (title, body)) in [
-        ('Problem', study.problem),
-        ('Approach', study.solution),
-        ('Result', study.result),
+        (l10n.csProblem, study.problem),
+        (l10n.csApproach, study.solution),
+        (l10n.csResult, study.result),
       ].indexed)
         _NumberedBlock(number: i + 1, title: title, body: body),
     ];
@@ -50,7 +53,9 @@ class CaseStudyPage extends ConsumerWidget {
           TextButton(
             onPressed: () => context.go(AppRoutes.work),
             style: TextButton.styleFrom(padding: EdgeInsets.zero),
-            child: const Text('← Work'),
+            child: Text(
+              '${directionalArrow(context, back: true)} ${l10n.navWork}',
+            ),
           ),
           const SizedBox(height: AppSpacing.s32),
           Semantics(
@@ -149,6 +154,7 @@ class _TitleBlock extends StatelessWidget {
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
     final deco = AppDecorations.of(context);
+    final l10n = AppLocalizations.of(context);
     Widget cell(String label, String value) => Container(
       width: 220,
       padding: const EdgeInsets.fromLTRB(0, AppSpacing.s12, AppSpacing.s24, 0),
@@ -173,10 +179,10 @@ class _TitleBlock extends StatelessWidget {
         ),
         child: Wrap(
           children: [
-            cell('Type', study.type),
-            cell('Role', study.role),
-            cell('Year', study.yearLabel),
-            cell('Stack', study.techStack.join(' / ')),
+            cell(l10n.colType, study.type),
+            cell(l10n.role, study.role),
+            cell(l10n.colYear, study.yearLabel),
+            cell(l10n.stack, study.techStack.join(' / ')),
           ],
         ),
       ),
@@ -310,6 +316,7 @@ class _Neighbours extends StatelessWidget {
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
     final deco = AppDecorations.of(context);
+    final l10n = AppLocalizations.of(context);
     Widget cell(String label, CaseStudy s, {required bool end}) => InkWell(
       onTap: () => context.go(AppRoutes.caseStudy(s.slug)),
       child: Padding(
@@ -322,7 +329,9 @@ class _Neighbours extends StatelessWidget {
             Text(label, style: text.labelMedium?.copyWith(color: deco.inkMute)),
             const SizedBox(height: AppSpacing.s8),
             Text(
-              end ? '${s.title} →' : '← ${s.title}',
+              end
+                  ? '${s.title} ${directionalArrow(context)}'
+                  : '${directionalArrow(context, back: true)} ${s.title}',
               style: text.titleLarge,
               textAlign: end ? TextAlign.end : TextAlign.start,
             ),
@@ -339,9 +348,9 @@ class _Neighbours extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(child: cell('Previous project', previous, end: false)),
+            Expanded(child: cell(l10n.csPrevious, previous, end: false)),
             const SizedBox(width: AppSpacing.s24),
-            Expanded(child: cell('Next project', next, end: true)),
+            Expanded(child: cell(l10n.csNext, next, end: true)),
           ],
         ),
       ),

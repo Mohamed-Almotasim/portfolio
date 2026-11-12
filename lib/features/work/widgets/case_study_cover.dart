@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:portfolio/core/content/case_study.dart';
 import 'package:portfolio/core/theme/app_decorations.dart';
 import 'package:portfolio/core/theme/app_spacing.dart';
+import 'package:portfolio/l10n/app_localizations.dart';
 import 'package:portfolio/shared/widgets/spec_marks.dart';
 
 /// The case study's cover in a cropped frame. Wrapped in a Hero so it flies
@@ -67,7 +68,7 @@ class FigureImage extends StatelessWidget {
       alignment: Alignment.bottomLeft,
       padding: const EdgeInsets.all(AppSpacing.s12),
       child: Text(
-        'No image yet',
+        AppLocalizations.of(context).noImageYet,
         style: Theme.of(
           context,
         ).textTheme.labelSmall?.copyWith(color: deco.inkMute),
@@ -121,7 +122,7 @@ class Figure extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.s12),
         Text(
-          'Fig. $number · ${figure.caption}',
+          AppLocalizations.of(context).figCaption(number, figure.caption),
           style: Theme.of(
             context,
           ).textTheme.labelSmall?.copyWith(color: deco.inkMute),

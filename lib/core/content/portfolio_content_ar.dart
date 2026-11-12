@@ -13,10 +13,9 @@ import 'package:portfolio/core/content/service_offering.dart';
 // Arabic; links, slugs, media and anything not listed here come from the
 // English file. Client reviews stay as written on Fiverr.
 
-// TODO(me): review every translation here; add your name in Arabic if you
-// want it shown (the wordmark's initials are taken from it).
+// TODO(me): review every translation here.
 final profile = Profile(
-  name: en.profile.name,
+  name: 'محمد المعتصم صالح',
   title: 'مطوّر Flutter',
   tagline: 'تطبيقات Flutter جاهزة للنشر.',
   shortBio:
@@ -33,17 +32,52 @@ final profile = Profile(
 );
 
 /// What the landing page shows of a case study, by slug.
-// shortcut: tagline/problem/solution/result stay English, translate them
-// here when the case-study page is localized.
 const _studies =
     <
       String,
-      ({String type, String outcome, String role, List<String> captions})
+      ({
+        String type,
+        String outcome,
+        String role,
+        String tagline,
+        String problem,
+        String solution,
+        String result,
+        List<String> captions,
+        List<String> notes,
+      })
     >{
       'dukkan': (
         type: 'نقطة بيع',
         outcome: 'المبيعات تستمر دون اتصال وتُزامَن عند عودة الشبكة.',
         role: 'مطوّر منفرد',
+        tagline:
+            'تطبيق مخزون ونقطة بيع للمتاجر الصغيرة يعمل دون اتصال أولًا، '
+            'بالعربية والإنجليزية.',
+        problem:
+            'المتاجر الصغيرة تخسر مبيعاتها عند انقطاع الاتصال، ويحتاج المالك '
+            'إلى الثقة بأن الكاشير لا يستطيع تغيير الأسعار أو المخزون أو '
+            'التقارير. كان على التطبيق أن يعمل على هاتف رخيص، بالعربية '
+            'والإنجليزية.',
+        solution:
+            'كل عملية بيع معاملة قاعدة بيانات واحدة: تحفظ البيع، وتخصم المخزون '
+            'بعد فحص محكوم، وتكتب حركة مخزون لكل بند، وتضع المزامنة في طابور '
+            'صادر معاملاتي. يدفع محرّك المزامنة الطابور مع تراجع أُسّي '
+            'ويحلّ التعارض بقاعدة «آخر كتابة تفوز» مع سجل تدقيق. تُفرَض '
+            'صلاحيات المالك والكاشير في طبقة التطبيق عبر PermissionPolicy '
+            'واحدة يستخدمها الموجّه وتستخدمها الواجهة أيضًا.',
+        result:
+            'دوران في تطبيق واحد مع سجل مخزون مدقَّق، ولوحة مالك حيّة، ودعم '
+            'كامل لـ RTL. مختبر شبكة مخفي يحاكي انقطاع الاتصال وزمن '
+            'الاستجابة والأعطال، وتغطي الاختبارات التدفق كله وتعمل دون واجهة '
+            'في CI.',
+        notes: [
+          'مخطط الإيرادات: CustomPainter',
+          'مربعات نقطة البيع تُعاد عبر select()',
+          'سجل المخزون: استعلام حي على قاعدة البيانات',
+          'الأدوار: PermissionPolicy واحدة',
+          'الكاشير: المنتجات للعرض فقط',
+        ],
         captions: [
           'تسجيل الدخول كمالك أو كاشير',
           'سجل المخزون: كل عملية بيع وتوريد وتعديل',
@@ -57,6 +91,30 @@ const _studies =
         outcome:
             'بطاقات تُقيَّم بالسحب وتُجدوَل بخوارزمية SM-2 مختبَرة بالكامل.',
         role: 'مطوّر منفرد',
+        tagline:
+            'تطبيق بطاقات تعليمية بالتكرار المتباعد، بتقييم بالسحب يحاكي '
+            'الفيزياء، وإحصاءات مرسومة يدويًا ودعم كامل للعربية.',
+        problem:
+            'تطبيقات البطاقات تنجح أو تفشل بأمرين: جدولة يمكنك الوثوق بها، '
+            'وحلقة مذاكرة ممتعة تعود إليها كل يوم.',
+        solution:
+            'جدولة SM-2 وحدة Dart نقية خلف واجهة Clock، باختبارات جدولية '
+            'تتحقق من الفواصل بدقة. جلسات المذاكرة Notifier بحالات مغلقة '
+            '(sealed). تنقلب البطاقات بثلاثية الأبعاد وتُقيَّم بالسحب، '
+            'بمحاكاة SpringSimulation تنقل سرعة الإفلات إلى الرمية. تُحسب '
+            'الإحصاءات من سجلات المراجعة وتُرسم بـ CustomPainter.',
+        result:
+            'خريطة حرارية سنوية ومنحنى احتفاظ وتوزيع للنضج دون أي حزمة '
+            'رسوم، واستيراد CSV/TSV وتصدير JSON، واختصارات لوحة المفاتيح '
+            'على الشاشات الكبيرة، ودعم تقليل الحركة، وRTL كامل باتجاهين '
+            'لكل بطاقة.',
+        notes: [
+          'شاشة البداية: CustomPainter واحد',
+          'الخريطة الحرارية تُعاد رسمها عند بيانات جديدة فقط',
+          'العربية: RTL كامل',
+          'الجلسة: Notifier بحالات مغلقة',
+          'السحب: SpringSimulation',
+        ],
         captions: [
           'شاشة بداية متحركة برسّام CustomPainter واحد',
           'المجموعات: ثلاث مجموعات تجريبية جاهزة',
@@ -69,6 +127,24 @@ const _studies =
         type: 'متابعة الحضور',
         outcome: 'تسجيل حضور لا يُحتسب إلا ضمن 30 مترًا من القاعة.',
         role: 'مطوّر Flutter',
+        tagline:
+            'متتبّع حضور يتحقق بنظام GPS، يساعد المعلّمين وموظفي الكلية على '
+            'متابعة الحضور واكتشاف الطلاب المعرّضين للخطر مبكرًا.',
+        problem:
+            'الحضور الجامعي يجب أن يثبت أن الطالب كان في القاعة فعلًا، '
+            'ويحتاج المعلمون إلى معرفة من هو معرّض للرسوب قبل صدور الدرجات '
+            'النهائية.',
+        solution:
+            'يسجّل الطلاب حضورهم من هواتفهم ويقارن التطبيق موقعهم بموقع '
+            'القاعة: ضمن 30 مترًا، تُوسَّع بدقة القراءة المُبلَّغ عنها (حتى '
+            '20 مترًا)، مع قراءة ثانية عالية الدقة قبل الرفض. يدير المعلمون '
+            'المواد والجداول والطلاب والدرجات، وقواعد أمان Firestore تفرض '
+            'الوصول حسب الدور.',
+        result:
+            'دوران في تطبيق واحد، وتصدير الدرجات إلى PDF وCSV، وتوقعات '
+            'مخاطر لكل طالب مبنية على قواعد شفافة، فيرى المعلّم سبب تعليم '
+            'الطالب.',
+        notes: [],
         captions: [
           'تسجيل الدخول مع خيار «تذكّرني»',
           'توقعات المخاطر مع الفلاتر',
@@ -78,7 +154,7 @@ const _studies =
       ),
     };
 
-/// A study without an entry above stays in English.
+/// A study without an entry above stays in English. Titles are project names.
 final caseStudies = [
   for (final e in en.caseStudies)
     if (_studies[e.slug] case final ar?)
@@ -86,11 +162,11 @@ final caseStudies = [
         slug: e.slug,
         title: e.title,
         type: ar.type,
-        tagline: e.tagline,
+        tagline: ar.tagline,
         outcome: ar.outcome,
-        problem: e.problem,
-        solution: e.solution,
-        result: e.result,
+        problem: ar.problem,
+        solution: ar.solution,
+        result: ar.result,
         techStack: e.techStack,
         role: ar.role,
         year: e.year,
@@ -100,7 +176,10 @@ final caseStudies = [
             : ProjectMedia(
                 prefix: e.media!.prefix,
                 captions: ar.captions,
-                notes: e.media!.notes,
+                notes: [
+                  for (final (i, n) in e.media!.notes.indexed)
+                    InspectNote(n.seconds, ar.notes[i]),
+                ],
               ),
         gallery: e.gallery,
         imagePath: e.imagePath,

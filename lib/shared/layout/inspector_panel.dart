@@ -6,11 +6,14 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:portfolio/core/content/inspector_notes_ar.dart';
+import 'package:portfolio/core/state/locale_provider.dart';
 import 'package:portfolio/core/state/profile_provider.dart';
 import 'package:portfolio/core/state/theme_tokens_provider.dart';
 import 'package:portfolio/core/theme/app_decorations.dart';
 import 'package:portfolio/core/theme/app_spacing.dart';
 import 'package:portfolio/core/theme/theme_tokens.dart';
+import 'package:portfolio/l10n/app_localizations.dart';
 import 'package:portfolio/shared/demo/source_snippet.dart';
 import 'package:portfolio/shared/layout/inspectable.dart';
 import 'package:portfolio/shared/utils/link_launcher.dart';
@@ -58,13 +61,6 @@ class InspectorPanel extends StatefulWidget {
 }
 
 class _InspectorPanelState extends State<InspectorPanel> {
-  static const _tabs = [
-    ('Layout', 'Layout'),
-    ('Tokens', 'Tokens'),
-    ('Perf', 'Performance'),
-    ('A11y', 'Accessibility'),
-  ];
-
   final _panelKey = GlobalKey();
   int _tab = 0;
   Offset _downAt = Offset.zero;
@@ -112,6 +108,13 @@ class _InspectorPanelState extends State<InspectorPanel> {
   @override
   Widget build(BuildContext context) {
     final box = widget.box;
+    final l10n = AppLocalizations.of(context);
+    final tabNames = [
+      (l10n.ipTabLayout, l10n.ipTabLayout),
+      (l10n.ipTabTokens, l10n.ipTabTokens),
+      (l10n.ipTabPerf, l10n.ipTabPerfFull),
+      (l10n.ipTabA11y, l10n.ipTabA11yFull),
+    ];
     final scheme = Theme.of(context).colorScheme;
     final text = Theme.of(context).textTheme;
     final deco = AppDecorations.of(context);
@@ -136,7 +139,7 @@ class _InspectorPanelState extends State<InspectorPanel> {
             style: text.labelMedium?.copyWith(color: deco.inkMute),
           ),
           IconButton(
-            tooltip: 'Close inspector (Esc)',
+            tooltip: l10n.ipClose,
             icon: const Icon(Icons.close, size: 20),
             onPressed: RenderInspectable.selection.clear,
           ),
@@ -152,7 +155,7 @@ class _InspectorPanelState extends State<InspectorPanel> {
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s4),
         child: Row(
           children: [
-            for (final (i, (short, full)) in _tabs.indexed)
+            for (final (i, (short, full)) in tabNames.indexed)
               _TabButton(
                 label: short,
                 semanticsLabel: full,
@@ -184,7 +187,7 @@ class _InspectorPanelState extends State<InspectorPanel> {
         child: Semantics(
           container: true,
           explicitChildNodes: true,
-          label: 'Inspector: ${box.label}',
+          label: l10n.ipPanelLabel(box.label),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -281,10 +284,12 @@ String _n(double v) => v.isInfinite
 String _range(double min, double max) =>
     min == max ? _n(min) : '${_n(min)}–${_n(max)}';
 
-String _insets(EdgeInsets e) {
+String _insets(AppLocalizations l10n, EdgeInsets e) {
   final v = [e.top, e.right, e.bottom, e.left].map(_n).toList();
-  if (v.toSet().length == 1) return v.first == '0' ? 'none' : 'all ${v.first}';
-  return 't ${v[0]} · r ${v[1]} · b ${v[2]} · l ${v[3]}';
+  if (v.toSet().length == 1) {
+    return v.first == '0' ? l10n.ipInsetsNone : l10n.ipInsetsAll(v.first);
+  }
+  return l10n.ipInsetsSides(v[0], v[1], v[2], v[3]);
 }
 
 /// Heading for a group of rows inside a tab.
@@ -362,6 +367,7 @@ class _LayoutTabState extends ConsumerState<_LayoutTab> {
   @override
   Widget build(BuildContext context) {
     final box = widget.box;
+    final l10n = AppLocalizations.of(context);
     final text = Theme.of(context).textTheme;
     final deco = AppDecorations.of(context);
     final src = _parse(box.source);
@@ -408,22 +414,30 @@ class _LayoutTabState extends ConsumerState<_LayoutTab> {
         ),
         if (box.note != null) ...[
           const SizedBox(height: AppSpacing.s12),
-          Text(box.note!, style: text.bodyMedium),
+          Text(
+            ref.watch(isArabicProvider)
+                ? inspectorNoteAr(box.note!) ?? box.note!
+                : box.note!,
+            style: text.bodyMedium,
+          ),
         ],
         const SizedBox(height: AppSpacing.s16),
         _Row(
-          'constraints',
-          'w ${_range(c.minWidth, c.maxWidth)} · '
-              'h ${_range(c.minHeight, c.maxHeight)}',
+          l10n.ipConstraints,
+          l10n.ipConstraintsValue(
+            _range(c.minWidth, c.maxWidth),
+            _range(c.minHeight, c.maxHeight),
+          ),
         ),
-        _Row('size', '${_n(box.size.width)} × ${_n(box.size.height)}'),
-        _Row('padding', _insets(box.padding)),
-        if (margin != null) _Row('margin', _insets(margin)),
-        if (box.tokens.isNotEmpty) _Row('tokens', box.tokens.join('\n')),
-        const _Heading('Source'),
+        _Row(l10n.ipSize, '${_n(box.size.width)} × ${_n(box.size.height)}'),
+        _Row(l10n.ipPadding, _insets(l10n, box.padding)),
+        if (margin != null) _Row(l10n.ipMargin, _insets(l10n, margin)),
+        if (box.tokens.isNotEmpty)
+          _Row(l10n.ipTokensRow, box.tokens.join('\n')),
+        _Heading(l10n.ipSource),
         if (src == null)
           Text(
-            'No source annotated for this box.',
+            l10n.ipNoSource,
             style: text.bodySmall?.copyWith(color: deco.inkMute),
           )
         else ...[
@@ -436,7 +450,7 @@ class _LayoutTabState extends ConsumerState<_LayoutTab> {
                 Uri.parse(ref.read(sourceUrlProvider)(src.$1, src.$2)),
               ),
               style: TextButton.styleFrom(padding: EdgeInsets.zero),
-              child: const Text('View source'),
+              child: Text(l10n.ipViewSource),
             ),
           ),
           const SizedBox(height: AppSpacing.s8),
@@ -450,7 +464,7 @@ class _LayoutTabState extends ConsumerState<_LayoutTab> {
                     wrap: true,
                   )
                 : snap.hasError
-                ? Text('Source unavailable', style: text.bodySmall)
+                ? Text(l10n.ipSourceUnavailable, style: text.bodySmall)
                 : const LinearProgressIndicator(),
           ),
         ],
@@ -466,6 +480,7 @@ class _TokensTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final t = ref.watch(themeTokensProvider);
     final notifier = ref.read(themeTokensProvider.notifier);
     final text = Theme.of(context).textTheme;
@@ -499,11 +514,10 @@ class _TokensTab extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          'Preview only. Nothing is saved, and switching Inspect off '
-          'resets it.',
+          l10n.ipTokensNote,
           style: text.bodySmall?.copyWith(color: deco.inkMute),
         ),
-        _Row('accent', t.accent.label),
+        _Row(l10n.ipAccent, t.accent.label),
         const SizedBox(height: AppSpacing.s8),
         Wrap(
           spacing: AppSpacing.s8,
@@ -519,14 +533,14 @@ class _TokensTab extends ConsumerWidget {
         ),
         const SizedBox(height: AppSpacing.s16),
         slider(
-          'spacing',
+          l10n.ipSpacing,
           t.space,
           0.5,
           1.5,
           4,
           (v) => notifier.set(t.copyWith(space: v)),
         ),
-        _Row('radius', _n(t.radius)),
+        _Row(l10n.ipRadius, _n(t.radius)),
         const SizedBox(height: AppSpacing.s8),
         Wrap(
           spacing: AppSpacing.s8,
@@ -541,7 +555,7 @@ class _TokensTab extends ConsumerWidget {
         ),
         const SizedBox(height: AppSpacing.s16),
         slider(
-          'type scale',
+          l10n.ipTypeScale,
           t.typeScale,
           0.875,
           1.25,
@@ -553,7 +567,7 @@ class _TokensTab extends ConsumerWidget {
           alignment: Alignment.centerLeft,
           child: OutlinedButton(
             onPressed: t.isDefault ? null : notifier.reset,
-            child: const Text('Reset tokens'),
+            child: Text(l10n.ipResetTokens),
           ),
         ),
       ],
@@ -645,6 +659,7 @@ class _PerfTabState extends State<_PerfTab> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final text = Theme.of(context).textTheme;
     final deco = AppDecorations.of(context);
     final mute = text.bodySmall?.copyWith(color: deco.inkMute);
@@ -658,13 +673,10 @@ class _PerfTabState extends State<_PerfTab> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          'Boxes flash when they rebuild while this tab is open.',
-          style: mute,
-        ),
-        const _Heading('Frame time'),
+        Text(l10n.ipPerfNote, style: mute),
+        _Heading(l10n.ipFrameTime),
         if (_frames.isEmpty)
-          Text('No frames reported yet. Scroll or hover the page.', style: mute)
+          Text(l10n.ipNoFrames, style: mute)
         else ...[
           SizedBox(
             height: 64,
@@ -679,14 +691,13 @@ class _PerfTabState extends State<_PerfTab> {
           ),
           const SizedBox(height: AppSpacing.s8),
           Text(
-            'avg ${avg.toStringAsFixed(1)} ms · worst '
-            '${worst.toStringAsFixed(1)} ms · line at 16.7 ms',
+            l10n.ipFrameStats(avg.toStringAsFixed(1), worst.toStringAsFixed(1)),
             style: text.labelSmall?.copyWith(color: deco.inkMute),
           ),
         ],
-        const _Heading('Rebuilds per box'),
+        _Heading(l10n.ipRebuilds),
         if (counts.isEmpty)
-          Text('No rebuilds since Inspect was switched on.', style: mute)
+          Text(l10n.ipNoRebuilds, style: mute)
         else
           for (final e in counts.take(12)) _Row('${e.value}', e.key),
         const SizedBox(height: AppSpacing.s8),
@@ -695,7 +706,7 @@ class _PerfTabState extends State<_PerfTab> {
           child: TextButton(
             onPressed: () => setState(RenderInspectable.rebuilds.clear),
             style: TextButton.styleFrom(padding: EdgeInsets.zero),
-            child: const Text('Reset counts'),
+            child: Text(l10n.ipResetCounts),
           ),
         ),
       ],
@@ -841,7 +852,7 @@ class _A11yTabState extends State<_A11yTab> {
               : f.isHeader
               ? 'heading'
               : f.isTextField
-              ? 'text field'
+              ? 'textField'
               : f.isImage
               ? 'image'
               : 'text';
@@ -907,6 +918,7 @@ class _A11yTabState extends State<_A11yTab> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final scheme = Theme.of(context).colorScheme;
     final text = Theme.of(context).textTheme;
     final deco = AppDecorations.of(context);
@@ -924,26 +936,30 @@ class _A11yTabState extends State<_A11yTab> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const _Heading('Tap targets'),
+          _Heading(l10n.ipTapTargets),
           Text(
-            _small.isEmpty
-                ? 'Every tap target on screen is at least 44 px.'
-                : '${_small.length} on screen under 44 px, outlined in the '
-                      'error colour.',
+            _small.isEmpty ? l10n.ipTapOk : l10n.ipTapSmall(_small.length),
             style: text.bodySmall,
           ),
-          const _Heading('Semantics in this box'),
+          _Heading(l10n.ipSemanticsIn),
           if (_labels.isEmpty)
-            Text('No labelled nodes.', style: mute)
+            Text(l10n.ipNoLabels, style: mute)
           else
             for (final l in _labels.take(24))
-              _Row(l.split('|').first, l.substring(l.indexOf('|') + 1)),
-          const _Heading('Text contrast'),
-          Text('Measured against the page ground.', style: mute),
+              _Row(switch (l.split('|').first) {
+                'button' => l10n.ipRoleButton,
+                'link' => l10n.ipRoleLink,
+                'heading' => l10n.ipRoleHeading,
+                'textField' => l10n.ipRoleTextField,
+                'image' => l10n.ipRoleImage,
+                _ => l10n.ipRoleText,
+              }, l.substring(l.indexOf('|') + 1)),
+          _Heading(l10n.ipTextContrast),
+          Text(l10n.ipContrastNote, style: mute),
           for (final c in contrasts)
             _Row(
               c.hex,
-              '${_n(c.size)}px  ${c.ratio.toStringAsFixed(1)}:1  ${c.verdict}',
+              '${_n(c.size)}px  ${c.ratio.toStringAsFixed(1)}:1  ${c.verdict(l10n)}',
               trailing: Container(
                 width: 12,
                 height: 12,
@@ -978,13 +994,13 @@ class _Contrast {
   String get key => '$hex|${_n(size)}|${weight.value}';
 
   /// WCAG AA: 3:1 for large text (24px, or 18.66px bold), else 4.5:1.
-  String get verdict {
+  String verdict(AppLocalizations l10n) {
     final large = size >= 24 || (size >= 18.66 && weight.value >= 700);
     return ratio >= 4.5
-        ? 'AA'
+        ? l10n.ipAA
         : large && ratio >= 3
-        ? 'AA large'
-        : 'fails AA';
+        ? l10n.ipAALarge
+        : l10n.ipFailsAA;
   }
 }
 

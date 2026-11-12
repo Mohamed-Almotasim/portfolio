@@ -628,7 +628,9 @@ class _Shot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final well = _Well(text: 'Screen ${index + 1}\nNo screenshot yet');
+    final well = _Well(
+      text: AppLocalizations.of(context).screenNoShot(index + 1),
+    );
     if (path == null) return well;
     return Image.asset(
       path!,

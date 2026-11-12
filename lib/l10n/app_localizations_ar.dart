@@ -773,4 +773,205 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get mlPlace4 => 'حديقة النهر · 800 م';
+
+  @override
+  String get workLead =>
+      'كل المشاريع في سجل واحد. افتح أي صف لتقرأ المشكلة والنهج والنتيجة.';
+
+  @override
+  String get all => 'الكل';
+
+  @override
+  String get colTitle => 'العنوان';
+
+  @override
+  String get workNoRows => 'لا يوجد شيء من هذا النوع بعد.';
+
+  @override
+  String get csProblem => 'المشكلة';
+
+  @override
+  String get csApproach => 'النهج';
+
+  @override
+  String get csResult => 'النتيجة';
+
+  @override
+  String get csPrevious => 'المشروع السابق';
+
+  @override
+  String get csNext => 'المشروع التالي';
+
+  @override
+  String get noImageYet => 'لا توجد صورة بعد';
+
+  @override
+  String screenNoShot(int n) {
+    return 'الشاشة $n\nلا توجد لقطة بعد';
+  }
+
+  @override
+  String get ipClose => 'إغلاق الفاحص (Esc)';
+
+  @override
+  String get ipTabLayout => 'التخطيط';
+
+  @override
+  String get ipTabTokens => 'الرموز';
+
+  @override
+  String get ipTabPerf => 'الأداء';
+
+  @override
+  String get ipTabPerfFull => 'الأداء';
+
+  @override
+  String get ipTabA11y => 'الوصول';
+
+  @override
+  String get ipTabA11yFull => 'إمكانية الوصول';
+
+  @override
+  String ipPanelLabel(String label) {
+    return 'الفاحص: $label';
+  }
+
+  @override
+  String get ipConstraints => 'القيود';
+
+  @override
+  String ipConstraintsValue(String w, String h) {
+    return 'ع $w · ا $h';
+  }
+
+  @override
+  String get ipSize => 'الحجم';
+
+  @override
+  String get ipPadding => 'الحشو';
+
+  @override
+  String get ipMargin => 'الهامش';
+
+  @override
+  String get ipTokensRow => 'الرموز';
+
+  @override
+  String get ipInsetsNone => 'لا شيء';
+
+  @override
+  String ipInsetsAll(String v) {
+    return 'الكل $v';
+  }
+
+  @override
+  String ipInsetsSides(String t, String r, String b, String l) {
+    return 'أ $t · ي $r · س $b · ش $l';
+  }
+
+  @override
+  String get ipSource => 'المصدر';
+
+  @override
+  String get ipNoSource => 'لا يوجد مصدر موثّق لهذا الصندوق.';
+
+  @override
+  String get ipViewSource => 'عرض المصدر';
+
+  @override
+  String get ipSourceUnavailable => 'المصدر غير متاح';
+
+  @override
+  String get ipTokensNote =>
+      'معاينة فقط. لا يُحفظ شيء، وإيقاف الفحص يعيد كل شيء.';
+
+  @override
+  String get ipAccent => 'اللون المميّز';
+
+  @override
+  String get ipSpacing => 'التباعد';
+
+  @override
+  String get ipRadius => 'نصف القطر';
+
+  @override
+  String get ipTypeScale => 'مقياس الخط';
+
+  @override
+  String get ipResetTokens => 'إعادة الرموز';
+
+  @override
+  String get ipPerfNote =>
+      'تومض الصناديق عند إعادة بنائها ما دام هذا التبويب مفتوحًا.';
+
+  @override
+  String get ipFrameTime => 'زمن الإطار';
+
+  @override
+  String get ipNoFrames =>
+      'لم يُسجَّل أي إطار بعد. مرّر الصفحة أو حرّك المؤشر فوقها.';
+
+  @override
+  String ipFrameStats(String avg, String worst) {
+    return 'المتوسط $avg م‌ث · الأسوأ $worst م‌ث · الخط عند 16.7 م‌ث';
+  }
+
+  @override
+  String get ipRebuilds => 'إعادة البناء لكل صندوق';
+
+  @override
+  String get ipNoRebuilds => 'لا إعادة بناء منذ تفعيل الفحص.';
+
+  @override
+  String get ipResetCounts => 'إعادة العدّادات';
+
+  @override
+  String get ipTapTargets => 'أهداف اللمس';
+
+  @override
+  String get ipTapOk => 'كل أهداف اللمس على الشاشة لا تقل عن 44 بكسل.';
+
+  @override
+  String ipTapSmall(int n) {
+    return '$n على الشاشة أصغر من 44 بكسل، محاطة بلون الخطأ.';
+  }
+
+  @override
+  String get ipSemanticsIn => 'الدلالات في هذا الصندوق';
+
+  @override
+  String get ipNoLabels => 'لا عناصر ذات تسمية.';
+
+  @override
+  String get ipTextContrast => 'تباين النص';
+
+  @override
+  String get ipContrastNote => 'يُقاس مقابل خلفية الصفحة.';
+
+  @override
+  String get ipRoleButton => 'زر';
+
+  @override
+  String get ipRoleLink => 'رابط';
+
+  @override
+  String get ipRoleHeading => 'عنوان';
+
+  @override
+  String get ipRoleTextField => 'حقل نص';
+
+  @override
+  String get ipRoleImage => 'صورة';
+
+  @override
+  String get ipRoleText => 'نص';
+
+  @override
+  String get ipAA => 'AA';
+
+  @override
+  String get ipAALarge => 'AA للنص الكبير';
+
+  @override
+  String get ipFailsAA => 'لا يحقق AA';
 }

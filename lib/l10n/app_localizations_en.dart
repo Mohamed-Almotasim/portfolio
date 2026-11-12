@@ -774,4 +774,204 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get mlPlace4 => 'Riverside Park · 800 m';
+
+  @override
+  String get workLead =>
+      'Every project in one register. Open a row for the problem, the approach and the result.';
+
+  @override
+  String get all => 'All';
+
+  @override
+  String get colTitle => 'Title';
+
+  @override
+  String get workNoRows => 'Nothing of this type yet.';
+
+  @override
+  String get csProblem => 'Problem';
+
+  @override
+  String get csApproach => 'Approach';
+
+  @override
+  String get csResult => 'Result';
+
+  @override
+  String get csPrevious => 'Previous project';
+
+  @override
+  String get csNext => 'Next project';
+
+  @override
+  String get noImageYet => 'No image yet';
+
+  @override
+  String screenNoShot(int n) {
+    return 'Screen $n\nNo screenshot yet';
+  }
+
+  @override
+  String get ipClose => 'Close inspector (Esc)';
+
+  @override
+  String get ipTabLayout => 'Layout';
+
+  @override
+  String get ipTabTokens => 'Tokens';
+
+  @override
+  String get ipTabPerf => 'Perf';
+
+  @override
+  String get ipTabPerfFull => 'Performance';
+
+  @override
+  String get ipTabA11y => 'A11y';
+
+  @override
+  String get ipTabA11yFull => 'Accessibility';
+
+  @override
+  String ipPanelLabel(String label) {
+    return 'Inspector: $label';
+  }
+
+  @override
+  String get ipConstraints => 'constraints';
+
+  @override
+  String ipConstraintsValue(String w, String h) {
+    return 'w $w · h $h';
+  }
+
+  @override
+  String get ipSize => 'size';
+
+  @override
+  String get ipPadding => 'padding';
+
+  @override
+  String get ipMargin => 'margin';
+
+  @override
+  String get ipTokensRow => 'tokens';
+
+  @override
+  String get ipInsetsNone => 'none';
+
+  @override
+  String ipInsetsAll(String v) {
+    return 'all $v';
+  }
+
+  @override
+  String ipInsetsSides(String t, String r, String b, String l) {
+    return 't $t · r $r · b $b · l $l';
+  }
+
+  @override
+  String get ipSource => 'Source';
+
+  @override
+  String get ipNoSource => 'No source annotated for this box.';
+
+  @override
+  String get ipViewSource => 'View source';
+
+  @override
+  String get ipSourceUnavailable => 'Source unavailable';
+
+  @override
+  String get ipTokensNote =>
+      'Preview only. Nothing is saved, and switching Inspect off resets it.';
+
+  @override
+  String get ipAccent => 'accent';
+
+  @override
+  String get ipSpacing => 'spacing';
+
+  @override
+  String get ipRadius => 'radius';
+
+  @override
+  String get ipTypeScale => 'type scale';
+
+  @override
+  String get ipResetTokens => 'Reset tokens';
+
+  @override
+  String get ipPerfNote =>
+      'Boxes flash when they rebuild while this tab is open.';
+
+  @override
+  String get ipFrameTime => 'Frame time';
+
+  @override
+  String get ipNoFrames => 'No frames reported yet. Scroll or hover the page.';
+
+  @override
+  String ipFrameStats(String avg, String worst) {
+    return 'avg $avg ms · worst $worst ms · line at 16.7 ms';
+  }
+
+  @override
+  String get ipRebuilds => 'Rebuilds per box';
+
+  @override
+  String get ipNoRebuilds => 'No rebuilds since Inspect was switched on.';
+
+  @override
+  String get ipResetCounts => 'Reset counts';
+
+  @override
+  String get ipTapTargets => 'Tap targets';
+
+  @override
+  String get ipTapOk => 'Every tap target on screen is at least 44 px.';
+
+  @override
+  String ipTapSmall(int n) {
+    return '$n on screen under 44 px, outlined in the error colour.';
+  }
+
+  @override
+  String get ipSemanticsIn => 'Semantics in this box';
+
+  @override
+  String get ipNoLabels => 'No labelled nodes.';
+
+  @override
+  String get ipTextContrast => 'Text contrast';
+
+  @override
+  String get ipContrastNote => 'Measured against the page ground.';
+
+  @override
+  String get ipRoleButton => 'button';
+
+  @override
+  String get ipRoleLink => 'link';
+
+  @override
+  String get ipRoleHeading => 'heading';
+
+  @override
+  String get ipRoleTextField => 'text field';
+
+  @override
+  String get ipRoleImage => 'image';
+
+  @override
+  String get ipRoleText => 'text';
+
+  @override
+  String get ipAA => 'AA';
+
+  @override
+  String get ipAALarge => 'AA large';
+
+  @override
+  String get ipFailsAA => 'fails AA';
 }

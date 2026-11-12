@@ -12,6 +12,7 @@ import 'package:portfolio/core/theme/app_theme.dart';
 import 'package:portfolio/core/theme/theme_tokens.dart';
 import 'package:portfolio/features/landing/landing_page.dart';
 import 'package:portfolio/features/work/work_page.dart';
+import 'package:portfolio/l10n/app_localizations.dart';
 import 'package:portfolio/shared/demo/source_snippet.dart';
 import 'package:portfolio/shared/layout/inspectable.dart';
 import 'package:portfolio/shared/layout/inspector_panel.dart';
@@ -31,6 +32,8 @@ void main() {
       UncontrolledProviderScope(
         container: container,
         child: MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           theme: AppTheme.light(),
           home: const Stack(
             children: [

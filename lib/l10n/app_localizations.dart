@@ -1513,6 +1513,372 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Riverside Park · 800 m'**
   String get mlPlace4;
+
+  /// No description provided for @workLead.
+  ///
+  /// In en, this message translates to:
+  /// **'Every project in one register. Open a row for the problem, the approach and the result.'**
+  String get workLead;
+
+  /// No description provided for @all.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get all;
+
+  /// No description provided for @colTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get colTitle;
+
+  /// No description provided for @workNoRows.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing of this type yet.'**
+  String get workNoRows;
+
+  /// No description provided for @csProblem.
+  ///
+  /// In en, this message translates to:
+  /// **'Problem'**
+  String get csProblem;
+
+  /// No description provided for @csApproach.
+  ///
+  /// In en, this message translates to:
+  /// **'Approach'**
+  String get csApproach;
+
+  /// No description provided for @csResult.
+  ///
+  /// In en, this message translates to:
+  /// **'Result'**
+  String get csResult;
+
+  /// No description provided for @csPrevious.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous project'**
+  String get csPrevious;
+
+  /// No description provided for @csNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next project'**
+  String get csNext;
+
+  /// No description provided for @noImageYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No image yet'**
+  String get noImageYet;
+
+  /// No description provided for @screenNoShot.
+  ///
+  /// In en, this message translates to:
+  /// **'Screen {n}\nNo screenshot yet'**
+  String screenNoShot(int n);
+
+  /// No description provided for @ipClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close inspector (Esc)'**
+  String get ipClose;
+
+  /// No description provided for @ipTabLayout.
+  ///
+  /// In en, this message translates to:
+  /// **'Layout'**
+  String get ipTabLayout;
+
+  /// No description provided for @ipTabTokens.
+  ///
+  /// In en, this message translates to:
+  /// **'Tokens'**
+  String get ipTabTokens;
+
+  /// No description provided for @ipTabPerf.
+  ///
+  /// In en, this message translates to:
+  /// **'Perf'**
+  String get ipTabPerf;
+
+  /// No description provided for @ipTabPerfFull.
+  ///
+  /// In en, this message translates to:
+  /// **'Performance'**
+  String get ipTabPerfFull;
+
+  /// No description provided for @ipTabA11y.
+  ///
+  /// In en, this message translates to:
+  /// **'A11y'**
+  String get ipTabA11y;
+
+  /// No description provided for @ipTabA11yFull.
+  ///
+  /// In en, this message translates to:
+  /// **'Accessibility'**
+  String get ipTabA11yFull;
+
+  /// No description provided for @ipPanelLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspector: {label}'**
+  String ipPanelLabel(String label);
+
+  /// No description provided for @ipConstraints.
+  ///
+  /// In en, this message translates to:
+  /// **'constraints'**
+  String get ipConstraints;
+
+  /// No description provided for @ipConstraintsValue.
+  ///
+  /// In en, this message translates to:
+  /// **'w {w} · h {h}'**
+  String ipConstraintsValue(String w, String h);
+
+  /// No description provided for @ipSize.
+  ///
+  /// In en, this message translates to:
+  /// **'size'**
+  String get ipSize;
+
+  /// No description provided for @ipPadding.
+  ///
+  /// In en, this message translates to:
+  /// **'padding'**
+  String get ipPadding;
+
+  /// No description provided for @ipMargin.
+  ///
+  /// In en, this message translates to:
+  /// **'margin'**
+  String get ipMargin;
+
+  /// No description provided for @ipTokensRow.
+  ///
+  /// In en, this message translates to:
+  /// **'tokens'**
+  String get ipTokensRow;
+
+  /// No description provided for @ipInsetsNone.
+  ///
+  /// In en, this message translates to:
+  /// **'none'**
+  String get ipInsetsNone;
+
+  /// No description provided for @ipInsetsAll.
+  ///
+  /// In en, this message translates to:
+  /// **'all {v}'**
+  String ipInsetsAll(String v);
+
+  /// No description provided for @ipInsetsSides.
+  ///
+  /// In en, this message translates to:
+  /// **'t {t} · r {r} · b {b} · l {l}'**
+  String ipInsetsSides(String t, String r, String b, String l);
+
+  /// No description provided for @ipSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Source'**
+  String get ipSource;
+
+  /// No description provided for @ipNoSource.
+  ///
+  /// In en, this message translates to:
+  /// **'No source annotated for this box.'**
+  String get ipNoSource;
+
+  /// No description provided for @ipViewSource.
+  ///
+  /// In en, this message translates to:
+  /// **'View source'**
+  String get ipViewSource;
+
+  /// No description provided for @ipSourceUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Source unavailable'**
+  String get ipSourceUnavailable;
+
+  /// No description provided for @ipTokensNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview only. Nothing is saved, and switching Inspect off resets it.'**
+  String get ipTokensNote;
+
+  /// No description provided for @ipAccent.
+  ///
+  /// In en, this message translates to:
+  /// **'accent'**
+  String get ipAccent;
+
+  /// No description provided for @ipSpacing.
+  ///
+  /// In en, this message translates to:
+  /// **'spacing'**
+  String get ipSpacing;
+
+  /// No description provided for @ipRadius.
+  ///
+  /// In en, this message translates to:
+  /// **'radius'**
+  String get ipRadius;
+
+  /// No description provided for @ipTypeScale.
+  ///
+  /// In en, this message translates to:
+  /// **'type scale'**
+  String get ipTypeScale;
+
+  /// No description provided for @ipResetTokens.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset tokens'**
+  String get ipResetTokens;
+
+  /// No description provided for @ipPerfNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Boxes flash when they rebuild while this tab is open.'**
+  String get ipPerfNote;
+
+  /// No description provided for @ipFrameTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Frame time'**
+  String get ipFrameTime;
+
+  /// No description provided for @ipNoFrames.
+  ///
+  /// In en, this message translates to:
+  /// **'No frames reported yet. Scroll or hover the page.'**
+  String get ipNoFrames;
+
+  /// No description provided for @ipFrameStats.
+  ///
+  /// In en, this message translates to:
+  /// **'avg {avg} ms · worst {worst} ms · line at 16.7 ms'**
+  String ipFrameStats(String avg, String worst);
+
+  /// No description provided for @ipRebuilds.
+  ///
+  /// In en, this message translates to:
+  /// **'Rebuilds per box'**
+  String get ipRebuilds;
+
+  /// No description provided for @ipNoRebuilds.
+  ///
+  /// In en, this message translates to:
+  /// **'No rebuilds since Inspect was switched on.'**
+  String get ipNoRebuilds;
+
+  /// No description provided for @ipResetCounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset counts'**
+  String get ipResetCounts;
+
+  /// No description provided for @ipTapTargets.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap targets'**
+  String get ipTapTargets;
+
+  /// No description provided for @ipTapOk.
+  ///
+  /// In en, this message translates to:
+  /// **'Every tap target on screen is at least 44 px.'**
+  String get ipTapOk;
+
+  /// No description provided for @ipTapSmall.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} on screen under 44 px, outlined in the error colour.'**
+  String ipTapSmall(int n);
+
+  /// No description provided for @ipSemanticsIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Semantics in this box'**
+  String get ipSemanticsIn;
+
+  /// No description provided for @ipNoLabels.
+  ///
+  /// In en, this message translates to:
+  /// **'No labelled nodes.'**
+  String get ipNoLabels;
+
+  /// No description provided for @ipTextContrast.
+  ///
+  /// In en, this message translates to:
+  /// **'Text contrast'**
+  String get ipTextContrast;
+
+  /// No description provided for @ipContrastNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Measured against the page ground.'**
+  String get ipContrastNote;
+
+  /// No description provided for @ipRoleButton.
+  ///
+  /// In en, this message translates to:
+  /// **'button'**
+  String get ipRoleButton;
+
+  /// No description provided for @ipRoleLink.
+  ///
+  /// In en, this message translates to:
+  /// **'link'**
+  String get ipRoleLink;
+
+  /// No description provided for @ipRoleHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'heading'**
+  String get ipRoleHeading;
+
+  /// No description provided for @ipRoleTextField.
+  ///
+  /// In en, this message translates to:
+  /// **'text field'**
+  String get ipRoleTextField;
+
+  /// No description provided for @ipRoleImage.
+  ///
+  /// In en, this message translates to:
+  /// **'image'**
+  String get ipRoleImage;
+
+  /// No description provided for @ipRoleText.
+  ///
+  /// In en, this message translates to:
+  /// **'text'**
+  String get ipRoleText;
+
+  /// No description provided for @ipAA.
+  ///
+  /// In en, this message translates to:
+  /// **'AA'**
+  String get ipAA;
+
+  /// No description provided for @ipAALarge.
+  ///
+  /// In en, this message translates to:
+  /// **'AA large'**
+  String get ipAALarge;
+
+  /// No description provided for @ipFailsAA.
+  ///
+  /// In en, this message translates to:
+  /// **'fails AA'**
+  String get ipFailsAA;
 }
 
 class _AppLocalizationsDelegate
